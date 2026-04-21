@@ -21,7 +21,8 @@ import sys
 # ─────────────────────────────────────────────
 # CONFIGURACIÓN
 # ─────────────────────────────────────────────
-NOTION_TOKEN = "***REMOVED_NOTION_TOKEN***"
+import os
+NOTION_TOKEN = os.getenv("NOTION_TOKEN") or input("Introduce tu NOTION_TOKEN: ").strip()
 DATABASE_ID = "33d11515-f4b2-81ef-a776-d0ea698b748f"
 
 HEADERS = {
