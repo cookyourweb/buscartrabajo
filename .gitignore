@@ -65,6 +65,13 @@ BuscarTrabajo-*.json
 workflow-*.json
 !workflows/
 
+# Archivos locales / sensibles
+get_token.py
+client_secret.json
+client_secret.json.xml
+*.pem
+*.key
+
 # Temporales
 *.tmp
 *.temp
