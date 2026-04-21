@@ -1,0 +1,70 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Credentials
+credentials.json
+token.pickle
+.env
+*.pem
+*.key
+
+# Logs
+*.log
+cv_server.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# N8N
+.n8n/
+n8n/
+
+# PDFs generados
+*.pdf
+
+# cv-server (repo separado)
+cv-server/
+
+# SSH keys
+*.key
+*.key.pub
+
+# Directorios locales
+.sixth/
+
+# CVs generados locales
+cv/*.docx
+cv/*.pdf
+
+# Workflow backups antiguos (mantener solo los de /workflows/)
+BuscarTrabajo-*.json
+workflow-*.json
+!workflows/
+
+# Temporales
+*.tmp
+*.temp
