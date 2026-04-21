@@ -386,9 +386,9 @@ Ver `ROADMAP.md` para detalle.
 
 | Variable | Valor |
 |----------|-------|
-| `CLAUDE_API_KEY` | `sk-ant-api03-...` |
+| `CLAUDE_API_KEY` | `sk-ant-api03-...` (tu clave) |
 | `GOOGLE_CREDENTIALS` | Base64 del service-account JSON |
-| `NOTION_TOKEN` | `ntn_G464872773099...` |
+| `NOTION_TOKEN` | `ntn_...` (tu clave) |
 | `NOTION_DB_USUARIOS` | `34811515f4b280f19a42f8da5e91a8fe` |
 | `FOLDER_GENERADOS` | ID Drive carpeta output CVs |
 | `FOLDER_CV_MASTERS` | ID Drive carpeta CV masters |

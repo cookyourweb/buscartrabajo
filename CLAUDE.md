@@ -123,7 +123,7 @@ curl -X POST https://n8n-qwmu.onrender.com/webhook/buscar-para-user \
 
 # 5. Test Notion directamente
 curl -X POST https://api.notion.com/v1/databases/34811515f4b280f19a42f8da5e91a8fe/query \
-  -H "Authorization: Bearer ntn_G464872773099dpLY7OzD7I4ZeZee38rKHsoVlmCV2z7A0" \
+  -H "Authorization: Bearer $NOTION_TOKEN" \
   -H "Notion-Version: 2022-06-28" \
   -H "Content-Type: application/json" \
   -d '{"page_size": 5}'

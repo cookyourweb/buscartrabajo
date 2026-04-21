@@ -10,7 +10,7 @@ import requests
 import json
 
 # Configuración
-NOTION_API_KEY = "ntn_G464872773099dpLY7OzD7I4ZeZee38rKHsoVlmCV2z7A0"
+NOTION_API_KEY = input("Introduce tu NOTION_API_KEY: ").strip()
 DATABASE_ID = "33d11515-f4b2-81ef-a776-d0ea698b748f"
 
 HEADERS = {
