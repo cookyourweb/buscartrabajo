@@ -1,0 +1,260 @@
+{
+  "name": "BuscarTrabajo-Usuarios",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nuevo-usuario",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "55fd3c6e-a4d4-45ce-b234-b7de8e3d2512",
+      "name": "Webhook — Nuevo usuario",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        200
+      ],
+      "webhookId": "nuevo-usuario"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extrae los datos del body del webhook\nconst body = $input.first().json.body || $input.first().json;\n\nreturn [{\n  json: {\n    nombre:     body.nombre || '',\n    email:      body.email  || '',\n    perfil:     body.perfil || '',\n    // Nuevos campos estructurados (opcionales)\n    rol:        body.rol_objetivo || '',\n    stack:      Array.isArray(body.stack) ? body.stack : (body.stack ? [body.stack] : []),\n    salario:    parseInt(body.salario_min) || 0,\n    modalidad:  Array.isArray(body.modalidad) ? body.modalidad : (body.modalidad ? [body.modalidad] : []),\n    ciudad:     body.ciudad || '',\n    linkedin:   body.linkedin || '',\n    cv_master_url: body.cv_master_url || ''\n  }\n}];"
+      },
+      "id": "2763495a-2487-44d9-b9eb-2b308936e38f",
+      "name": "Code — Extraer datos nuevo usuario",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/pages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer ntn_G464872773099dpLY7OzD7I4ZeZee38rKHsoVlmCV2z7A0"
+            },
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  parent: { database_id: '34811515f4b280f19a42f8da5e91a8fe' },\n  properties: {\n    Name:       { title:     [{ text: { content: $json.nombre } }] },\n    Email:      { email:     $json.email },\n    Perfil:     { rich_text: [{ text: { content: $json.perfil } }] },\n    Activo:     { checkbox:  true },\n    'Rol objetivo': { rich_text: [{ text: { content: $json.rol || '' } }] },\n    Stack:      { multi_select: ($json.stack || []).map(s => ({ name: s })) },\n    'Salario min': { number: $json.salario || null },\n    Modalidad:  { multi_select: ($json.modalidad || []).map(m => ({ name: m })) },\n    Ciudad:     { rich_text: [{ text: { content: $json.ciudad || '' } }] },\n    LinkedIn:   { url:       $json.linkedin || null },\n    'CV Master URL': { url: $json.cv_master_url || null }\n  }\n}) }}",
+        "options": {}
+      },
+      "id": "eba79b85-a68f-46c3-8c36-01683b7e53ea",
+      "name": "Notion — Crear usuario",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  ok: true,\n  mensaje: 'Usuario creado correctamente',\n  email: $('Code — Extraer datos nuevo usuario').first().json.email\n}) }}",
+        "options": {}
+      },
+      "id": "700dd346-b741-4b82-8491-a7079e3bf77d",
+      "name": "Respond — OK nuevo usuario",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "buscar-ahora",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "ee62e49d-d434-47f6-87dd-2a80c0bc9229",
+      "name": "Webhook — Buscar ahora",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        500
+      ],
+      "webhookId": "buscar-ahora"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\nreturn [{ json: { email: body.email || '', nombre: body.nombre || '' } }];"
+      },
+      "id": "8f721bb1-e3fa-4a2c-ac13-0a5f9818c53d",
+      "name": "Code — Extraer email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/databases/34811515f4b280f19a42f8da5e91a8fe/query",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer ntn_G464872773099dpLY7OzD7I4ZeZee38rKHsoVlmCV2z7A0"
+            },
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  filter: {\n    and: [\n      { property: 'Email',  email:    { equals: $json.email } },\n      { property: 'Activo', checkbox: { equals: true } }\n    ]\n  },\n  page_size: 1\n}) }}",
+        "options": {}
+      },
+      "id": "5fcda411-90c2-4cc7-bde5-837f538b64de",
+      "name": "Notion — Buscar usuario por email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extrae el perfil del usuario encontrado (shape normalizado)\nconst results = $input.first().json.results || [];\nif (!results.length) {\n  throw new Error('Usuario no encontrado o inactivo: ' + $('Code — Extraer email').first().json.email);\n}\nconst u = results[0];\nconst p = u.properties || {};\n\nreturn [{ json: {\n  user_id:    u.id,\n  nombre:     p.Name?.title?.[0]?.plain_text || '',\n  email:      p.Email?.email || '',\n  perfil:     p.Perfil?.rich_text?.[0]?.plain_text || '',\n  rol:        p['Rol objetivo']?.rich_text?.[0]?.plain_text || '',\n  stack:      (p.Stack?.multi_select || []).map(s => s.name),\n  salario:    p['Salario min']?.number || 0,\n  modalidad:  (p.Modalidad?.multi_select || []).map(m => m.name),\n  ciudad:     p.Ciudad?.rich_text?.[0]?.plain_text || '',\n  linkedin:   p.LinkedIn?.url || '',\n  cv_master_url: p['CV Master URL']?.url || '',\n  source:     'buscar-ahora'\n}}];"
+      },
+      "id": "8a7881a4-3d5f-4607-af79-f7132f83d009",
+      "name": "Code — Normalizar perfil (buscar-ahora)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  ok: true,\n  mensaje: 'Búsqueda iniciada, recibirás ofertas en unos minutos',\n  email: $('Code — Extraer email').first().json.email\n}) }}",
+        "options": {}
+      },
+      "id": "efeada20-924c-4e5c-bfdb-2592a59297c0",
+      "name": "Respond — OK buscar ahora",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        500
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook — Nuevo usuario": {
+      "main": [
+        [
+          {
+            "node": "Code — Extraer datos nuevo usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Extraer datos nuevo usuario": {
+      "main": [
+        [
+          {
+            "node": "Notion — Crear usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion — Crear usuario": {
+      "main": [
+        [
+          {
+            "node": "Respond — OK nuevo usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook — Buscar ahora": {
+      "main": [
+        [
+          {
+            "node": "Code — Extraer email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Extraer email": {
+      "main": [
+        [
+          {
+            "node": "Notion — Buscar usuario por email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion — Buscar usuario por email": {
+      "main": [
+        [
+          {
+            "node": "Code — Normalizar perfil (buscar-ahora)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Normalizar perfil (buscar-ahora)": {
+      "main": [
+        [
+          {
+            "node": "Respond — OK buscar ahora",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
