@@ -193,8 +193,8 @@ return [{
 **Importante:** Las API keys están embebidas en el JSON. Verifica que estén activas:
 
 1. **Claude API (Anthropic):** Verificar que `sk-ant-api03-...` siga siendo válida
-2. **Notion:** Token `***REMOVED_NOTION_TOKEN***`
-3. **Brevo:** API Key `***REMOVED_BREVO_KEY***`
+2. **Notion:** Token `REEMPLAZAR_POR_TU_NOTION_TOKEN`
+3. **Brevo:** API Key `REEMPLAZAR_POR_TU_BREVO_API_KEY`
 4. **CV Server:** URL `https://cv-server-production.up.railway.app/generar-cv`
 
 ### Paso 4: Activar el Workflow

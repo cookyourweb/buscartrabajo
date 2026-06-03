@@ -126,14 +126,14 @@ curl "https://n8n-qwmu.onrender.com/webhook/reject?id=PAGE_ID_AQUI"
 Antes de probar, verifica que estas credenciales estén configuradas en n8n:
 
 ### 1. Notion API
-- **Token:** `***REMOVED_NOTION_TOKEN***`
+- **Token:** `REEMPLAZAR_POR_TU_NOTION_TOKEN`
 - **Database ID:** `33d11515-f4b2-81ef-a776-d0ea698b748f`
 
 ### 2. Claude API (Anthropic)
 - **API Key:** `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`
 
 ### 3. Brevo (Email)
-- **API Key:** `***REMOVED_BREVO_KEY***`
+- **API Key:** `REEMPLAZAR_POR_TU_BREVO_API_KEY`
 
 ### 4. CV Server
 - **URL:** `https://cv-server-production.up.railway.app/generar-cv`

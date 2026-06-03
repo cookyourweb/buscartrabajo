@@ -31,11 +31,11 @@ El workflow está configurado para ejecutarse **CADA MINUTO** para facilitar las
 1. Ve a Settings (rueda dentada) → Credentials
 2. Click "Add Credential"
 3. Selecciona "Notion API"
-4. Introduce tu token: `***REMOVED_NOTION_TOKEN***`
+4. Introduce tu token: `REEMPLAZAR_POR_TU_NOTION_TOKEN`
 
 ### Brevo API:
 El workflow ya tiene la API key incluida:
-`***REMOVED_BREVO_KEY***`
+`REEMPLAZAR_POR_TU_BREVO_API_KEY`
 
 ### Claude API:
 La API key ya está incluida en los nodos HTTP Request

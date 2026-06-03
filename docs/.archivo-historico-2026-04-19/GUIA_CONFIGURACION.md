@@ -39,7 +39,7 @@
 
 #### Notion
 1. Crea credencial tipo **Notion API**
-2. Usa el token existente: `***REMOVED_NOTION_TOKEN***`
+2. Usa el token existente: `REEMPLAZAR_POR_TU_NOTION_TOKEN`
 
 #### Brevo
 1. Crea credencial tipo **HTTP Header Auth**

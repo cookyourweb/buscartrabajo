@@ -111,9 +111,9 @@ Sistema automatizado que:
 ```json
 {
   "notion_database_id": "33d11515-f4b2-81ef-a776-d0ea698b748f",
-  "notion_token": "Bearer ***REMOVED_NOTION_TOKEN***",
+  "notion_token": "Bearer REEMPLAZAR_POR_TU_NOTION_TOKEN",
   "claude_api_key": "sk-ant-api03-...",
-  "brevo_api_key": "***REMOVED_BREVO_KEY***",
+  "brevo_api_key": "REEMPLAZAR_POR_TU_BREVO_API_KEY",
   "webhook_base_url": "https://n8n-qwmu.onrender.com/webhook"
 }
 ```
