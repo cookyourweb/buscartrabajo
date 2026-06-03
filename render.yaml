@@ -8,7 +8,7 @@ services:
     plan: starter            # NO free: free se duerme y tiene disco efímero
     region: frankfurt        # más cerca de España → menos latencia
     image:
-      url: docker.n8n.io/n8nio/n8n
+      url: docker.io/n8nio/n8n:latest
     # Disco persistente: aquí vive TODO el estado de n8n (workflows + credenciales encriptadas).
     disk:
       name: n8n-data
