@@ -1,0 +1,54 @@
+# Blueprint de Render para n8n (asistente de correo Outlook)
+# Servicio web a partir de la imagen Docker oficial de n8n.
+# Plan Starter (~7 €/mes): no se duerme + disco persistente (conserva workflows y credenciales).
+services:
+  - type: web
+    name: n8n-asistente-correo
+    runtime: image
+    plan: starter            # NO free: free se duerme y tiene disco efímero
+    region: frankfurt        # más cerca de España → menos latencia
+    image:
+      url: docker.n8n.io/n8nio/n8n
+    # Disco persistente: aquí vive TODO el estado de n8n (workflows + credenciales encriptadas).
+    disk:
+      name: n8n-data
+      mountPath: /home/node/.n8n
+      sizeGB: 1
+    healthCheckPath: /healthz
+    envVars:
+      # Clave de encriptación: Render la genera UNA vez y la conserva.
+      # Protege la credencial OAuth de Azure. Nunca va al repo, nunca se pierde.
+      - key: N8N_ENCRYPTION_KEY
+        generateValue: true
+
+      # n8n corre detrás del reverse proxy de Render (HTTPS lo pone Render).
+      - key: N8N_PROTOCOL
+        value: https
+      - key: N8N_PORT
+        value: "5678"
+      - key: N8N_PROXY_HOPS          # 1 salto de proxy (el de Render)
+        value: "1"
+      - key: NODE_ENV
+        value: production
+
+      # Zona horaria: que el cron del digest dispare a las 8:00 hora de España.
+      - key: GENERIC_TIMEZONE
+        value: Europe/Madrid
+      - key: TZ
+        value: Europe/Madrid
+
+      # Silencia avisos conocidos de n8n self-host.
+      - key: N8N_RUNNERS_ENABLED
+        value: "true"
+      - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+        value: "true"
+
+      # --- Estas tres dependen de la URL pública (no se conoce hasta el 1er deploy) ---
+      # Se rellenan en el Dashboard DESPUÉS del primer deploy, con la URL real
+      # (algo como https://n8n-asistente-correo.onrender.com). Ver paso 2.
+      - key: N8N_HOST
+        sync: false
+      - key: WEBHOOK_URL
+        sync: false
+      - key: N8N_EDITOR_BASE_URL
+        sync: false
