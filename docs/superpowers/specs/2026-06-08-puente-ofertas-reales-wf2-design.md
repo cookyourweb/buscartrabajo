@@ -76,7 +76,7 @@ disparan carta + CV + email de revisión.
 - Va antes del LLM para no gastar ranking en ofertas ya vistas.
 
 ### 3. Nodos "Crear en Notion" + "Email con botones" (REUSAR de WF2 Mitad A)
-- Por cada oferta nueva: crear página en Notion con `Estado = Nueva` y los campos
+- Por cada oferta nueva: crear página en Notion con `Estado = Pendiente` y los campos
   (título, empresa, ubicación, salario, url, descripción, fuente).
 - Recoger el `id` de la página creada para construir los links de los botones.
 - Agrupar todas las ofertas del día en **un solo email** Brevo, cada una con sus
@@ -90,7 +90,8 @@ disparan carta + CV + email de revisión.
 
 Campos mínimos por oferta (verificar contra la DB existente al implementar):
 `Título`, `Empresa`, `Ubicación`, `Salario`, `URL`, `Descripción`, `Fuente`,
-`Estado` (Nueva → Aprobada → En proceso → En revisión → Enviada / Descartada).
+`Estado` (Pendiente → Aprobada → En proceso → En revisión → Enviada / Descartada).
+DB id real: `33d11515f4b281efa776d0ea698b748f`.
 
 ## Manejo de errores
 
@@ -112,7 +113,7 @@ Campos mínimos por oferta (verificar contra la DB existente al implementar):
 
 ## Criterios de éxito
 
-1. Una oferta real que pasa el filtro aparece en Notion con `Estado = Nueva`.
+1. Una oferta real que pasa el filtro aparece en Notion con `Estado = Pendiente`.
 2. Llega **un** email diario con las ofertas nuevas y sus botones.
 3. Al tocar **Aprobar**, llega a los pocos minutos el email con CV adaptado + carta.
 4. Ofertas ya vistas **no** se repiten al día siguiente (dedupe funciona).
