@@ -1,7 +1,19 @@
 # 📋 BuscarTrabajo v2.3 — Documentación maestra
-**Última actualización:** 28 abril 2026
-**Estado:** ✅ MVP funcional end-to-end con ofertas inventadas por LLM
-**Próximo hito:** Migrar a ofertas REALES (Fase 3)
+
+> ⚠️ **DOC PARCIALMENTE SUPERADA (jun 2026).** El sistema ya está en **v3 (ofertas reales, multi-usuario)**.
+> La **fuente de verdad operativa** (arquitectura, instancia n8n, schema Notion, webhooks, flujos) es **[`../README.md`](../README.md)**.
+> Lo que cambió respecto a este documento:
+> - Instancia n8n viva: **`n8n-asistente-correo.onrender.com`** (NO `n8n-st1v` / `n8n-qwmu`).
+> - Workflow vigente: **`WF2-integrado-v3`** (NO `WF2-BuscarTrabajo-v2-Groq`).
+> - Ofertas **reales** (Remotive + Adzuna + Tecnoempleo) con anti-spam, NO inventadas.
+> - LLM de ofertas/cartas: **Groq** (`llama-3.3-70b-versatile`), NO Claude.
+> - Schema Ofertas: la carta va en **`Carta Enviada`** (no "Carta generada"); el email del user en **`Email Enviado`** (no "Email usuario"); campos nuevos `CV usado` (=CV master), `Link CV Drive` (=CV adaptado), `Fecha envio`, `Fecha Envio Empresa`, `Seguimiento`, `Usuario` (relation).
+> - Envío a empresa **híbrido con edición previa** (revisar carta/CV antes de mandar).
+>
+> Las secciones de **lecciones aprendidas, modelo de costes y gotchas** de abajo siguen siendo válidas.
+
+**Última actualización (doc original):** 28 abril 2026
+**Estado real:** ✅ v3 multi-usuario con ofertas reales (ver README)
 
 ---
 
