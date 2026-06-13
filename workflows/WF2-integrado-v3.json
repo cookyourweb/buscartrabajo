@@ -638,7 +638,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "url": "https://cv-server-ggd8.onrender.com/generar-carta",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -649,11 +649,12 @@
           ]
         },
         "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  model: \"llama-3.3-70b-versatile\",\n  messages: [{\n    role: \"user\",\n    content: \"Eres un experto en redacción de cartas de presentación para ofertas de trabajo en España. Escribe una carta de presentación profesional en español.\\\\n\\\\nDATOS DE LA OFERTA:\\\\n- Empresa: \" + ($('Notion - Obtener Datos Oferta').first().json.properties?.Empresa?.title?.[0]?.text?.content || '') + \"\\\\n- Puesto: \" + ($('Notion - Obtener Datos Oferta').first().json.properties?.Puesto?.rich_text?.[0]?.text?.content || '') + \"\\\\n- Descripción: \" + ($('Notion - Obtener Datos Oferta').first().json.properties?.Notas?.rich_text?.[0]?.text?.content || '') + \"\\\\n\\\\nINSTRUCCIONES:\\\\n- Carta de máximo 300 palabras\\\\n- Tono profesional pero cercano\\\\n- Destacar experiencia en React, TypeScript, Vue.js\\\\n- Formato: Estimados/as, ..., Atentamente, Verónica Serna\\\\n- Devuelve SOLO el texto de la carta\"\n  }],\n  max_tokens: 1024,\n  temperature: 0.7\n}) }}",
-        "options": {},
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth"
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  email:       $('Notion - Obtener Datos Oferta').first().json.properties['Email Enviado']?.email \n               || $('Notion - Obtener Datos Oferta').first().json.properties['Email Enviado']?.rich_text?.[0]?.plain_text \n               || 'hello.cookyourweb@gmail.com',\n  empresa:     $('Notion - Obtener Datos Oferta').first().json.properties.Empresa?.title?.[0]?.text?.content || '',\n  puesto:      $('Notion - Obtener Datos Oferta').first().json.properties.Puesto?.rich_text?.[0]?.text?.content || '',\n  descripcion: $('Notion - Obtener Datos Oferta').first().json.properties.Notas?.rich_text?.[0]?.text?.content || ''\n}) }}",
+        "options": {
+          "timeout": 120000
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -665,12 +666,6 @@
       "name": "Groq - Generar Carta",
       "retryOnFail": true,
       "continueOnFail": true,
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "NDntqAlYPkuWbKRh",
-          "name": "Header Auth account"
-        }
-      },
       "maxTries": 4,
       "waitBetweenTries": 25000
     },
@@ -709,7 +704,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const notionData = $('Notion - Obtener Datos Oferta').first().json;\nconst empresa = notionData.properties?.Empresa?.title?.[0]?.text?.content || notionData.properties?.Empresa?.title?.[0]?.plain_text || '';\nconst puesto = notionData.properties?.Puesto?.rich_text?.[0]?.text?.content || '';\nconst pageId = notionData.id || '';\nconst nombreContacto = notionData.properties?.['Nombre Contacto']?.rich_text?.[0]?.text?.content || '';\nconst emailContacto = notionData.properties?.['Email empresa']?.email || '';\nconst telefonoContacto = notionData.properties?.['Teléfono Contacto']?.phone_number || '';\n\nconst cartaText = $('Groq - Generar Carta').first().json.choices?.[0]?.message?.content || '';\n\nlet linkCV = '';\ntry {\n  linkCV = $('CV Server - Generar CV').first().json.link || null;\n} catch(e) {}\n\nlet cvMaster = '';\ntry {\n  cvMaster = $('CV Server - Generar CV').first().json.cv_master_url || '';\n} catch(e) {}\n\n// Email del usuario (para avisarle que está listo para revisar)\nconst emailDestino = notionData.properties?.['Email Enviado']?.email\n  || notionData.properties?.['Email usuario']?.email\n  || notionData.properties?.['Email usuario']?.rich_text?.[0]?.plain_text\n  || 'hello.cookyourweb@gmail.com';\n\n// Carta en chunks de 1900 chars para guardar en Notion (límite rich_text 2000)\nconst chunk = (s, n) => {\n  const a = [];\n  for (let i = 0; i < (s || '').length; i += n) a.push({ text: { content: s.slice(i, i + n) } });\n  return a.length ? a : [{ text: { content: '' } }];\n};\nconst cartaRichText = chunk(cartaText, 1900);\n\n// Link a la página de Notion para editar la carta\nconst notionPageUrl = 'https://www.notion.so/' + pageId.replace(/-/g, '');\n\nconst htmlContent = '<div style=\"font-family:Arial;padding:20px;max-width:600px\">'\n  + '<h2 style=\"color:#1F5C8B\">📝 Carta y CV listos para revisar</h2>'\n  + '<h3>' + empresa + ' — ' + puesto + '</h3>'\n  + '<p>Tu carta y CV ya están generados. <b>Revisalos y editalos si querés ANTES de enviar:</b></p>'\n  + '<div style=\"padding:16px;line-height:1.6;white-space:pre-wrap;background:#f9f9f9;border-radius:6px\">' + cartaText + '</div>'\n  + '<p style=\"margin-top:16px\">'\n  + '<a href=\"' + notionPageUrl + '\" style=\"color:#1F5C8B;font-weight:bold;text-decoration:underline\" target=\"_blank\">✏️ Editar la carta en Notion</a>'\n  + (linkCV ? '&nbsp;&nbsp;|&nbsp;&nbsp;<a href=\"' + linkCV + '\" style=\"color:#1F5C8B;font-weight:bold;text-decoration:underline\" target=\"_blank\">✏️ Editar el CV en Drive</a>' : '')\n  + '</p>'\n  + '<p style=\"color:#666;font-size:13px\">Cuando la carta y el CV estén como querés, pulsá Enviar:</p>'\n  + '<a href=\"https://n8n-asistente-correo.onrender.com/webhook/oferta-mandar-empresa?id=' + pageId + '\" style=\"background:#22C55E;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;font-weight:bold\">🚀 Enviar a empresa</a>'\n  + '</div>';\n\nconst brevoBody = JSON.stringify({\n  sender: { name: 'Verónica Serna', email: 'veronica@usecookyourwebai.es' },\n  to: [{ email: emailDestino }],\n  subject: '📝 Revisar y enviar — ' + empresa + ' — ' + puesto,\n  htmlContent: htmlContent,\n  trackClicks: false,\n  trackOpens: false\n});\n\nreturn [{\n  json: {\n    empresa, puesto, pageId, cartaText, linkCV, nombreContacto, emailContacto, telefonoContacto,\n    notionPageId: pageId,\n    notionLinkCV: linkCV || null,\n    cvMaster: cvMaster || '',\n    cartaEnviada: cartaText,\n    cartaRichText,\n    emailDestino,\n    htmlContent,\n    brevoBody\n  }\n}];\n"
+        "jsCode": "const notionData = $('Notion - Obtener Datos Oferta').first().json;\nconst empresa = notionData.properties?.Empresa?.title?.[0]?.text?.content || notionData.properties?.Empresa?.title?.[0]?.plain_text || '';\nconst puesto = notionData.properties?.Puesto?.rich_text?.[0]?.text?.content || '';\nconst pageId = notionData.id || '';\nconst nombreContacto = notionData.properties?.['Nombre Contacto']?.rich_text?.[0]?.text?.content || '';\nconst emailContacto = notionData.properties?.['Email empresa']?.email || '';\nconst telefonoContacto = notionData.properties?.['Teléfono Contacto']?.phone_number || '';\n\nconst cartaText = $('Groq - Generar Carta').first().json.carta || '';\n\nlet linkCV = '';\ntry {\n  linkCV = $('CV Server - Generar CV').first().json.link || null;\n} catch(e) {}\n\nlet cvMaster = '';\ntry {\n  cvMaster = $('CV Server - Generar CV').first().json.cv_master_url || '';\n} catch(e) {}\n\n// Email del usuario (para avisarle que está listo para revisar)\nconst emailDestino = notionData.properties?.['Email Enviado']?.email\n  || notionData.properties?.['Email usuario']?.email\n  || notionData.properties?.['Email usuario']?.rich_text?.[0]?.plain_text\n  || 'hello.cookyourweb@gmail.com';\n\n// Carta en chunks de 1900 chars para guardar en Notion (límite rich_text 2000)\nconst chunk = (s, n) => {\n  const a = [];\n  for (let i = 0; i < (s || '').length; i += n) a.push({ text: { content: s.slice(i, i + n) } });\n  return a.length ? a : [{ text: { content: '' } }];\n};\nconst cartaRichText = chunk(cartaText, 1900);\n\n// Link a la página de Notion para editar la carta\nconst notionPageUrl = 'https://www.notion.so/' + pageId.replace(/-/g, '');\n\nconst htmlContent = '<div style=\"font-family:Arial;padding:20px;max-width:600px\">'\n  + '<h2 style=\"color:#1F5C8B\">📝 Carta y CV listos para revisar</h2>'\n  + '<h3>' + empresa + ' — ' + puesto + '</h3>'\n  + '<p>Tu carta y CV ya están generados. <b>Revisalos y editalos si querés ANTES de enviar:</b></p>'\n  + '<div style=\"padding:16px;line-height:1.6;white-space:pre-wrap;background:#f9f9f9;border-radius:6px\">' + cartaText + '</div>'\n  + '<p style=\"margin-top:16px\">'\n  + '<a href=\"' + notionPageUrl + '\" style=\"color:#1F5C8B;font-weight:bold;text-decoration:underline\" target=\"_blank\">✏️ Editar la carta en Notion</a>'\n  + (linkCV ? '&nbsp;&nbsp;|&nbsp;&nbsp;<a href=\"' + linkCV + '\" style=\"color:#1F5C8B;font-weight:bold;text-decoration:underline\" target=\"_blank\">✏️ Editar el CV en Drive</a>' : '')\n  + '</p>'\n  + '<p style=\"color:#666;font-size:13px\">Cuando la carta y el CV estén como querés, pulsá Enviar:</p>'\n  + '<a href=\"https://n8n-asistente-correo.onrender.com/webhook/oferta-mandar-empresa?id=' + pageId + '\" style=\"background:#22C55E;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;font-weight:bold\">🚀 Enviar a empresa</a>'\n  + '</div>';\n\nconst brevoBody = JSON.stringify({\n  sender: { name: 'Verónica Serna', email: 'veronica@usecookyourwebai.es' },\n  to: [{ email: emailDestino }],\n  subject: '📝 Revisar y enviar — ' + empresa + ' — ' + puesto,\n  htmlContent: htmlContent,\n  trackClicks: false,\n  trackOpens: false\n});\n\nreturn [{\n  json: {\n    empresa, puesto, pageId, cartaText, linkCV, nombreContacto, emailContacto, telefonoContacto,\n    notionPageId: pageId,\n    notionLinkCV: linkCV || null,\n    cvMaster: cvMaster || '',\n    cartaEnviada: cartaText,\n    cartaRichText,\n    emailDestino,\n    htmlContent,\n    brevoBody\n  }\n}];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -779,7 +774,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\\n  properties: {\\n    ...(($json.notionLinkCV && $json.notionLinkCV !== \"\") ? { \"Link CV Drive\": { url: $json.notionLinkCV } } : { \"Link CV Drive\": { url: null } }),\\n    \"Nombre Contacto\": { rich_text: [{ text: { content: $json.nombreContacto || \"\" } }] },\\n    \"Teléfono Contacto\": { phone_number: $json.telefonoContacto || null },\\n    \"Carta Enviada\": { rich_text: $json.cartaRichText || [{ text: { content: \"\" } }] },\\n    ...(($json.cvMaster && $json.cvMaster !== \"\") ? { \"CV usado\": { rich_text: [{ text: { content: $json.cvMaster } }] } } : {}),\\n    \"Fecha envio\": { date: { start: new Date().toISOString().slice(0,10) } }\\n  }\\n}) }}",
+        "jsonBody": "={{ JSON.stringify({ properties: { ...(($json.notionLinkCV && $json.notionLinkCV !== \"\") ? { \"Link CV Drive\": { url: $json.notionLinkCV } } : { \"Link CV Drive\": { url: null } }), \"Nombre Contacto\": { rich_text: [{ text: { content: $json.nombreContacto || \"\" } }] }, \"Teléfono Contacto\": { phone_number: $json.telefonoContacto || null }, \"Carta Enviada\": { rich_text: $json.cartaRichText || [{ text: { content: \"\" } }] }, ...(($json.cvMaster && $json.cvMaster !== \"\") ? { \"CV usado\": { rich_text: [{ text: { content: $json.cvMaster } }] } } : {}), \"Fecha envio\": { date: { start: new Date().toISOString().slice(0,10) } } } }) }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
