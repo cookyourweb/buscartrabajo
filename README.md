@@ -163,9 +163,11 @@ Si responden 200 → el problema está en el flujo interno (revisar Executions e
 - **API keys**: tras rotarlas hay que actualizarlas en DOS sitios — credenciales n8n (Notion, Brevo) **y** env vars Render (Groq, Gemini, Notion, Google OAuth).
 - **n8n**: al importar un workflow desde otra instancia, los IDs de credencial NO se mapean → reasignar credencial nodo por nodo. Importar con *Import from File* SOBRE el workflow abierto (si no, se duplica).
 - **Notion**: nombres de propiedad case-sensitive y con tildes (`Teléfono Contacto`, `Email empresa`). Mandar una propiedad con tipo equivocado da 400; mandar una que no existe en el payload no falla, pero escribir en un nombre inexistente sí rompe el PATCH.
+- **Tipografía del CV/carta (cv-server)**: el `cv-server` sanea el texto antes de renderizar (`sanear_tipografia`): fuera guiones largos y flechas, que son rastro de IA y NO pueden salir a una empresa. Cuidado: el DOCX detecta la línea de empresa usando el guion largo como marcador, así que la detección sigue leyendo la línea cruda y solo se limpia el texto que se escribe. No metas un saneado global antes de parsear o pierdes las negritas.
+- **Credencial Groq del workflow Telegram**: caso real del gotcha de importar workflows. "Búsqueda Empleo Diaria" fallaba a diario porque su nodo Groq apuntaba a una credencial borrada (`2b1f3WOTcvKNLpgy`). Reapuntado a la credencial viva `Groq account 2` (`Ewz07GBHAM5voex1`, la misma que usan Digest y Outlook FIX) el 20-jul-2026.
 
 ---
 
-**Última actualización:** 12 junio 2026
-**Estado:** ✅ v3 multi-usuario con ofertas reales — flujo aprobar→carta+CV en pruebas
+**Última actualización:** 20 julio 2026
+**Estado:** ✅ v3 multi-usuario con ofertas reales. Flujo de aprobación con carta y CV operativo. Fix de tipografía (sin guiones largos ni flechas) en cv-server y credencial Telegram reparada el 20-jul.
 **Archivo canónico workflow:** `workflows/WF2-integrado-v3.json`
