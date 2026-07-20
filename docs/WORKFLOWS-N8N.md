@@ -36,6 +36,37 @@ Otros workflows menores comparten la credencial Groq viva `Groq account 2`
 
 ---
 
+## Filtro de modalidad (20-jul-2026)
+
+**Preferencia de Vero**: Remoto SIEMPRE, Híbrido SOLO Madrid, Presencial NUNCA, Híbrido de
+otras ciudades fuera. Ver [[preferencia-modalidad-vero]].
+
+**Fuentes de ofertas** (3, mezcladas en el workflow PROD `5pTwriXcc6aYHO1Y`):
+- **Remotive** (`Buscar en Remotive`): 100% remoto por diseño. No produce presenciales.
+- **Adzuna** (`Buscar en Adzuna`): trae ubicación por oferta.
+- **Tecnoempleo** (`Buscar en Tecnoempleo`, RSS): portal español, de aquí salen las
+  presenciales y las que no cuadraban.
+
+**El problema**: el nodo `Code - Normalizar Modalidad` clasificaba Remoto/Híbrido/Presencial
+pero las pasaba TODAS a Notion. La preferencia de modalidad del usuario (`U.modalidad`) y la
+ciudad viajaban por el workflow pero no se usaban para filtrar.
+
+**El fix** (2 nodos, sin nodos nuevos ni tocar credenciales):
+1. `Formatear ofertas`: además del idioma, ahora guarda `ubicacion_por_link` (ubicación de
+   cada oferta por su link, de las 3 fuentes).
+2. `Code - Normalizar Modalidad`: descarta `Presencial` y `Hibrido` no-Madrid justo antes de
+   `Notion - Crear Oferta` (`return null` + `.filter(x => x !== null)`).
+
+Nota: el filtro de PERFIL ya existía en `Formatear ofertas` (función `matchea`): exige señal
+del perfil en el título (frontend/React/fullstack/AI/tech lead) y descarta backend puro.
+Un ".NET + Angular" cuela porque tiene "Angular" (señal válida); endurecer eso queda como
+mejora aparte.
+
+**Edge case**: si un día TODAS las ofertas son presencial/híbrido-no-Madrid, no llega
+ninguna (preferible a recibir presenciales). Raro, porque Remotive es 100% remoto.
+
+---
+
 ## Ficheros de export en `workflows/` (NO son la fuente de verdad)
 
 Son backups/exports, útiles para reimportar. **Trampa conocida**: el sufijo `(5)` en un
