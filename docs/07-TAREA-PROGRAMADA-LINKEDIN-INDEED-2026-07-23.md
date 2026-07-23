@@ -107,27 +107,62 @@ devolviendo cero, no merece la pena mantener la parte local.
 
 ---
 
-## 4. Prompt corregido (listo para copiar y pegar)
+## 4. Prompt corregido v2 (listo para copiar y pegar)
 
-**Dónde:** Claude de escritorio, barra lateral `Programado`, tarjeta
+**Dónde:** Claude de escritorio o Cowork, barra lateral `Programado`, tarjeta
 **"Busqueda empleos mejor pagados"**. Reemplazar las instrucciones enteras.
+
+**Copia suelta:** `~/Downloads/prompt-tarea-empleos-linkedin-indeed-v2-2026-07-23.txt`
+(mismo contenido, en texto plano, para pegar sin arrastrar el markdown).
 
 Cambios respecto al original:
 
 1. **Línea IMPORTANTE**: antes decía "NO envíes ningún email". Si se añade el email de
    resumen sin tocarla, se crea una contradicción interna (el mismo tipo de fallo que
    hacía que el prompt de `cv-server` inventara métricas: la regla 1 lo prohibía y la
-   regla 4 lo pedía). Ahora distingue **postularse** (prohibido) de **informar**
-   (obligatorio).
+   regla 4 lo pedía). Ahora distingue **postularse** (prohibido) de **informar** y
+   **marcar estado** (permitidos).
 2. **Paso 3**: dedup por **Empresa + Puesto** en vez de por link.
 3. **Paso 5**: email de resumen con contadores y desglose por fuente.
 4. Perfil de la primera línea actualizado al reposicionamiento de 22-jul
    (AI Engineer primero).
 
+Añadido en v2 (23-jul, tarde):
+
+5. **Paso 5, ofertas numeradas.** El listado del chat y el del email van numerados 1..N
+   con la URL de la página de Notion. La numeración es lo que hace posible el paso 6.
+6. **Paso 6 nuevo: aprobar o descartar desde el propio chat.** Verónica responde
+   "aprueba 1 y 4" o "descarta 2, 3" y el agente escribe `Estado` en Notion. Incluye
+   revisión bajo demanda ("revisar pendientes") sin lanzar búsqueda nueva.
+7. **Paso 3, ofertas descartadas.** El dedup mira **todos** los estados: una oferta que
+   ella descartó no se vuelve a crear al día siguiente. Descartarla ya fue una decisión.
+
+### Por qué el paso 6 es opcional por diseño
+
+Una tarea programada corre sola a las 9:10h. Si Verónica no abre el chat, nadie
+responde y las ofertas se quedan en `Pendiente`, que es un estado correcto: nada se
+pierde ni se bloquea. La aprobación es una conversación disponible, no un requisito de
+la ejecución. El agente NO debe quedarse esperando ni reintentar.
+
+Esto **no sustituye** al botón "Aprobar" del email de n8n (doc 06, sección 3): ese
+resuelve el caso síncrono desde el móvil sin abrir Claude. Son dos vías al mismo campo.
+
+### Schema real de `Estado` (verificado en Notion, 23-jul-2026)
+
+Leído del select de la data source `collection://33d11515-f4b2-8176-947b-000bbafd1ca7`.
+Nueve opciones, ni cuatro ni seis:
+
+`Pendiente` · `Enviado` · `En proceso` · `Entrevista` · `Oferta recibida` ·
+`Descartado` · `Rechazado` · `Aprobado` · `Enviado a empresa`
+
+Esto cierra la **contradicción 2 de `docs/08`**: ninguno de los tres documentos que
+declaraban los estados los tenía bien. Distinción que hay que respetar al escribir:
+**`Descartado`** = la descarta Verónica. **`Rechazado`** = la rechaza la empresa.
+
 ```text
 Eres el asistente de búsqueda de empleo de Verónica Serna Pérez (perfil Notion: "AI Engineer · Full-Stack Developer · Frontend Tech Lead", salario mínimo 60.000€, modalidad Remoto o Híbrido Madrid, ciudad Valdemorillo/Madrid). Su sistema real de búsqueda vive en n8n (Remotive+Adzuna+Tecnoempleo). Esta tarea es un complemento para LinkedIn e Indeed, integrado en la MISMA base de datos Notion.
 
-IMPORTANTE: NO te postules a ninguna oferta ni escribas a ninguna empresa. Verónica gestiona los envíos ella misma. Tus únicas acciones permitidas son: crear páginas en Notion y enviarle a ella un email de resumen (paso 5).
+IMPORTANTE: NO te postules a ninguna oferta ni escribas a ninguna empresa. Verónica gestiona los envíos ella misma. Tus únicas acciones permitidas son tres: crear páginas en Notion, actualizar el campo Estado de esas páginas cuando ella te lo pida explícitamente en el chat (paso 6), y enviarle a ella un email de resumen (paso 5).
 
 Pasos:
 
@@ -143,9 +178,11 @@ Pasos:
 
 2. FILTRAR: solo ofertas ABIERTAS, remoto o híbrido Madrid (nunca presencial, nunca híbrido de otra ciudad), con salario ≥60.000€ si el dato está disponible, o nivel Senior/Staff/Lead/Principal si no hay salario explícito.
 
-3. ANTI-DUPLICADOS: antes de crear nada, consulta la base de datos Notion "Ofertas de Trabajo" (data source collection://33d11515-f4b2-8176-947b-000bbafd1ca7) y trae las páginas de los últimos 30 días con sus campos Empresa y Puesto.
+3. ANTI-DUPLICADOS: antes de crear nada, consulta la base de datos Notion "Ofertas de Trabajo" (data source collection://33d11515-f4b2-8176-947b-000bbafd1ca7) y trae las páginas de los últimos 30 días con sus campos Empresa, Puesto y Estado.
 
    Compara cada candidata por EMPRESA + PUESTO, normalizando mayúsculas y espacios sobrantes. Si ya existe, SÁLTALA y no la crees.
+
+   La comparación incluye TODOS los estados, también las ofertas que Verónica ya descartó. Si una oferta está como "Descartado" o "Rechazado", NO la vuelvas a crear: descartarla ya fue una decisión suya.
 
    NO deduplices por "Link oferta": la misma oferta llega cada día con un link distinto (to.indeed.com/aaXXXX cambia), así que el link NO identifica la oferta.
 
@@ -163,15 +200,37 @@ Pasos:
    - Usuario (relation): ["https://app.notion.com/p/34b11515f4b2817980ecc0b6d2093abb"]
    - Fecha Publicacion (date): pasar expandida como "date:Fecha Publicacion:start": "YYYY-MM-DD"
 
-5. RESUMEN. En el chat: cuántas ofertas nuevas creaste, con título+empresa+salario+link agrupadas por perfil (AI Engineer / Frontend Lead / Full Stack).
+   Guarda la URL de cada página creada: la necesitas en los pasos 5 y 6.
+
+5. RESUMEN. En el chat: lista las ofertas nuevas NUMERADAS del 1 al N, agrupadas por perfil (AI Engineer / Frontend Lead / Full Stack). De cada una: número, empresa, puesto, salario, modalidad, link de la oferta y URL de la página de Notion.
+
+   La numeración es lo que le permite aprobarlas o descartarlas en el paso 6. No la omitas nunca, aunque solo haya una oferta.
 
    Además, envía un email a hello.cookyourweb@gmail.com con asunto "Ofertas [FECHA]: N nuevas" y este contenido:
    - Ofertas encontradas / creadas / descartadas por duplicadas
    - Desglose por fuente: cuántas de Indeed y cuántas de LinkedIn
    - Si la rama de LinkedIn no devolvió nada, di POR QUÉ: sin acceso a Chrome, sin sesión iniciada, sin resultados de búsqueda, o todas descartadas por cerradas
-   - Listado de las nuevas: empresa, puesto, salario, link
+   - Listado numerado de las nuevas con los mismos números que usaste en el chat: empresa, puesto, salario, link
+   - Una línea final: "Para aprobar o descartar, responde en el chat de la tarea con los números."
 
    Si no hubo ofertas nuevas, manda el email igualmente diciéndolo. El silencio no es información.
+
+6. REVISIÓN: aprobar o descartar. Solo se ejecuta si Verónica responde en el chat. Si no responde, la tarea termina en el paso 5 y las ofertas se quedan en "Pendiente", que es un final correcto.
+
+   Ella contestará refiriéndose a los números del paso 5. Ejemplos: "aprueba 1 y 4", "descarta 2, 3", "aprueba todas", "descarta el resto", "la 5 no".
+
+   Reglas de escritura:
+   - Aprobar el número N: actualiza esa página con notion-update-page, Estado = "Aprobado".
+   - Descartar / denegar / rechazar el número N: Estado = "Descartado".
+   - El campo Estado es un select y sus ÚNICAS opciones válidas son: "Pendiente", "Aprobado", "Descartado", "Rechazado", "En proceso", "Enviado", "Enviado a empresa", "Entrevista", "Oferta recibida". No inventes valores nuevos ni cambies mayúsculas o tildes.
+   - En esta revisión usa SOLO "Aprobado" o "Descartado". "Descartado" es Verónica quien descarta la oferta; "Rechazado" es la empresa quien la rechaza a ella. No los confundas.
+   - NO toques ningún otro campo de la página. Solo Estado.
+   - Si un número no existe, la instrucción es ambigua o hay dos lecturas posibles, PREGUNTA antes de escribir. No adivines.
+   - Después de cada tanda, confirma en una línea por oferta: número, empresa, puesto, estado nuevo. Si alguna actualización falló, dilo con el error. No des por buena una escritura que no confirmaste.
+
+   Aprobar una oferta NO significa postularse. Aprobar solo marca el estado en Notion para que el resto del pipeline (generar CV y carta) la recoja. Sigue estando prohibido escribir a la empresa.
+
+   REVISIÓN BAJO DEMANDA: si Verónica te escribe "revisar pendientes" sin pedir búsqueda nueva, no busques nada. Consulta la data source y trae las ofertas con Estado = "Pendiente" de los últimos 14 días, numeradas igual que en el paso 5 (empresa, puesto, salario, modalidad, link, URL de Notion), y aplica estas mismas reglas de aprobación.
 
 Máximo 5 páginas nuevas creadas por perfil y por ejecución.
 ```
@@ -200,8 +259,13 @@ sola, a favor de la más concreta. Dos consecuencias prácticas:
 
 ## 6. Pendiente
 
-- [ ] Pegar el prompt corregido en la tarea y ejecutarla a mano
+- [ ] Pegar el prompt v2 en la tarea y ejecutarla a mano
+- [ ] Probar el paso 6: responder "aprueba 1, descarta 2" y comprobar en Notion que el
+      `Estado` queda en `Aprobado` / `Descartado` y que NINGÚN otro campo cambió
 - [ ] Verificar en Notion que NO se recrean Hostaway / Trivelta / Luxoft / Trimble / MarsBased
+- [ ] Alinear con el schema real de `Estado` (las nueve opciones de la sección 4) los tres
+      documentos que lo declaran mal: `buscartrabajo/README.md:122`, `docs/01:145` y
+      `cv-server/README.md:111-117`
 - [ ] Leer el email de resumen para saber **por qué** LinkedIn devuelve cero
 - [ ] Activar **"Mantener activo"** en la pantalla de tareas programadas (si no, el día
       que el portátil esté cerrado a las 9:00 no hay ofertas y no hay aviso)
@@ -215,3 +279,5 @@ sola, a favor de la más concreta. Dos consecuencias prácticas:
 ---
 
 **Generado:** 23 julio 2026. Datos verificados contra Notion, Gmail y la API de rutinas.
+**Actualizado:** 23 julio 2026 (tarde). Prompt v2 con aprobación desde el chat (paso 6) y
+schema real del select `Estado` leído de Notion.

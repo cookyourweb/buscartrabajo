@@ -61,7 +61,7 @@ constante en vez del modelo usado.
 
 **Corregir en:** `buscartrabajo/README.md:28` y `docs/01:58-61`. Documentar las DOS capas.
 
-### 2. Los estados del CRM (cuatro versiones incompatibles)
+### 2. Los estados del CRM (cuatro versiones incompatibles) — RESUELTA 23-jul (tarde)
 
 | Fuente | Estados declarados |
 |---|---|
@@ -76,8 +76,20 @@ Ningún documento coincide con otro. Y ninguno parece coincidir con el select re
 filtradas por `Estado` y hubo que parar: una vista sobre "Enviado" saldría siempre vacía si esa
 opción no existe en el select.
 
-**Acción previa a cualquier arreglo:** leer el schema real del select en Notion y tomarlo como
-referencia. Después alinear los tres documentos con él, no entre ellos.
+**Schema real, leído del select el 23-jul (data source
+`collection://33d11515-f4b2-8176-947b-000bbafd1ca7`). Nueve opciones:**
+
+`Pendiente` · `Enviado` · `En proceso` · `Entrevista` · `Oferta recibida` ·
+`Descartado` · `Rechazado` · `Aprobado` · `Enviado a empresa`
+
+Lección: la tabla de arriba mezclaba dos cosas distintas. Las **60 filas leídas** solo decían qué
+estados están **en uso**, no cuáles **existen**. `Enviado`, `Entrevista`, `Oferta recibida`,
+`Rechazado`, `Aprobado` y `Enviado a empresa` sí existen en el select: nadie los ha usado todavía.
+Un valor sin usar no es un valor inexistente, y una vista sobre él sale vacía pero es válida.
+
+**Pendiente:** alinear con estas nueve opciones `buscartrabajo/README.md:122`, `docs/01:145` y
+`cv-server/README.md:111-117`. Y respetar la distinción: **`Descartado`** = la descarta Verónica,
+**`Rechazado`** = la rechaza la empresa.
 
 ### 3. `docs/01` se contradice consigo mismo
 
@@ -227,8 +239,9 @@ Ese fue exactamente el método que produjo esta lista.
 
 1. **Verificar el dominio del remitente** (contradicción 5). Es la única con riesgo de romper
    envíos en producción.
-2. **Leer el schema real del select `Estado`** en Notion (contradicción 2). Bloquea la
-   configuración de vistas que está en curso.
+2. ~~**Leer el schema real del select `Estado`** en Notion (contradicción 2). Bloquea la
+   configuración de vistas que está en curso.~~ **HECHO 23-jul (tarde)**: nueve opciones,
+   listadas en la contradicción 2. Queda alinear los tres documentos con ellas.
 3. Corregir `buscartrabajo/README.md`: capa LLM, archivo canónico, schema con `CV Master URL ES`
    (contradicciones 1, 4, 8).
 4. Actualizar `docs/WORKFLOWS-N8N.md` reverificando contra la API de n8n (contradicción 9).
