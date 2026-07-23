@@ -7,6 +7,15 @@ tener que abrir n8n.
 
 **Estado verificado vía n8n API el 20-jul-2026.** Si cambias algo en n8n, actualiza esta tabla.
 
+> **¿Buscas los endpoints de webhook?** Están en [`../README.md`](../README.md), sección
+> **"Webhooks n8n"** (`/webhook/oferta-aprobar?id=`, `/-descartar`, `/-mandar-empresa`,
+> `/nuevo-usuario`, `/buscar-ahora`, `/buscar-para-user`), sobre el host
+> `https://n8n-asistente-correo.onrender.com`.
+>
+> No se duplican aquí a propósito: dos copias de la misma tabla se desincronizan y acabas
+> sin saber cuál es la buena. Este fichero cubre QUÉ workflows corren; el README, CÓMO se
+> les llama.
+
 ---
 
 ## Workflows activos y su estado
