@@ -1,4 +1,4 @@
-# Tarea programada LinkedIn+Indeed — diagnóstico y prompt corregido — 23 jul 2026
+# Tarea programada LinkedIn+Indeed: diagnóstico y prompt corregido (23 jul 2026)
 
 > Continuación directa de `06-INTEGRACION-LINKEDIN-Y-AUDITORIA-MULTIUSUARIO-2026-07-21.md`.
 > El doc 06 explica **cómo se montó** la tarea. Este explica **qué falla** y deja el
@@ -40,9 +40,9 @@ Indeed genera un link distinto para la misma oferta en cada ejecución
 
 **Duplicados confirmados** (misma Empresa + mismo Puesto, links distintos):
 
-- `Senior Frontend Engineer - 100% Remote - EMEA` @ **Hostaway** — 2 veces el 22-jul
+- `Senior Frontend Engineer - 100% Remote - EMEA` @ **Hostaway**: 2 veces el 22-jul
   (06:08 y 07:27 UTC), links `aaxy4j2k2jm7` y `aa4rcyq6xcvk`
-- `AI-Native TypeScript Engineer` @ **MarsBased** — 21 y 22 jul
+- `AI-Native TypeScript Engineer` @ **MarsBased**: 21 y 22 jul
 - También repetidos entre días: **Trivelta**, **Luxoft**, **Trimble**
 
 **Causa raíz:** el link NO identifica la oferta. La clave correcta es **Empresa +
@@ -75,7 +75,7 @@ manda las alertas a la dirección **principal** de la cuenta; añadir una segund
 dirección no las duplica.
 
 **Solución propuesta (sin tocar LinkedIn):** filtro de reenvío automático en
-`verserper@gmail.com` → `hello.cookyourweb@gmail.com` para todo lo que venga de
+`verserper@gmail.com` hacia `hello.cookyourweb@gmail.com` para todo lo que venga de
 LinkedIn. Así entra en el buzón que n8n y los agentes sí leen.
 
 **Expectativa realista:** las alertas de LinkedIn son un resumen algorítmico, no un
@@ -99,8 +99,8 @@ Google Drive, Google Calendar, Composio. **No** hay claude-in-chrome.
 
 **Consecuencia:** si se quiere pasar a la nube, hay que **partir la tarea en dos**:
 
-- **Indeed → nube.** Conector oficial, corre 24/7 sin depender del portátil.
-- **LinkedIn → local.** Atado a Chrome y a la sesión iniciada.
+- **Indeed, a la nube.** Conector oficial, corre 24/7 sin depender del portátil.
+- **LinkedIn, en local.** Atado a Chrome y a la sesión iniciada.
 
 Decisión aplazada hasta tener el dato del punto 2.2: si la rama de LinkedIn sigue
 devolviendo cero, no merece la pena mantener la parte local.
@@ -109,8 +109,8 @@ devolviendo cero, no merece la pena mantener la parte local.
 
 ## 4. Prompt corregido (listo para copiar y pegar)
 
-**Dónde:** Claude de escritorio → barra lateral `Programado` → tarjeta
-**"Busqueda empleos mejor pagados"** → reemplazar las instrucciones enteras.
+**Dónde:** Claude de escritorio, barra lateral `Programado`, tarjeta
+**"Busqueda empleos mejor pagados"**. Reemplazar las instrucciones enteras.
 
 Cambios respecto al original:
 
@@ -125,7 +125,7 @@ Cambios respecto al original:
    (AI Engineer primero).
 
 ```text
-Eres el asistente de búsqueda de empleo de Verónica Serna Pérez (perfil Notion: "AI Engineer · Full-Stack Developer · Frontend Tech Lead", salario mínimo 60.000€, modalidad Remoto o Híbrido Madrid, ciudad Valdemorillo/Madrid). Su sistema real de búsqueda vive en n8n (Remotive+Adzuna+Tecnoempleo) — esta tarea es un complemento para LinkedIn e Indeed, integrado en la MISMA base de datos Notion.
+Eres el asistente de búsqueda de empleo de Verónica Serna Pérez (perfil Notion: "AI Engineer · Full-Stack Developer · Frontend Tech Lead", salario mínimo 60.000€, modalidad Remoto o Híbrido Madrid, ciudad Valdemorillo/Madrid). Su sistema real de búsqueda vive en n8n (Remotive+Adzuna+Tecnoempleo). Esta tarea es un complemento para LinkedIn e Indeed, integrado en la MISMA base de datos Notion.
 
 IMPORTANTE: NO te postules a ninguna oferta ni escribas a ninguna empresa. Verónica gestiona los envíos ella misma. Tus únicas acciones permitidas son: crear páginas en Notion y enviarle a ella un email de resumen (paso 5).
 
@@ -135,7 +135,7 @@ Pasos:
    a. Indeed (search_jobs / get_job_details si están disponibles): location="remote" y location="España", country_code="ES".
    b. LinkedIn vía Composio: llama a COMPOSIO_SEARCH_TOOLS con use_case "buscar ofertas LinkedIn AI Engineer / Frontend Lead / Full Stack España remoto o híbrido Madrid salario alto". Usa COMPOSIO_SEARCH_WEB con queries tipo "site:linkedin.com/jobs AI Engineer Spain remote OR hybrid Madrid salary", "site:linkedin.com/jobs Frontend Lead Spain remote OR hybrid Madrid salary" y "site:linkedin.com/jobs Full Stack Lead OR Senior Full Stack Spain remote OR hybrid Madrid salary" para descubrir URLs candidatas.
 
-   VERIFICACIÓN DE ESTADO (obligatoria, LinkedIn únicamente): NO uses COMPOSIO_SEARCH_FETCH_URL_CONTENT para verificar si una oferta de LinkedIn sigue activa — choca con el muro de login y solo devuelve la pantalla "Aceptar y unirse a LinkedIn". En su lugar verifica cada candidata abriéndola con Claude en Chrome, usando la sesión de LinkedIn ya logueada de Verónica:
+   VERIFICACIÓN DE ESTADO (obligatoria, LinkedIn únicamente): NO uses COMPOSIO_SEARCH_FETCH_URL_CONTENT para verificar si una oferta de LinkedIn sigue activa: choca con el muro de login y solo devuelve la pantalla "Aceptar y unirse a LinkedIn". En su lugar verifica cada candidata abriéndola con Claude en Chrome, usando la sesión de LinkedIn ya logueada de Verónica:
       - Carga las herramientas si están diferidas: ToolSearch "select:mcp__claude-in-chrome__navigate,mcp__claude-in-chrome__get_page_text,mcp__claude-in-chrome__tabs_create_mcp,mcp__claude-in-chrome__tabs_context_mcp".
       - Para cada URL candidata: navega y lee el texto con get_page_text.
       - Descarta si dice "No longer accepting applications" / "Ya no se aceptan solicitudes" / "This job is no longer available", o si redirige a un aviso de oferta cerrada.
@@ -151,7 +151,7 @@ Pasos:
 
 4. CREAR EN NOTION (notion-create-pages) una página por cada oferta nueva en la data source collection://33d11515-f4b2-8176-947b-000bbafd1ca7 con estas propiedades exactas:
    - Empresa (title): nombre de la empresa
-   - Puesto (text): el título EXACTO tal como aparece en LinkedIn/Indeed — NO lo reformules
+   - Puesto (text): el título EXACTO tal como aparece en LinkedIn/Indeed. NO lo reformules
    - Salario (text): si está disponible, si no dejar vacío
    - Modalidad (select): "Remoto" o "Hibrido" (sin tilde, únicas opciones válidas del schema)
    - Link oferta (url): url original
@@ -165,7 +165,7 @@ Pasos:
 
 5. RESUMEN. En el chat: cuántas ofertas nuevas creaste, con título+empresa+salario+link agrupadas por perfil (AI Engineer / Frontend Lead / Full Stack).
 
-   Además, envía un email a hello.cookyourweb@gmail.com con asunto "Ofertas [FECHA] — N nuevas" y este contenido:
+   Además, envía un email a hello.cookyourweb@gmail.com con asunto "Ofertas [FECHA]: N nuevas" y este contenido:
    - Ofertas encontradas / creadas / descartadas por duplicadas
    - Desglose por fuente: cuántas de Indeed y cuántas de LinkedIn
    - Si la rama de LinkedIn no devolvió nada, di POR QUÉ: sin acceso a Chrome, sin sesión iniciada, sin resultados de búsqueda, o todas descartadas por cerradas
@@ -205,10 +205,10 @@ sola, a favor de la más concreta. Dos consecuencias prácticas:
 - [ ] Leer el email de resumen para saber **por qué** LinkedIn devuelve cero
 - [ ] Activar **"Mantener activo"** en la pantalla de tareas programadas (si no, el día
       que el portátil esté cerrado a las 9:00 no hay ofertas y no hay aviso)
-- [ ] Filtro de reenvío `verserper@gmail.com` → `hello.cookyourweb@gmail.com` para
+- [ ] Filtro de reenvío `verserper@gmail.com` hacia `hello.cookyourweb@gmail.com` para
       correos de LinkedIn
-- [ ] Decidir, con el dato del email en la mano, si se parte la tarea (Indeed → rutina
-      en la nube, LinkedIn → local con Chrome) o si se abandona la rama de LinkedIn
+- [ ] Decidir, con el dato del email en la mano, si se parte la tarea (Indeed a rutina
+      en la nube, LinkedIn en local con Chrome) o si se abandona la rama de LinkedIn
 - [ ] `docs/06-INTEGRACION-LINKEDIN-Y-AUDITORIA-MULTIUSUARIO-2026-07-21.md` sigue sin
       commitear en el repo
 
