@@ -119,8 +119,10 @@ Las cuatro se arreglan en el origen, no repitiendo el trabajo manual cada vez.
 
 ## Pendiente para que este runbook sobre
 
-- [ ] Guardrail de tecnologías en el prompt del cv-server (regla de evidencia: la
-      tecnología entra solo si el Master la respalda)
+- [x] ~~Guardrail de tecnologías en el prompt del cv-server (regla de evidencia: la
+      tecnología entra solo si el Master la respalda)~~ **HECHO 23-jul**, commit `b3c98d2`
+      en `cv-server`. `/generar-cv` devuelve `tecnologias_no_respaldadas`. Falta desplegar
+      a PROD.
 - [ ] Que la regla de NIVEL DEL PUESTO se cumpla de verdad (existe en
       `cv_server_railway.py:1381-1385` y no se aplicó)
 - [ ] Regla anti-eco en el prompt (ya documentada en
