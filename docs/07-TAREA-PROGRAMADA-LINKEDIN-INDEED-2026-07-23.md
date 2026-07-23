@@ -174,9 +174,9 @@ Pasos:
       - Carga las herramientas si están diferidas: ToolSearch "select:mcp__claude-in-chrome__navigate,mcp__claude-in-chrome__get_page_text,mcp__claude-in-chrome__tabs_create_mcp,mcp__claude-in-chrome__tabs_context_mcp".
       - Para cada URL candidata: navega y lee el texto con get_page_text.
       - Descarta si dice "No longer accepting applications" / "Ya no se aceptan solicitudes" / "This job is no longer available", o si redirige a un aviso de oferta cerrada.
-      - Si la extensión de Chrome no está conectada o no hay sesión de LinkedIn, NO des por buena ninguna oferta: sáltala y dilo explícitamente en el paso 5.
+      - Si la extensión de Chrome no está conectada o no hay sesión de LinkedIn, NO descartes las ofertas: créalas igualmente y márcalas como SIN VERIFICAR. Empieza el campo `Notas` con "SIN VERIFICAR: no se pudo comprobar si la oferta sigue abierta." y dilo explícitamente en el paso 5. Una oferta caducada cuesta un clic; un día sin ofertas cuesta la búsqueda entera.
 
-2. FILTRAR: solo ofertas ABIERTAS, remoto o híbrido Madrid (nunca presencial, nunca híbrido de otra ciudad), con salario ≥60.000€ si el dato está disponible, o nivel Senior/Staff/Lead/Principal si no hay salario explícito.
+2. FILTRAR: remoto o híbrido Madrid (nunca presencial, nunca híbrido de otra ciudad), con salario ≥60.000€ si el dato está disponible, o nivel Senior/Staff/Lead/Principal si no hay salario explícito. Descarta las que hayas comprobado que están CERRADAS. Las que no hayas podido comprobar, pasan marcadas como SIN VERIFICAR: no saber si está abierta no es lo mismo que saber que está cerrada.
 
 3. ANTI-DUPLICADOS: antes de crear nada, consulta la base de datos Notion "Ofertas de Trabajo" (data source collection://33d11515-f4b2-8176-947b-000bbafd1ca7) y trae las páginas de los últimos 30 días con sus campos Empresa, Puesto y Estado.
 
@@ -210,6 +210,7 @@ Pasos:
    - Ofertas encontradas / creadas / descartadas por duplicadas
    - Desglose por fuente: cuántas de Indeed y cuántas de LinkedIn
    - Si la rama de LinkedIn no devolvió nada, di POR QUÉ: sin acceso a Chrome, sin sesión iniciada, sin resultados de búsqueda, o todas descartadas por cerradas
+   - Cuántas van marcadas como SIN VERIFICAR, y por qué no se pudieron comprobar
    - Listado numerado de las nuevas con los mismos números que usaste en el chat: empresa, puesto, salario, link
    - Una línea final: "Para aprobar o descartar, responde en el chat de la tarea con los números."
 
