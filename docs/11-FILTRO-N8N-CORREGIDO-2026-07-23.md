@@ -1,10 +1,10 @@
 # Filtro de ofertas de n8n, corregido
 
 > Escrito el 23 de julio de 2026, después de comprobar que el workflow manda ofertas de
-> Java, .NET e Ionic a una desarrolladora de React y Vue.
+> Java, .NET, Ionic y Rails a una desarrolladora de React y Vue.
 >
-> Objetivo: que n8n use los mismos criterios duros que la tarea programada de Claude, que
-> sí filtra bien.
+> Objetivo: que n8n use los mismos criterios que la tarea programada de Claude, que sí
+> filtra bien. Un solo criterio, no dos.
 
 ## Los dos fallos
 
@@ -20,14 +20,15 @@ return tieneSenal;
 Una oferta de backend que además mencione una palabra del perfil, pasa. Y en España casi
 todas las ofertas mezclan las dos cosas.
 
-Las cuatro ofertas del 20 de julio de 2026, que llegaron al correo de Verónica:
+Las cuatro del 20 de julio y las de hoy:
 
 | Título | Por qué coló |
 |---|---|
 | Programador/a Senior .NET + Angular | `.net` excluye, `angular` incluye |
 | Tech Lead ó Analista Fullstack Java | `java` excluye, `tech lead` incluye |
 | Desarrollador/a Java Ionic Angular | `java` excluye, `angular` incluye |
-| Desarrollador/a Node con Inglés | `node` está en `INCLUIR` |
+| Senior Full Stack Engineer (Java/React) | `java` excluye, `react` incluye |
+| Tech Lead Full-Stack Rails Engineer | `rails` no está ni en la lista de excluir |
 
 ### 2. El ranking no tiene suelo
 
@@ -38,18 +39,30 @@ En el nodo **`Groq - Generar Ofertas`**, el prompt pide:
 Siempre devuelve cinco, haya o no cinco buenas. Un ranking sin suelo siempre produce algo:
 si el día no trae nada que valga, manda lo menos malo y el sistema parece sano.
 
-La tarea programada de Claude, con los mismos catálogos, descartó la mayoría de 54
-resultados y podría haber devuelto cero. Esa es la diferencia.
+## Por qué el título no basta, y quién decide qué
 
-## Comparación de criterios
+Primera versión de este documento proponía bloquear siempre por stack ajeno. **Estaba mal.**
+Mirá estos dos títulos:
 
-| Criterio | Tarea de Claude | n8n hoy |
+```
+Senior Full Stack Engineer (Java/React)             sobra
+Senior Fullstack Software Engineer (.NET + React)   vale
+```
+
+Misma forma. Stack ajeno delante, React detrás. Ninguna regla sobre el título los distingue,
+y un bloqueo duro habría tirado la segunda, que es una oferta buena: la descripción dice
+"React/TypeScript y C#/.NET Core, uso de IA y Cursor como herramienta principal".
+
+Lo que los separa está en la **descripción**, y el nodo de código solo ve títulos.
+
+De ahí el reparto:
+
+| Capa | Ve | Decide |
 |---|---|---|
-| Stack ajeno | Descarta | Pasa si menciona también algo suyo |
-| Seniority | Obligatoria (Senior, Staff, Lead, Principal) | No se mira |
-| Modalidad | Remoto, o híbrido solo en Madrid | Solo ordena, no descarta |
-| Salario | Descarta por debajo de 60.000 € | Solo ordena, no descarta |
-| Puede devolver cero | Sí | No, siempre cinco |
+| `Formatear ofertas` (código) | El título | La basura evidente, que es determinista |
+| `Groq - Generar Ofertas` (modelo) | La descripción entera | Si el frontend es el trabajo o un añadido |
+
+Determinista lo obvio, criterio lo que necesita criterio. No al revés.
 
 ## Corrección 1: nodo `Formatear ofertas`
 
@@ -67,23 +80,22 @@ const matchea = (titulo, desc) => {
   // 1. Basura y roles no tecnicos: fuera siempre.
   if (EXCLUIR_DURO.some(k => tit.includes(k))) return false;
 
-  // 2. Stack ajeno: fuera SIEMPRE, aunque el titulo mencione algo de su perfil.
-  //    Este es el cambio: antes era "esOtroPerfil && !tieneSenal", y ese && dejaba
-  //    pasar "Java + Angular" y ".NET + React".
-  if (EXCLUIR_PERFIL.some(k => tit.includes(k))) return false;
-
-  // 3. Tiene que haber senal real de su perfil en el titulo.
+  // 2. Tiene que haber senal real de su perfil en el titulo.
   if (!INCLUIR.some(k => tit.includes(k))) return false;
 
-  // 4. Seniority obligatoria.
+  // 3. Seniority obligatoria.
   if (!SENIORITY.some(k => tit.includes(k))) return false;
 
+  // 4. Stack ajeno SIN ninguna senal del perfil: fuera. Con senal, NO se decide aqui:
+  //    el titulo no distingue "Java/React" de ".NET + React", y uno sobra y el otro no.
+  //    Esa llamada la hace el nodo de Groq, que si lee la descripcion.
   return true;
 };
 ```
 
-**Efecto esperado:** las cuatro ofertas del 20 de julio caen las cuatro. Las tres primeras
-por la regla 2, la de Node por la regla 4, que no dice seniority.
+**Efecto esperado:** caen "Desarrollador/a Node con Inglés" y "Tech Lead Full-Stack Rails"
+por seniority o por falta de señal. Las de Java y .NET llegan al nodo de Groq, que decide
+con la descripción delante.
 
 **Riesgo asumido:** el filtro es más estrecho y habrá días de cero ofertas. Eso es correcto.
 Un día sin ofertas buenas debe verse como un día sin ofertas, no como cinco mediocres.
@@ -103,24 +115,50 @@ ciudad); 4) descarta lo claramente fuera de perfil (ventas, soporte, oficios no 
 **Poner:**
 
 ```
-FILTROS DUROS. Descarta la oferta si incumple CUALQUIERA de estos, sin excepcion:
-1. El puesto principal no es del perfil de la usuaria. Una oferta de backend que
-   mencione de pasada una tecnologia suya NO cuenta como encaje.
+Principio general: descartar es una decision que tomas por ella y no deja rastro; marcar
+se la deja a ella y le cuesta un vistazo. Ante la duda, marca en vez de descartar.
+
+DESCARTA de verdad, sin marcar, solo esto:
+1. El frontend o la IA no son EL TRABAJO, sino un anadido. Lee la DESCRIPCION, no el
+   titulo. "Java y React" sobra; "React/TypeScript con algo de .NET Core" vale. Si el
+   puesto es backend y el frontend aparece de refuerzo, fuera.
 2. No es Senior, Staff, Lead, Principal ni Architect.
-3. Es presencial fuera de Madrid, o hibrida fuera de Madrid. Remoto siempre vale.
-4. Indica salario y el maximo esta por debajo de 60.000 EUR brutos anuales.
-   Si NO indica salario, no la descartes por eso: pasa, pero va abajo del todo.
+3. Es presencial, o hibrida fuera de Madrid, cuando el dato sea EXPLICITO.
+
+MARCA, y deja pasar, empezando el campo Notas con la marca:
+- Salario por debajo del suelo: "BAJO SUELO: <la cifra>". Una oferta de 50k donde todo lo
+  demas encaja puede valer mas que una de 65k que no le gusta. Ella decide.
+
+SUELO SALARIAL, segun el tipo de contrato:
+- Contrato: 60.000 EUR brutos anuales.
+- Freelance o por horas: 400 EUR al dia, o 50 EUR la hora. Es la equivalencia aproximada
+  de esos 60.000 por cuenta ajena, contando cuota de autonomos, vacaciones no pagadas y
+  huecos entre proyectos. Veronica esta de alta como autonoma: el freelance SI le interesa.
+- Si la tarifa viene en dolares, conviertela antes de comparar.
+- Sin salario indicado: no marques nada, pasa por seniority.
+
+NUNCA ASUMAS LA MODALIDAD. Si la oferta no dice si es remota o hibrida, deja Modalidad
+VACIA y dilo en Notas. Rellenarla a ojo es peor que dejarla en blanco: es un filtro duro,
+y una presencial colada como hibrida le cuesta un proceso entero, no un clic.
 
 ORDEN entre las que sobreviven: 1) encaje real con su perfil y stack; 2) salario mas alto
 primero; 3) remoto antes que hibrido.
 
 IMPORTANTE: devuelve como maximo 5, pero puedes devolver MENOS, incluso NINGUNA.
 Un array vacio [] es una respuesta valida y correcta cuando ninguna oferta pasa los
-filtros duros. NO rellenes hasta cinco. Prefiero cero ofertas a una oferta mala.
+filtros. NO rellenes hasta cinco. Prefiero cero ofertas a una oferta mala.
 ```
 
-**Donde dice** `con las 5 MEJORES`, **poner** `con las que hayan pasado los filtros duros,
-como maximo 5`.
+**Donde dice** `con las 5 MEJORES`, **poner** `con las que hayan pasado los filtros, como
+maximo 5`.
+
+## Corrección 3: rellenar `Tipo Contrato`
+
+El campo existe en el schema de Notion y hoy está vacío en todas las ofertas menos en la de
+Tenth Revolution. Sin él no se puede comparar un salario anual con una tarifa por hora.
+
+En el nodo que escribe en Notion, añadir `Tipo Contrato` (texto): "Indefinido", "Freelance",
+"Temporal", lo que diga la oferta. Vacío si no lo dice.
 
 ## Antes de tocar nada
 
@@ -138,4 +176,5 @@ por bueno.
 
 ---
 
-**Generado:** 23 de julio de 2026.
+**Generado:** 23 de julio de 2026. Reescrito el mismo día tras comprobar que el bloqueo duro
+por stack ajeno tiraba ofertas buenas.

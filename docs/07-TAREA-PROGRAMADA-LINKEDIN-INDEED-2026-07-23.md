@@ -176,7 +176,25 @@ Pasos:
       - Descarta si dice "No longer accepting applications" / "Ya no se aceptan solicitudes" / "This job is no longer available", o si redirige a un aviso de oferta cerrada.
       - Si la extensión de Chrome no está conectada o no hay sesión de LinkedIn, NO descartes las ofertas: créalas igualmente y márcalas como SIN VERIFICAR. Empieza el campo `Notas` con "SIN VERIFICAR: no se pudo comprobar si la oferta sigue abierta." y dilo explícitamente en el paso 5. Una oferta caducada cuesta un clic; un día sin ofertas cuesta la búsqueda entera.
 
-2. FILTRAR: remoto o híbrido Madrid (nunca presencial, nunca híbrido de otra ciudad), con salario ≥60.000€ si el dato está disponible, o nivel Senior/Staff/Lead/Principal si no hay salario explícito. Descarta las que hayas comprobado que están CERRADAS. Las que no hayas podido comprobar, pasan marcadas como SIN VERIFICAR: no saber si está abierta no es lo mismo que saber que está cerrada.
+2. FILTRAR. Principio general: **descartar es una decisión que tomas por Verónica y no deja rastro; marcar se la deja a ella y le cuesta un vistazo.** Ante la duda, marca en vez de descartar.
+
+   DESCARTA de verdad, sin marcar, solo esto:
+   - Ofertas que hayas COMPROBADO que están cerradas.
+   - Presencial, o híbrido de una ciudad que no sea Madrid, cuando el dato sea EXPLÍCITO.
+   - Nivel junior o mid: sin Senior, Staff, Lead, Principal o Architect no entra.
+   - Roles que no son los suyos: el frontend o la IA tienen que ser el TRABAJO, no un añadido. "Java y React" sobra; "React/TypeScript con algo de .NET" vale. Esto se decide leyendo la DESCRIPCIÓN, no el título.
+
+   MARCA, y deja pasar:
+   - No pudiste comprobar si sigue abierta: `SIN VERIFICAR:` al principio de Notas.
+   - Salario por debajo del suelo: `BAJO SUELO: <la cifra>` al principio de Notas. Una oferta de 50k donde todo lo demás encaja puede valer más que una de 65k que no le gusta. Ella decide.
+
+   SUELO SALARIAL, según el tipo de contrato:
+   - Contrato: 60.000 € brutos anuales.
+   - Freelance o por horas: 400 € al día, o 50 € la hora. Es la equivalencia aproximada de esos 60.000 por cuenta ajena, contando cuota de autónomos, vacaciones no pagadas y huecos entre proyectos. Verónica está de alta como autónoma: las ofertas freelance SÍ le interesan.
+   - Si la tarifa viene en dólares, conviértela antes de comparar.
+   - Sin salario indicado: no marques nada. Pasa por seniority.
+
+   NUNCA ASUMAS LA MODALIDAD. Si la oferta no dice si es remota o híbrida, deja el campo `Modalidad` VACÍO y dilo en Notas. Rellenarlo a ojo es peor que dejarlo en blanco: la modalidad es un filtro duro, y una presencial colada como híbrida le cuesta un proceso entero, no un clic.
 
 3. ANTI-DUPLICADOS: antes de crear nada, consulta la base de datos Notion "Ofertas de Trabajo" (data source collection://33d11515-f4b2-8176-947b-000bbafd1ca7) y trae las páginas de los últimos 30 días con sus campos Empresa, Puesto y Estado.
 
@@ -190,7 +208,8 @@ Pasos:
    - Empresa (title): nombre de la empresa
    - Puesto (text): el título EXACTO tal como aparece en LinkedIn/Indeed. NO lo reformules
    - Salario (text): si está disponible, si no dejar vacío
-   - Modalidad (select): "Remoto" o "Hibrido" (sin tilde, únicas opciones válidas del schema)
+   - Modalidad (select): "Remoto" o "Hibrido" (sin tilde, únicas opciones válidas del schema). Si la oferta NO lo dice explícitamente, DÉJALO VACÍO. No lo deduzcas de que aparezca una ciudad
+   - Tipo Contrato (text): "Indefinido", "Freelance", "Temporal"... lo que diga la oferta. Si no lo dice, vacío. Es lo que permite comparar un salario anual con una tarifa por hora
    - Link oferta (url): url original
    - Notas (text): 2-3 frases EN ESPAÑOL resumiendo qué busca la empresa en ESTA oferta (requisitos clave, stack, seniority). Lo usará cv-server para adaptar el CV: debe ser específico, no genérico
    - Descripción (text): descripción breve de la oferta (hasta 500 caracteres)
@@ -211,6 +230,7 @@ Pasos:
    - Desglose por fuente: cuántas de Indeed y cuántas de LinkedIn
    - Si la rama de LinkedIn no devolvió nada, di POR QUÉ: sin acceso a Chrome, sin sesión iniciada, sin resultados de búsqueda, o todas descartadas por cerradas
    - Cuántas van marcadas como SIN VERIFICAR, y por qué no se pudieron comprobar
+   - Cuántas van marcadas como BAJO SUELO
    - Listado numerado de las nuevas con los mismos números que usaste en el chat: empresa, puesto, salario, link
    - Una línea final: "Para aprobar o descartar, responde en el chat de la tarea con los números."
 
