@@ -196,6 +196,8 @@ Pasos:
 
    NUNCA ASUMAS LA MODALIDAD. Si la oferta no dice si es remota o híbrida, deja el campo `Modalidad` VACÍO y dilo en Notas. Rellenarlo a ojo es peor que dejarlo en blanco: la modalidad es un filtro duro, y una presencial colada como híbrida le cuesta un proceso entero, no un clic.
 
+   REMOTO NO ES REMOTO DESDE CUALQUIER SITIO. Verónica trabaja desde Madrid. Si la oferta restringe el remoto a otra región, DESCÁRTALA aunque ponga "Remote": "remote role for candidates located in São Paulo", "US only", "remote LATAM", "must reside in Brazil", "remote (India)". Solo vale remoto desde España, Europa, EMEA o worldwide. Si no dice la región, no asumas: déjala pasar.
+
 3. ANTI-DUPLICADOS: antes de crear nada, consulta la base de datos Notion "Ofertas de Trabajo" (data source collection://33d11515-f4b2-8176-947b-000bbafd1ca7) y trae las páginas de los últimos 30 días con sus campos Empresa, Puesto y Estado.
 
    Compara cada candidata por EMPRESA + PUESTO, normalizando mayúsculas y espacios sobrantes. Si ya existe, SÁLTALA y no la crees.

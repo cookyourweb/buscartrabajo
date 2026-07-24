@@ -152,6 +152,32 @@ filtros. NO rellenes hasta cinco. Prefiero cero ofertas a una oferta mala.
 **Donde dice** `con las 5 MEJORES`, **poner** `con las que hayan pasado los filtros, como
 maximo 5`.
 
+## Corrección 4 (24-jul): el remoto tiene región
+
+El 24 de julio entraron **cuatro** ofertas de LawnStarter, la misma posición repetida, con
+este texto:
+
+> "Remote role for candidates located in **São Paulo** / **Mexico City** / **Campinas** /
+> **Florianópolis**"
+
+Son remotas **para Latinoamérica**. Verónica trabaja desde Madrid. El sistema las marcaba
+`Remoto` y las dejaba pasar sin mirar la restricción geográfica.
+
+**"Remoto" no significa remoto desde cualquier sitio.** Remotive da el dato en el campo
+`candidate_required_location`, así que este filtro es determinista y va en el código, no en
+el modelo.
+
+En el nodo `Formatear ofertas`, antes del bucle, se define `remotoValido(loc)`: descarta si
+la ubicación apunta a un país o ciudad fuera de España o Europa, acepta España, Europa,
+EMEA, worldwide y Madrid, y **si el campo viene vacío no asume nada y deja pasar**. Se aplica
+en el bucle de Remotive justo después del dedup.
+
+La misma regla va en el prompt de `Groq - Generar Ofertas` y en el de la tarea programada,
+para las fuentes que no traen el dato estructurado.
+
+Ambos cambios están aplicados en
+`workflows/BuscarTrabajo-PROD-v4-2026-07-24-region-remoto.json`.
+
 ## Corrección 3: rellenar `Tipo Contrato`
 
 El campo existe en el schema de Notion y hoy está vacío en todas las ofertas menos en la de
