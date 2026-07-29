@@ -49,18 +49,30 @@ Full-Stack Developer & AI Engineer · React · TypeScript · Python · +10 años
 Y rellenar el campo **Website**: `https://linkedin.com/in/veronica4web`
 
 ### 2. Fijar 6 repos en el perfil
-Botón **Customize your pins**. Tenés 61 repos públicos y un recruiter mira tres.
+Botón **Customize your pins**. Hay 52 repos propios y un recruiter mira tres.
 
-1. `cv-server`
-2. `cookyourwebai`
-3. `wunjocreations`
-4. `calendarioAdvientoIA`
-5. `bespoke-finance-pro`
-6. `practicaAvanzadaAndroidKeepcoding`
+| # | Repo | Qué dice |
+|---|---|---|
+| 1 | `cv-server` | Ingeniería: guardrails, ADRs, TDD, 132 tests |
+| 2 | `wunjocreations` | IA en producción, con producto y usuarios |
+| 3 | `cookyourwebai` | La marca, en producción |
+| 4 | `bespoke-finance-pro` | TypeScript y React |
+| 5 | `calendarioAdvientoIA` | Formación reciente **con el stack de hoy** (dic-2025) |
+| 6 | `teenage-points-system` | Producto propio, React (jul-2025) |
 
-El sexto va a propósito: **los repos de bootcamp son prueba de formación continua** y
-no se archivan. Dejando uno arriba, el mensaje es "me sigo formando"; los otros cinco
-dicen "y construyo cosas que funcionan".
+Los seis son TypeScript, React o Python con IA: una línea coherente.
+
+> **Descartado `practicaAvanzadaAndroidKeepcoding`**, que estaba en una versión previa
+> de esta lista. Los repos de bootcamp **no se archivan** — prueban formación continua —
+> pero ese es de **julio 2023 y en Kotlin/Android**: no aparece en el CV, ni en LinkedIn,
+> ni tiene relación con lo que se busca. Fijado arriba, el perfil leería
+> "React, IA, IA, Vite... y Android", que no dice *me formo* sino *no sé hacia dónde voy*.
+> Quien sostiene el argumento de formación con fecha reciente es `calendarioAdvientoIA`.
+>
+> **Regla**: la formación se demuestra teniéndola en el historial, no fijándola arriba.
+
+> `buscartrabajo` tampoco se fija: hace visible que estás en búsqueda activa y no aporta
+> nada al perfil técnico.
 
 ### 3. Descripción de los repos sin ella
 `wunjocreations`, `cookyourwebai`, `bespoke-finance-pro` y `calendarioAdvientoIA` no
