@@ -4,6 +4,30 @@
 
 ---
 
+## La jerarquía (importante: hoy no está contada en ningún sitio)
+
+```
+CookYourWeb  ·  cookyourwebai.es        agencia de IA y automatización
+   └── Wunjo Creations  ·  wunjocreations.com    marca de producto / IA educativa
+        └── Tu Vuelta al Sol  ·  tuvueltalsol.es      SaaS de agenda astrológica con IA
+```
+
+**Tal y como está hoy, un recruiter ve tres dominios sueltos.** Ni las webs se enlazan
+entre sí, ni los repos lo mencionan, ni el CV lo explica.
+
+Contada, la estructura dice algo bueno: no son tres proyectos dispersos, es una
+**agencia que lanza una marca de producto y esa marca lanza un producto**. Eso es
+criterio de negocio, no solo código. Sin contar, parecen tres webs a medias.
+
+**Dónde debería aparecer:**
+
+- En `cookyourwebai.es` — sección de proyectos que baje por la cadena
+- En la descripción de los repos de GitHub (`wunjocreations` → "marca de producto de
+  CookYourWeb")
+- En el `ÍNDICE DE EVIDENCIAS` del CV Master, hoy los lista como cuatro cosas planas
+
+---
+
 ## Los cuatro enlaces (verificados hoy, todos 200)
 
 | Proyecto | URL | Qué es |
