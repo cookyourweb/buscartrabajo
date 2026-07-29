@@ -6,10 +6,10 @@
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
       "position": [
-        8512,
-        3504
+        0,
+        -112
       ],
-      "id": "00f5931b-a458-4af9-98f2-edcc56bc85aa",
+      "id": "bb635579-c1ae-405a-9155-e1dbc0494051",
       "name": "Error Trigger"
     },
     {
@@ -19,18 +19,16 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        8736,
-        3504
+        224,
+        -112
       ],
-      "id": "2f71a57d-4bf2-4a23-91c4-dd6172cf3a7b",
+      "id": "39d975e3-43cb-44cb-bd4e-0d47b1e90628",
       "name": "Code - Preparar Email Error"
     },
     {
       "parameters": {
         "method": "POST",
         "url": "https://api.brevo.com/v3/smtp/email",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "sendInBlueApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -44,32 +42,28 @@
         "contentType": "raw",
         "rawContentType": "application/json",
         "body": "={{ JSON.stringify({\n  sender: {name: 'N8N Error Monitor', email: 'veronica@usecookyourwebai.es'},\n  to: [{email: $json.to}],\n  subject: $json.subject,\n  htmlContent: $json.htmlContent\n}) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        8960,
-        3504
+        448,
+        -112
       ],
-      "id": "3c121746-cd61-4970-873d-306b50282fa5",
-      "name": "Brevo - Enviar Email Error",
-      "credentials": {
-        "sendInBlueApi": {
-          "id": "rIV8aruieHBr9uC3",
-          "name": "Brevo account"
-        }
-      }
+      "id": "6801d58d-6f85-4541-82ec-c9e4fe9227e0",
+      "name": "Brevo - Enviar Email Error"
     },
     {
       "parameters": {},
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        8512,
-        3920
+        0,
+        304
       ],
-      "id": "c6aecf34-f8cc-42af-a7e2-fcdd13568607",
+      "id": "fac0cfad-c3f4-4495-b7c1-5f79ba6a63c1",
       "name": "Manual Trigger"
     },
     {
@@ -86,18 +80,16 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        8512,
-        3728
+        0,
+        112
       ],
-      "id": "90571806-5592-4a29-a118-2b39bca01ccd",
+      "id": "bfc9b740-55ba-4546-a82c-95b44a54f491",
       "name": "Schedule Trigger (9am)"
     },
     {
       "parameters": {
         "method": "POST",
         "url": "https://api.groq.com/openai/v1/chat/completions",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -110,39 +102,33 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({\n  model: \"llama-3.3-70b-versatile\",\n  messages: [{\n    role: \"user\",\n    content: \"Eres el career coach y reclutador senior del usuario. De una lista de ofertas REALES, elige las que MEJOR encajan con su perfil y descarta el resto sin piedad. NO inventes ofertas ni datos: usa SOLO las de la lista.\\n\\nPERFIL DEL USUARIO:\\n- Nombre: \" + ($json.nombre || '') + \"\\n- Rol objetivo: \" + ($json.rol || '') + \"\\n- Perfil: \" + ($json.perfil || '') + \"\\n- Stack: \" + (($json.stack || []).join(', ')) + \"\\n- Salario minimo: \" + ($json.salario || 0) + \" EUR\\n- Modalidad preferida: \" + (($json.modalidad || []).join(', ')) + \"\\n- Ciudad: \" + ($json.ciudad || '') + \"\\n\\nCRITERIOS (en orden): 1) encaje real con su perfil/stack; 2) salario (prioriza mejor pagadas; si no indica, no descartes pero ponla abajo); 3) modalidad (remoto/hibrido/su ciudad); 4) descarta lo claramente fuera de perfil (ventas, soporte, oficios no tecnicos).\\n\\nOFERTAS REALES:\\n\" + ($json.ofertas || '') + \"\\n\\nDevuelve SOLO un array JSON (sin texto extra, sin markdown) con las 5 MEJORES, cada una con estos campos EXACTOS:\\n[{\\\"empresa\\\":\\\"\\\",\\\"puesto\\\":\\\"\\\",\\\"salario\\\":\\\"\\\",\\\"modalidad\\\":\\\"Remoto|Hibrido|Presencial\\\",\\\"link\\\":\\\"\\\",\\\"descripcion_corta\\\":\\\"80-150 chars\\\",\\\"nombre_contacto\\\":\\\"\\\",\\\"email_contacto\\\":\\\"\\\",\\\"telefono_contacto\\\":\\\"\\\",\\\"fecha_publicacion\\\":\\\"\\\"}]\\nUsa el link real de cada oferta. Si NINGUNA encaja, devuelve [].\"\n  }],\n  max_tokens: 2048,\n  temperature: 0.3\n}) }}",
-        "options": {}
+        "options": {},
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        10528,
-        3856
+        896,
+        304
       ],
-      "id": "e162da90-4dba-4a9d-8917-e6fcd3623a79",
+      "id": "210107bb-0db1-4abf-ace8-f7c0fedcfb08",
       "name": "Groq - Generar Ofertas",
       "retryOnFail": true,
       "executeOnce": false,
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "NDntqAlYPkuWbKRh",
-          "name": "Header Auth account"
-        }
-      },
-      "continueOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 25000
+      "continueOnFail": true
     },
     {
       "parameters": {
-        "jsCode": "const response = $input.first().json;\n\nif (response.error) {\n  throw new Error('Groq API error: ' + JSON.stringify(response.error));\n}\n\nconst text = response.choices?.[0]?.message?.content || '';\nif (!text) {\n  throw new Error('Respuesta vacía: ' + JSON.stringify(response).substring(0, 300));\n}\n\nconst jsonMatch = text.match(/\\[[\\s\\S]*\\]/);\nif (!jsonMatch) {\n  throw new Error('No se encontró array JSON. Texto: ' + text.substring(0, 500));\n}\n\nlet ofertas;\ntry { ofertas = JSON.parse(jsonMatch[0]); }\ncatch (e) { throw new Error('JSON inválido: ' + e.message); }\n\n// Recuperar email_usuario Y user_id del nodo que alimentó el Wait\nlet emailUsuario = '';\nlet userId = '';\ntry {\n  emailUsuario = $('Formatear ofertas').first().json.email_usuario || '';\n  userId = $('Formatear ofertas').first().json.user_id || '';\n} catch(e) {}\nif (!emailUsuario || !userId) {\n  const nodosOrigen = ['Code — Normalizar (interno)', 'Code — Normalizar users (schedule)'];\n  for (const nodo of nodosOrigen) {\n    if (emailUsuario && userId) break;\n    try {\n      const d = $(nodo).first().json;\n      if (!emailUsuario) emailUsuario = d.email_usuario || d.email || '';\n      if (!userId) userId = d.user_id || '';\n    } catch(e) {}\n  }\n}\n\nreturn ofertas.map(oferta => {\n  const mod = (oferta.modalidad || '').toLowerCase();\n  let modalidad = 'Presencial';\n  if (mod.includes('remoto')) modalidad = 'Remoto';\n  else if (mod.includes('híbrido') || mod.includes('hibrido')) modalidad = 'Hibrido';\n\n  const emailContacto = oferta.email_contacto && oferta.email_contacto.includes('@')\n    ? oferta.email_contacto : '';\n\n  return { json: {\n    email_usuario:     emailUsuario,\n    user_id:           userId,\n    empresa:           oferta.empresa || 'Sin nombre',\n    puesto:            oferta.puesto || '',\n    salario:           oferta.salario || '',\n    modalidad,\n    link:              oferta.link || '',\n    descripcion_corta: oferta.descripcion_corta || '',\n    nombre_contacto:   oferta.nombre_contacto || '',\n    email_contacto:    emailContacto,\n    telefono_contacto: oferta.telefono_contacto || '',\n    fecha_publicacion: oferta.fecha_publicacion || ''\n  }};\n});\n\n"
+        "jsCode": "const response = $input.first().json;\n\nif (response.error) {\n  throw new Error('Groq API error: ' + JSON.stringify(response.error));\n}\n\nconst text = response.choices?.[0]?.message?.content || '';\nif (!text) {\n  throw new Error('Respuesta vacía: ' + JSON.stringify(response).substring(0, 300));\n}\n\nconst jsonMatch = text.match(/\\[[\\s\\S]*\\]/);\nif (!jsonMatch) {\n  throw new Error('No se encontró array JSON. Texto: ' + text.substring(0, 500));\n}\n\nlet ofertas;\ntry { ofertas = JSON.parse(jsonMatch[0]); }\ncatch (e) { throw new Error('JSON inválido: ' + e.message); }\n\n// Recuperar email_usuario del nodo que alimentó el Wait\n// El Wait recibe datos de Code — Normalizar (interno) o Code — Normalizar users (schedule)\n// Ambos tienen email y email_usuario\nlet emailUsuario = '';\ntry { emailUsuario = $('Formatear ofertas').item.json.email_usuario || ''; } catch(e) {}\nif (!emailUsuario) {\n  const nodosOrigen = ['Code — Normalizar (interno)', 'Code — Normalizar users (schedule)'];\n  for (const nodo of nodosOrigen) {\n    if (emailUsuario) break;\n    try { const d = $(nodo).first().json; emailUsuario = d.email_usuario || d.email || ''; } catch(e) {}\n  }\n}\n\nreturn ofertas.map(oferta => {\n  const mod = (oferta.modalidad || '').toLowerCase();\n  let modalidad = 'Presencial';\n  if (mod.includes('remoto')) modalidad = 'Remoto';\n  else if (mod.includes('híbrido') || mod.includes('hibrido')) modalidad = 'Hibrido';\n\n  const emailContacto = oferta.email_contacto && oferta.email_contacto.includes('@')\n    ? oferta.email_contacto : '';\n\n  return { json: {\n    email_usuario:     emailUsuario,\n    empresa:           oferta.empresa || 'Sin nombre',\n    puesto:            oferta.puesto || '',\n    salario:           oferta.salario || '',\n    modalidad,\n    link:              oferta.link || '',\n    descripcion_corta: oferta.descripcion_corta || '',\n    nombre_contacto:   oferta.nombre_contacto || '',\n    email_contacto:    emailContacto,\n    telefono_contacto: oferta.telefono_contacto || '',\n    fecha_publicacion: oferta.fecha_publicacion || ''\n  }};\n});"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        10752,
-        3856
+        1120,
+        304
       ],
-      "id": "95673512-6421-4370-ba9d-539210f0a0ad",
+      "id": "423ae5d3-7ecf-497e-81c9-afc4e331eaa9",
       "name": "Code - Normalizar Modalidad"
     },
     {
@@ -190,7 +176,7 @@
             },
             {
               "key": "Fecha Publicacion|date",
-              "date": "={{ /^\\d{4}-\\d{2}-\\d{2}/.test(($json.fecha_publicacion || \"\").toString()) ? $json.fecha_publicacion : $now.toFormat(\"yyyy-MM-dd\") }}"
+              "date": "={{ $json.fecha_publicacion || null }}"
             },
             {
               "key": "Usuario|relation",
@@ -207,26 +193,21 @@
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2.2,
       "position": [
-        10976,
-        3856
+        1344,
+        304
       ],
-      "id": "8fae8a90-c776-4b3f-a08c-e68814fa4cec",
+      "id": "9ad47c05-7ba7-484b-ad41-b8ee682fa0df",
       "name": "Notion - Crear Oferta",
       "credentials": {
         "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
+          "id": "7wHDB1eGIWDNHVl6",
           "name": "Notion account"
         }
-      },
-      "retryOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 4000
+      }
     },
     {
       "parameters": {
         "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -240,46 +221,44 @@
             }
           ]
         },
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        11200,
-        3856
+        1568,
+        304
       ],
-      "id": "b5f9807a-a308-48f5-84f9-341b5a0bb184",
+      "id": "306faefe-d630-401b-ac88-ecdfe7c88b3c",
       "name": "Notion - Obtener Datos Recién Creada",
       "retryOnFail": true,
+      "continueOnFail": true,
       "credentials": {
         "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
+          "id": "7wHDB1eGIWDNHVl6",
           "name": "Notion account"
         }
-      },
-      "continueOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 4000
+      }
     },
     {
       "parameters": {
-        "jsCode": "return $input.all().map((item, idx) => {\n  const d = item.json;\n\n  const titleProp = Object.values(d.properties || {}).find(p => p.type === 'title');\n  const empresa = titleProp?.title?.[0]?.plain_text || titleProp?.title?.[0]?.text?.content || 'Sin nombre';\n\n  // Email del usuario: 1º del nodo que lo grabó (valor probado), 2º la página, 3º fallback\n  let email = '';\n  try {\n    const src = $('Code - Normalizar Modalidad').all();\n    const j = (src[idx] || src[0] || {}).json || {};\n    if (j.email_usuario && j.email_usuario.includes('@')) email = j.email_usuario;\n  } catch (_) {}\n  if (!email) {\n    const emailPropNotion = d.properties?.['Email Enviado'] || d.properties?.['Email usuario'];\n    email = emailPropNotion?.email\n      || emailPropNotion?.rich_text?.[0]?.plain_text\n      || d.email_usuario\n      || 'hello.cookyourweb@gmail.com';\n  }\n\n  const puesto     = d.properties?.Puesto?.rich_text?.[0]?.plain_text || '';\n  const salario    = d.properties?.Salario?.rich_text?.[0]?.plain_text || '';\n  const modalidad  = d.properties?.Modalidad?.select?.name || '';\n  const notas      = d.properties?.Notas?.rich_text?.[0]?.plain_text || '';\n  const linkOferta = d.properties?.['Link oferta']?.url || '';\n  const pageId     = d.id || '';\n  const nombreContacto = d.properties?.['Nombre Contacto']?.rich_text?.[0]?.plain_text || '';\n  const emailContacto  = d.properties?.['Email empresa']?.email || '';\n\n  const htmlContent = '<div style=\"font-family:Arial;padding:20px;max-width:600px\">'\n    + '<h2 style=\"color:#1F5C8B\">' + empresa + '</h2>'\n    + '<p><b>Puesto:</b> ' + puesto + '</p>'\n    + '<p><b>Salario:</b> ' + salario + '</p>'\n    + '<p><b>Modalidad:</b> ' + modalidad + '</p>'\n    + '<p>' + notas + '</p>'\n    + (nombreContacto ? '<p><b>Contacto:</b> ' + nombreContacto + '</p>' : '')\n    + (emailContacto  ? '<p><b>Email empresa:</b> ' + emailContacto + '</p>' : '')\n    + (linkOferta ? '<p><a href=\"' + linkOferta + '\" style=\"color:#1F5C8B;font-weight:bold;text-decoration:underline\" target=\"_blank\">🔗 Ver oferta completa</a></p>' : '')\n    + '<br><a href=\"https://n8n-asistente-correo.onrender.com/webhook/oferta-aprobar?id=' + pageId\n    + '\" style=\"background:#22C55E;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block\">Aprobar</a> '\n    + '<a href=\"https://n8n-asistente-correo.onrender.com/webhook/oferta-descartar?id=' + pageId\n    + '\" style=\"background:#EF4444;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;margin-left:12px\">Descartar</a>'\n    + '</div>';\n\n  const brevoBody = JSON.stringify({\n    sender: {name: 'Verónica Serna', email: 'veronica@usecookyourwebai.es'},\n    to: [{email: email}],\n    subject: 'Nueva oferta: ' + empresa + ' - ' + puesto,\n    htmlContent: htmlContent,\n    trackClicks: false,\n    trackOpens: false\n  });\n\n  return { json: { empresa, puesto, salario, modalidad, pageId, email, linkOferta, brevoBody } };\n});\n"
+        "jsCode": "return $input.all().map(item => {\n  const d = item.json;\n\n  const titleProp = Object.values(d.properties || {}).find(p => p.type === 'title');\n  const empresa = titleProp?.title?.[0]?.plain_text || titleProp?.title?.[0]?.text?.content || 'Sin nombre';\n\n  const emailPropNotion = d.properties?.['Email Enviado'] || d.properties?.['Email usuario'];\n  const email = emailPropNotion?.email\n    || emailPropNotion?.rich_text?.[0]?.plain_text\n    || d.email_usuario\n    || 'hello.cookyourweb@gmail.com';\n\n  const puesto    = d.properties?.Puesto?.rich_text?.[0]?.plain_text || '';\n  const salario   = d.properties?.Salario?.rich_text?.[0]?.plain_text || '';\n  const modalidad = d.properties?.Modalidad?.select?.name || '';\n  const notas     = d.properties?.Notas?.rich_text?.[0]?.plain_text || '';\n  const pageId    = d.id || '';\n  const nombreContacto = d.properties?.['Nombre Contacto']?.rich_text?.[0]?.plain_text || '';\n  const emailContacto  = d.properties?.['Email empresa']?.email || '';\n\n  const htmlContent = '<div style=\"font-family:Arial;padding:20px;max-width:600px\">'\n    + '<h2 style=\"color:#1F5C8B\">' + empresa + '</h2>'\n    + '<p><b>Puesto:</b> ' + puesto + '</p>'\n    + '<p><b>Salario:</b> ' + salario + '</p>'\n    + '<p><b>Modalidad:</b> ' + modalidad + '</p>'\n    + '<p>' + notas + '</p>'\n    + (nombreContacto ? '<p><b>Contacto:</b> ' + nombreContacto + '</p>' : '')\n    + (emailContacto  ? '<p><b>Email empresa:</b> ' + emailContacto + '</p>' : '')\n    + '<br><a href=\"https://n8n-st1v.onrender.com/webhook/oferta-aprobar?id=' + pageId\n    + '\" style=\"background:#22C55E;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block\">Aprobar</a> '\n    + '<a href=\"https://n8n-st1v.onrender.com/webhook/oferta-descartar?id=' + pageId\n    + '\" style=\"background:#EF4444;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;margin-left:12px\">Descartar</a>'\n    + '</div>';\n\n  const brevoBody = JSON.stringify({\n    sender: {name: 'Verónica Serna', email: 'veronica@usecookyourwebai.es'},\n    to: [{email: email}],\n    subject: 'Nueva oferta: ' + empresa + ' - ' + puesto,\n    htmlContent: htmlContent,\n    trackClicks: false,\n    trackOpens: false\n  });\n\n  return { json: { empresa, puesto, salario, modalidad, pageId, email, brevoBody } };\n});"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        11424,
-        3856
+        1792,
+        304
       ],
-      "id": "71dbfebe-2e6f-4226-b54f-1a8407c19d7a",
+      "id": "dabf510f-79da-4d10-baa6-4edd94bec819",
       "name": "Code - Preparar Email Notificacion"
     },
     {
       "parameters": {
         "method": "POST",
         "url": "https://api.brevo.com/v3/smtp/email",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "sendInBlueApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -293,23 +272,19 @@
         "contentType": "raw",
         "rawContentType": "application/json",
         "body": "={{ $json.brevoBody }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        11648,
-        3920
+        2016,
+        304
       ],
-      "id": "a0dc6993-3446-4edc-99b5-3f9a0dfaecaa",
+      "id": "8fa8506e-01ca-4b53-9576-45642b86d44b",
       "name": "Brevo - Enviar Notificacion",
       "retryOnFail": true,
-      "credentials": {
-        "sendInBlueApi": {
-          "id": "rIV8aruieHBr9uC3",
-          "name": "Brevo account"
-        }
-      },
       "continueOnFail": true
     },
     {
@@ -321,10 +296,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        8512,
-        4656
+        0,
+        1040
       ],
-      "id": "9e4c13d9-6947-4eef-93b9-b19e398a8cec",
+      "id": "a51b6fa9-6ee0-45ad-97d9-33061ae28364",
       "name": "Webhook Descartar",
       "webhookId": "webhook-descartar-id-001"
     },
@@ -337,10 +312,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        8512,
-        4880
+        0,
+        1264
       ],
-      "id": "7cba1bdd-b576-4d03-b075-03ea0a3bbb09",
+      "id": "960eda16-9e3c-4d29-a572-e621fe17eac2",
       "name": "Webhook Mandar Empresa",
       "webhookId": "webhook-mandar-empresa-id-001"
     },
@@ -348,8 +323,6 @@
       "parameters": {
         "method": "PATCH",
         "url": "=https://api.notion.com/v1/pages/{{ $json.query.id }}",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -366,25 +339,24 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "{\"properties\": {\"Estado\": {\"select\": {\"name\": \"Descartado\"}}}}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        8736,
-        4656
+        224,
+        1040
       ],
-      "id": "0fc1018e-d098-4060-ae62-f17e57065b77",
+      "id": "cf4e716d-bc58-4078-9163-9caea75ca124",
       "name": "Notion - Marcar Descartado",
       "credentials": {
         "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
+          "id": "7wHDB1eGIWDNHVl6",
           "name": "Notion account"
         }
-      },
-      "retryOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 4000
+      }
     },
     {
       "parameters": {
@@ -393,18 +365,16 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        8736,
-        4880
+        224,
+        1264
       ],
-      "id": "e7c96429-21ee-47c3-8d7a-856c1e556d19",
+      "id": "503e1847-2578-4581-b3ba-2a025c67a8dc",
       "name": "Code - Extraer ID Mandar"
     },
     {
       "parameters": {
         "method": "PATCH",
         "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -421,31 +391,28 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({\n  properties: {\n    Estado: { select: { name: 'Enviado a empresa' } },\n    'Fecha Envio Empresa': { date: { start: $json.fechaEnvio } }\n  }\n}) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        8960,
-        4880
+        448,
+        1264
       ],
-      "id": "7601c86d-7124-4c3d-ab3f-530138358f00",
+      "id": "83feca68-22ce-45eb-a2ba-0570891d732a",
       "name": "Notion - Marcar Enviado a empresa",
       "credentials": {
         "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
+          "id": "7wHDB1eGIWDNHVl6",
           "name": "Notion account"
         }
-      },
-      "retryOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 4000
+      }
     },
     {
       "parameters": {
         "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -455,37 +422,36 @@
             }
           ]
         },
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        9184,
-        4880
+        672,
+        1264
       ],
-      "id": "8773f494-a7fb-49a9-a481-70728dad00b6",
+      "id": "7ceab6fa-813c-431b-96f4-5de0b20c308e",
       "name": "Notion - Obtener Datos Mandar",
       "credentials": {
         "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
+          "id": "7wHDB1eGIWDNHVl6",
           "name": "Notion account"
         }
-      },
-      "retryOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 4000
+      }
     },
     {
       "parameters": {
-        "jsCode": "// Rama \"Enviar a empresa\": lee la carta YA EDITADA de Notion y decide híbrido.\nconst d = $('Notion - Obtener Datos Mandar').first().json;\nconst p = d.properties || {};\n\nconst empresa = p.Empresa?.title?.[0]?.text?.content || p.Empresa?.title?.[0]?.plain_text || 'la empresa';\nconst puesto = p.Puesto?.rich_text?.[0]?.plain_text || p.Puesto?.rich_text?.[0]?.text?.content || '';\nconst pageId = d.id || '';\nconst linkOferta = p['Link oferta']?.url || '';\nconst linkCV = p['Link CV Drive']?.url || '';\nconst emailEmpresa = p['Email empresa']?.email || '';\nconst nombreContacto = p['Nombre Contacto']?.rich_text?.[0]?.plain_text || '';\nconst emailUsuario = p['Email Enviado']?.email || 'hello.cookyourweb@gmail.com';\n\n// Carta editada (rich_text en chunks → unir)\nconst carta = (p['Carta Enviada']?.rich_text || []).map(t => t.plain_text || t.text?.content || '').join('') || '(carta no encontrada)';\n\nconst tieneEmail = emailEmpresa && emailEmpresa.includes('@');\n\nlet brevoBody;\n\nif (tieneEmail) {\n  // CASO AUTO: hay email de la empresa → mandar carta + CV directo a la empresa\n  const html = '<div style=\"font-family:Arial;padding:20px;max-width:600px\">'\n    + (nombreContacto ? '<p>Estimado/a ' + nombreContacto + ',</p>' : '')\n    + '<div style=\"line-height:1.6;white-space:pre-wrap\">' + carta + '</div>'\n    + (linkCV ? '<br><br><a href=\"' + linkCV + '\" style=\"background:#1F5C8B;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block\">📄 Ver mi CV</a>' : '')\n    + '</div>';\n  brevoBody = JSON.stringify({\n    sender: { name: 'Verónica Serna', email: 'veronica@usecookyourwebai.es' },\n    to: [{ email: emailEmpresa }],\n    replyTo: { email: emailUsuario, name: 'Verónica Serna' },\n    subject: 'Candidatura: ' + puesto + (empresa ? ' — ' + empresa : ''),\n    htmlContent: html,\n    trackClicks: false,\n    trackOpens: false\n  });\n} else {\n  // CASO MANUAL: sin email → avisar a Verónica con el link para aplicar a mano\n  const html = '<div style=\"font-family:Arial;padding:20px;max-width:600px\">'\n    + '<h2 style=\"color:#F59E0B\">📋 Aplicar a mano</h2>'\n    + '<p>La oferta de <b>' + empresa + ' — ' + puesto + '</b> no trae email de contacto, así que hay que aplicar por el portal.</p>'\n    + '<p>Tu carta y CV ya están listos:</p>'\n    + (linkOferta ? '<p><a href=\"' + linkOferta + '\" style=\"background:#22C55E;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;font-weight:bold\" target=\"_blank\">🔗 Ir a la oferta para aplicar</a></p>' : '')\n    + (linkCV ? '<p><a href=\"' + linkCV + '\" style=\"color:#1F5C8B;font-weight:bold;text-decoration:underline\" target=\"_blank\">📄 Tu CV en Drive</a></p>' : '')\n    + '<div style=\"margin-top:16px;padding:16px;background:#f9f9f9;border-radius:6px;line-height:1.6;white-space:pre-wrap\"><b>Tu carta:</b><br>' + carta + '</div>'\n    + '</div>';\n  brevoBody = JSON.stringify({\n    sender: { name: 'Verónica Serna', email: 'veronica@usecookyourwebai.es' },\n    to: [{ email: emailUsuario }],\n    subject: '📋 Aplicar a mano — ' + empresa + ' — ' + puesto,\n    htmlContent: html,\n    trackClicks: false,\n    trackOpens: false\n  });\n}\n\nreturn [{\n  json: {\n    empresa, puesto, pageId, emailEmpresa, tieneEmail,\n    modo: tieneEmail ? 'auto-email-empresa' : 'manual-link',\n    brevoBody\n  }\n}];\n"
+        "jsCode": "const notionData = $input.first().json;\nconst empresa = notionData.properties.Empresa.title[0].text.content;\nconst puesto = notionData.properties.Puesto.rich_text[0].text.content;\nconst pageId = notionData.id;\nconst nombreContacto = notionData.properties?.['Nombre Contacto']?.rich_text?.[0]?.text?.content || 'No especificado';\nconst emailContacto = notionData.properties?.['Email empresa']?.email || 'No especificado';\nconst telefonoContacto = notionData.properties?.['Teléfono Contacto']?.phone_number || 'No especificado';\nconst fechaEnvio = new Date().toISOString();\n\nreturn [{\n  json: {\n    empresa: empresa,\n    puesto: puesto,\n    pageId: pageId,\n    nombreContacto: nombreContacto,\n    emailContacto: emailContacto,\n    telefonoContacto: telefonoContacto,\n    fechaEnvio: fechaEnvio\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        9408,
-        4880
+        896,
+        1264
       ],
-      "id": "b2ab575f-379c-4a78-93f9-3a150aacdca9",
+      "id": "59fdde85-6877-477c-b3f6-d863f1daefb0",
       "name": "Code - Preparar Confirmación"
     },
     {
@@ -497,10 +463,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        8512,
-        4240
+        0,
+        624
       ],
-      "id": "1d2db24b-a620-46dc-9754-c3c621fe0f9b",
+      "id": "7f8f2589-f8dc-4785-958e-48d4a07790ea",
       "name": "Webhook Aprobar",
       "webhookId": "aprobar-id"
     },
@@ -511,18 +477,16 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        8736,
-        4240
+        224,
+        624
       ],
-      "id": "80d322e5-982e-42da-8978-56b03f74702c",
+      "id": "1e67cc26-a5dd-4e4c-adc1-a850d7ffc81a",
       "name": "Code - Extraer ID"
     },
     {
       "parameters": {
         "method": "PATCH",
         "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -539,32 +503,29 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "{\"properties\":{\"Estado\":{\"select\":{\"name\":\"Aprobado\"}}}}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        8960,
-        4240
+        448,
+        624
       ],
-      "id": "ce39d877-2ff6-4c2b-87e0-23764c3cc91c",
+      "id": "b01d74bd-91a2-4f0c-9bd6-7369885f7d3a",
       "name": "Notion - Marcar Aprobado",
       "credentials": {
         "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
+          "id": "7wHDB1eGIWDNHVl6",
           "name": "Notion account"
         }
-      },
-      "retryOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 4000
+      }
     },
     {
       "parameters": {
         "method": "PATCH",
         "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -581,31 +542,28 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "{\"properties\":{\"Estado\":{\"select\":{\"name\":\"En proceso\"}}}}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        9184,
-        4240
+        672,
+        624
       ],
-      "id": "ee55990a-f321-4134-b12a-1590503cd1ba",
+      "id": "6e80cb9b-7aa6-47fe-926d-7af2f82af51c",
       "name": "Notion - Marcar En Proceso",
       "credentials": {
         "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
+          "id": "7wHDB1eGIWDNHVl6",
           "name": "Notion account"
         }
-      },
-      "retryOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 4000
+      }
     },
     {
       "parameters": {
         "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -615,30 +573,29 @@
             }
           ]
         },
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        9408,
-        4240
+        896,
+        624
       ],
-      "id": "f13be5cc-1e12-4fce-bacd-b31490665e7f",
+      "id": "1870ae25-eb40-4f89-b1f4-a6542fb3a21a",
       "name": "Notion - Obtener Datos Oferta",
       "credentials": {
         "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
+          "id": "7wHDB1eGIWDNHVl6",
           "name": "Notion account"
         }
-      },
-      "retryOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 4000
+      }
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://cv-server-ggd8.onrender.com/generar-carta",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -649,25 +606,22 @@
           ]
         },
         "sendBody": true,
-        "contentType": "raw",
-        "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({\n  email:       $('Notion - Obtener Datos Oferta').first().json.properties['Email Enviado']?.email \n               || $('Notion - Obtener Datos Oferta').first().json.properties['Email Enviado']?.rich_text?.[0]?.plain_text \n               || 'hello.cookyourweb@gmail.com',\n  empresa:     $('Notion - Obtener Datos Oferta').first().json.properties.Empresa?.title?.[0]?.text?.content || '',\n  puesto:      $('Notion - Obtener Datos Oferta').first().json.properties.Puesto?.rich_text?.[0]?.text?.content || '',\n  descripcion: $('Notion - Obtener Datos Oferta').first().json.properties.Notas?.rich_text?.[0]?.text?.content || ''\n}) }}",
-        "options": {
-          "timeout": 120000
-        }
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  model: \"llama-3.3-70b-versatile\",\n  messages: [{\n    role: \"user\",\n    content: \"Eres un experto en redacción de cartas de presentación para ofertas de trabajo en España. Escribe una carta de presentación profesional en español.\\\\n\\\\nDATOS DE LA OFERTA:\\\\n- Empresa: \" + ($('Notion - Obtener Datos Oferta').first().json.properties?.Empresa?.title?.[0]?.text?.content || '') + \"\\\\n- Puesto: \" + ($('Notion - Obtener Datos Oferta').first().json.properties?.Puesto?.rich_text?.[0]?.text?.content || '') + \"\\\\n- Descripción: \" + ($('Notion - Obtener Datos Oferta').first().json.properties?.Notas?.rich_text?.[0]?.text?.content || '') + \"\\\\n\\\\nINSTRUCCIONES:\\\\n- Carta de máximo 300 palabras\\\\n- Tono profesional pero cercano\\\\n- Destacar experiencia en React, TypeScript, Vue.js\\\\n- Formato: Estimados/as, ..., Atentamente, Verónica Serna\\\\n- Devuelve SOLO el texto de la carta\"\n  }],\n  max_tokens: 1024,\n  temperature: 0.7\n}) }}",
+        "options": {},
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        9632,
-        4240
+        1120,
+        624
       ],
-      "id": "afb79568-f2f0-4888-b49b-c26920474544",
+      "id": "975a4cd6-8564-4fac-83bb-0c27669bc02e",
       "name": "Groq - Generar Carta",
       "retryOnFail": true,
-      "continueOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 25000
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -685,7 +639,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({\n  email:       $('Notion - Obtener Datos Oferta').first().json.properties['Email Enviado']?.email \n               || $('Notion - Obtener Datos Oferta').first().json.properties['Email Enviado']?.rich_text?.[0]?.plain_text \n               || 'hello.cookyourweb@gmail.com',\n  empresa:     $('Notion - Obtener Datos Oferta').first().json.properties.Empresa?.title?.[0]?.text?.content || '',\n  puesto:      $('Notion - Obtener Datos Oferta').first().json.properties.Puesto?.rich_text?.[0]?.text?.content || '',\n  descripcion: $('Notion - Obtener Datos Oferta').first().json.properties.Notas?.rich_text?.[0]?.text?.content || ''\n}) }}",
+        "body": "={{ JSON.stringify({\n  email:       $('Notion - Obtener Datos Oferta').first().json.properties['Email usuario']?.rich_text?.[0]?.plain_text \n               || $('Notion - Obtener Datos Oferta').first().json.properties['Email usuario']?.email \n               || 'hello.cookyourweb@gmail.com',\n  empresa:     $('Notion - Obtener Datos Oferta').first().json.properties.Empresa?.title?.[0]?.text?.content || '',\n  puesto:      $('Notion - Obtener Datos Oferta').first().json.properties.Puesto?.rich_text?.[0]?.text?.content || '',\n  descripcion: $('Notion - Obtener Datos Oferta').first().json.properties.Notas?.rich_text?.[0]?.text?.content || ''\n}) }}",
         "options": {
           "timeout": 120000
         }
@@ -693,34 +647,30 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        9856,
-        4336
+        1344,
+        720
       ],
-      "id": "603f3bbc-a0d5-4557-b887-cd0398c64796",
+      "id": "dba680e7-6aac-4847-aa06-58f3ffd750e1",
       "name": "CV Server - Generar CV",
-      "retryOnFail": true,
-      "maxTries": 5,
-      "waitBetweenTries": 25000
+      "retryOnFail": false
     },
     {
       "parameters": {
-        "jsCode": "const notionData = $('Notion - Obtener Datos Oferta').first().json;\nconst empresa = notionData.properties?.Empresa?.title?.[0]?.text?.content || notionData.properties?.Empresa?.title?.[0]?.plain_text || '';\nconst puesto = notionData.properties?.Puesto?.rich_text?.[0]?.text?.content || '';\nconst pageId = notionData.id || '';\nconst nombreContacto = notionData.properties?.['Nombre Contacto']?.rich_text?.[0]?.text?.content || '';\nconst emailContacto = notionData.properties?.['Email empresa']?.email || '';\nconst telefonoContacto = notionData.properties?.['Teléfono Contacto']?.phone_number || '';\n\nconst cartaText = $('Groq - Generar Carta').first().json.carta || '';\n\nlet linkCV = '';\ntry {\n  linkCV = $('CV Server - Generar CV').first().json.link || null;\n} catch(e) {}\n\nlet cvMaster = '';\ntry {\n  cvMaster = $('CV Server - Generar CV').first().json.cv_master_url || '';\n} catch(e) {}\n\n// Email del usuario (para avisarle que está listo para revisar)\nconst emailDestino = notionData.properties?.['Email Enviado']?.email\n  || notionData.properties?.['Email usuario']?.email\n  || notionData.properties?.['Email usuario']?.rich_text?.[0]?.plain_text\n  || 'hello.cookyourweb@gmail.com';\n\n// Carta en chunks de 1900 chars para guardar en Notion (límite rich_text 2000)\nconst chunk = (s, n) => {\n  const a = [];\n  for (let i = 0; i < (s || '').length; i += n) a.push({ text: { content: s.slice(i, i + n) } });\n  return a.length ? a : [{ text: { content: '' } }];\n};\nconst cartaRichText = chunk(cartaText, 1900);\n\n// Link a la página de Notion para editar la carta\nconst notionPageUrl = 'https://www.notion.so/' + pageId.replace(/-/g, '');\n\nconst htmlContent = '<div style=\"font-family:Arial;padding:20px;max-width:600px\">'\n  + '<h2 style=\"color:#1F5C8B\">📝 Carta y CV listos para revisar</h2>'\n  + '<h3>' + empresa + ' — ' + puesto + '</h3>'\n  + '<p>Tu carta y CV ya están generados. <b>Revisalos y editalos si querés ANTES de enviar:</b></p>'\n  + '<div style=\"padding:16px;line-height:1.6;white-space:pre-wrap;background:#f9f9f9;border-radius:6px\">' + cartaText + '</div>'\n  + '<p style=\"margin-top:16px\">'\n  + '<a href=\"' + notionPageUrl + '\" style=\"color:#1F5C8B;font-weight:bold;text-decoration:underline\" target=\"_blank\">✏️ Editar la carta en Notion</a>'\n  + (linkCV ? '&nbsp;&nbsp;|&nbsp;&nbsp;<a href=\"' + linkCV + '\" style=\"color:#1F5C8B;font-weight:bold;text-decoration:underline\" target=\"_blank\">✏️ Editar el CV en Drive</a>' : '')\n  + '</p>'\n  + '<p style=\"color:#666;font-size:13px\">Cuando la carta y el CV estén como querés, pulsá Enviar:</p>'\n  + '<a href=\"https://n8n-asistente-correo.onrender.com/webhook/oferta-mandar-empresa?id=' + pageId + '\" style=\"background:#22C55E;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;font-weight:bold\">🚀 Enviar a empresa</a>'\n  + '</div>';\n\nconst brevoBody = JSON.stringify({\n  sender: { name: 'Verónica Serna', email: 'veronica@usecookyourwebai.es' },\n  to: [{ email: emailDestino }],\n  subject: '📝 Revisar y enviar — ' + empresa + ' — ' + puesto,\n  htmlContent: htmlContent,\n  trackClicks: false,\n  trackOpens: false\n});\n\nreturn [{\n  json: {\n    empresa, puesto, pageId, cartaText, linkCV, nombreContacto, emailContacto, telefonoContacto,\n    notionPageId: pageId,\n    notionLinkCV: linkCV || null,\n    cvMaster: cvMaster || '',\n    cartaEnviada: cartaText,\n    cartaRichText,\n    emailDestino,\n    htmlContent,\n    brevoBody\n  }\n}];\n"
+        "jsCode": "const notionData = $('Notion - Obtener Datos Oferta').first().json;\nconsole.log('NOTION PROPS:', JSON.stringify(Object.keys(notionData.properties || {})));\nconsole.log('EMAIL USUARIO raw:', JSON.stringify(notionData.properties?.['Email usuario']));\nconst empresa = notionData.properties?.Empresa?.title?.[0]?.text?.content || '';\nconst puesto = notionData.properties?.Puesto?.rich_text?.[0]?.text?.content || '';\nconst pageId = notionData.id || '';\nconst nombreContacto = notionData.properties?.['Nombre Contacto']?.rich_text?.[0]?.text?.content || '';\nconst emailContacto = notionData.properties?.['Email empresa']?.email || '';\nconst telefonoContacto = notionData.properties?.['Teléfono Contacto']?.phone_number || '';\n\nconst cartaText = $('Groq - Generar Carta').first().json.choices?.[0]?.message?.content || '';\n\nlet linkCV = '';\ntry {\n  linkCV = $('CV Server - Generar CV').first().json.link || null;\n} catch(e) {\n  console.log('⚠️ CV Server no disponible:', e.message);\n}\n\nconst emailDestino = notionData.properties?.['Email usuario']?.rich_text?.[0]?.plain_text \n  || notionData.properties?.['Email usuario']?.email \n  || 'hello.cookyourweb@gmail.com';\n\nconst htmlContent = '<div style=\"font-family:Arial;padding:20px;max-width:600px\">'\n  + '<h2 style=\"color:#1F5C8B\">Carta de presentación</h2>'\n  + '<h3>' + empresa + ' — ' + puesto + '</h3>'\n  + '<div style=\"padding:16px;line-height:1.6;white-space:pre-wrap;background:#f9f9f9;border-radius:6px\">' + cartaText + '</div>'\n  + (linkCV ? '<br><br><a href=\"' + linkCV + '\" style=\"background:#1F5C8B;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block\">📄 Ver CV en Drive</a>' : '<p style=\"color:#EF4444\">⚠️ CV no generado</p>')\n  + '<br><br><a href=\"https://n8n-st1v.onrender.com/webhook/oferta-mandar-empresa?id=' + pageId + '\" style=\"background:#22C55E;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;font-weight:bold\">✅ Confirmar envío a empresa</a>'\n  + '</div>';\n\nreturn [{\n  json: {\n    empresa, puesto, pageId, cartaText, linkCV, nombreContacto, emailContacto, telefonoContacto,\n    notionPageId: pageId,\n    notionLinkCV: linkCV || null,\n    cartaEnviada: cartaText,\n    emailDestino,\n    htmlContent,\n    brevoBody_old: JSON.stringify({\n      sender: {name: 'Verónica Serna', email: 'veronica@usecookyourwebai.es'},\n      to: [{email: notionData.properties?.['Email usuario']?.rich_text?.[0]?.plain_text || notionData.properties?.['Email usuario']?.email || 'hello.cookyourweb@gmail.com'}],\n      subject: '📝 Carta y CV — ' + empresa + ' — ' + puesto,\n      htmlContent: '<div style=\"font-family:Arial;padding:20px;max-width:600px\">'\n        + '<h2 style=\"color:#1F5C8B\">Carta de presentación</h2>'\n        + '<h3>' + empresa + ' — ' + puesto + '</h3>'\n        + '<div style=\"padding:16px;line-height:1.6;white-space:pre-wrap;background:#f9f9f9;border-radius:6px\">' + cartaText + '</div>'\n        + (linkCV ? '<br><br><a href=\"' + linkCV + '\" style=\"background:#1F5C8B;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block\">📄 Ver CV en Drive</a>' : '<p style=\"color:#EF4444\">⚠️ CV no generado</p>')\n        + '<br><br><hr style=\"border:none;border-top:1px solid #ddd;margin:24px 0\">'\n        + '<h3 style=\"color:#1F5C8B\">📧 Contacto en la empresa</h3>'\n        + (nombreContacto ? '<p><strong>Nombre:</strong> ' + nombreContacto + '</p>' : '')\n        + (emailContacto ? '<p><strong>Email:</strong> ' + emailContacto + '</p>' : '')\n        + (telefonoContacto ? '<p><strong>Teléfono:</strong> ' + telefonoContacto + '</p>' : '')\n        + '<br><a href=\"https://n8n-st1v.onrender.com/webhook/oferta-mandar-empresa?id=' + pageId + '\" style=\"background:#22C55E;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;font-weight:bold\">✅ Confirmar envío a empresa</a>'\n        + '</div>',\n      trackClicks: false, trackOpens: false\n    })\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        10080,
-        4336
+        1568,
+        720
       ],
-      "id": "f0b3bac4-de00-4fa0-8309-7fa32b07cda6",
+      "id": "fce90055-cc6b-4db3-9641-0ecdb64ba2d3",
       "name": "Code - Preparar Email Carta+CV"
     },
     {
       "parameters": {
         "method": "POST",
         "url": "https://api.brevo.com/v3/smtp/email",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "sendInBlueApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -734,31 +684,25 @@
         "contentType": "raw",
         "rawContentType": "application/json",
         "body": "={{ JSON.stringify({\n  sender: {name: 'Verónica Serna', email: 'veronica@usecookyourwebai.es'},\n  to: [{email: $json.emailDestino || 'hello.cookyourweb@gmail.com'}],\n  subject: '📝 Carta y CV — ' + ($json.empresa || '') + ' — ' + ($json.puesto || ''),\n  htmlContent: $json.htmlContent || '<p>Carta generada</p>',\n  trackClicks: false,\n  trackOpens: false\n}) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        10304,
-        4240
+        1792,
+        624
       ],
-      "id": "7c8e8af8-a393-499f-a086-1ae5bfccb3c7",
+      "id": "3a114f05-7e43-4ab6-a987-6a226037ff1e",
       "name": "Brevo - Enviar Carta+CV",
       "retryOnFail": true,
-      "credentials": {
-        "sendInBlueApi": {
-          "id": "rIV8aruieHBr9uC3",
-          "name": "Brevo account"
-        }
-      },
       "continueOnFail": true
     },
     {
       "parameters": {
         "method": "PATCH",
         "url": "=https://api.notion.com/v1/pages/{{ $json.notionPageId }}",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -774,33 +718,30 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ properties: { ...(($json.notionLinkCV && $json.notionLinkCV !== \"\") ? { \"Link CV Drive\": { url: $json.notionLinkCV } } : { \"Link CV Drive\": { url: null } }), \"Nombre Contacto\": { rich_text: [{ text: { content: $json.nombreContacto || \"\" } }] }, \"Teléfono Contacto\": { phone_number: $json.telefonoContacto || null }, \"Carta Enviada\": { rich_text: $json.cartaRichText || [{ text: { content: \"\" } }] }, ...(($json.cvMaster && $json.cvMaster !== \"\") ? { \"CV usado\": { rich_text: [{ text: { content: $json.cvMaster } }] } } : {}), \"Fecha envio\": { date: { start: new Date().toISOString().slice(0,10) } } } }) }}",
-        "options": {}
+        "jsonBody": "={{ JSON.stringify({\n  properties: {\n    ...(($json.notionLinkCV && $json.notionLinkCV !== \"\") ? { \"Link CV Drive\": { url: $json.notionLinkCV } } : { \"Link CV Drive\": { url: null } }),\n    \"Nombre Contacto\": { rich_text: [{ text: { content: $json.nombreContacto || \"\" } }] },\n    \"Teléfono Contacto\": { phone_number: $json.telefonoContacto || null }\n  }\n}) }}",
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        10304,
-        4432
+        1792,
+        816
       ],
-      "id": "a6e6c039-74fb-4a0a-b2c2-dd42ae6bd562",
+      "id": "db069e89-27c4-41e1-9df4-e3b4d746b9b5",
       "name": "Notion - Guardar Link CV",
       "credentials": {
         "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
+          "id": "7wHDB1eGIWDNHVl6",
           "name": "Notion account"
         }
-      },
-      "retryOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 4000
+      }
     },
     {
       "parameters": {
         "method": "POST",
         "url": "https://api.brevo.com/v3/smtp/email",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "sendInBlueApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -813,24 +754,20 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ $json.brevoBody }}",
-        "options": {}
+        "body": "={{ JSON.stringify({\n  sender: {name: 'Verónica Serna', email: 'veronica@usecookyourwebai.es'},\n  to: [{email: 'hello.cookyourweb@gmail.com'}],\n  subject: '✅ Aplicado a ' + $json.empresa,\n  htmlContent: '<div style=\"font-family:Arial;padding:20px;max-width:600px\"><h2 style=\"color:#22C55E\">✅ Candidatura Enviada</h2><p>Tu candidatura ha sido enviada a:</p><h3 style=\"color:#1F5C8B\">' + $json.empresa + ' — ' + $json.puesto + '</h3><div style=\"margin:20px 0;padding:16px;background:#f9f9f9;border-radius:6px\"><p><strong>Estado:</strong> Enviado a empresa</p><p><strong>Fecha envío:</strong> ' + new Date($json.fechaEnvio).toLocaleDateString('es-ES') + '</p>' + ($json.nombreContacto && $json.nombreContacto !== 'No especificado' ? '<p><strong>Contacto:</strong> ' + $json.nombreContacto + '</p>' : '') + ($json.emailContacto && $json.emailContacto !== 'No especificado' ? '<p><strong>Email:</strong> ' + $json.emailContacto + '</p>' : '') + ($json.telefonoContacto && $json.telefonoContacto !== 'No especificado' ? '<p><strong>Teléfono:</strong> ' + $json.telefonoContacto + '</p>' : '') + '</div><p style=\"color:#666;font-size:14px;margin-top:20px\">Te avisaremos cuando haya novedades.</p></div>',\n  trackClicks: false, trackOpens: false\n}) }}",
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        9632,
-        4880
+        1120,
+        1264
       ],
-      "id": "794bd9d3-8052-40d7-8ef2-5218f0618f83",
+      "id": "93cdfb67-65d3-496c-8a52-22ffe58371b8",
       "name": "Brevo - Email Confirmación",
       "retryOnFail": true,
-      "credentials": {
-        "sendInBlueApi": {
-          "id": "rIV8aruieHBr9uC3",
-          "name": "Brevo account"
-        }
-      },
       "continueOnFail": true
     },
     {
@@ -842,10 +779,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        8960,
-        4656
+        448,
+        1040
       ],
-      "id": "832afa15-f436-488b-8185-1d805bd9a6bc",
+      "id": "834d4fc4-1f75-4025-a5f2-0464178ff8bf",
       "name": "Respond to Webhook Descartar"
     },
     {
@@ -857,10 +794,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        9856,
-        4880
+        1344,
+        1264
       ],
-      "id": "b338e7cc-10ef-4235-9e29-01e7ce836075",
+      "id": "64c79f30-d456-428e-8fe9-a9528a1a610f",
       "name": "Respond to Webhook Mandar Empresa"
     },
     {
@@ -872,18 +809,16 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        10528,
-        4240
+        2016,
+        624
       ],
-      "id": "5783387c-61db-4da0-b879-89f0f83bc241",
+      "id": "c66debff-a20a-4f23-b797-e841ff20a6c7",
       "name": "Respond to Webhook Aprobar"
     },
     {
       "parameters": {
         "method": "POST",
         "url": "https://api.notion.com/v1/databases/34811515f4b280f19a42f8da5e91a8fe/query",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -900,25 +835,24 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({\n  filter: { property: 'Activo', checkbox: { equals: true } },\n  page_size: 100\n}) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        8736,
-        3824
+        224,
+        208
       ],
-      "id": "2014d620-5048-45aa-b04c-a6fb590ae65e",
+      "id": "c2da7ff9-5e85-412b-9b9b-11e7bf40350d",
       "name": "Notion — Query usuarios activos",
       "credentials": {
         "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
+          "id": "7wHDB1eGIWDNHVl6",
           "name": "Notion account"
         }
-      },
-      "retryOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 4000
+      }
     },
     {
       "parameters": {
@@ -927,10 +861,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        8960,
-        3824
+        448,
+        208
       ],
-      "id": "e9557b93-338c-4f4c-b0f1-dd6925512e66",
+      "id": "30764e51-4fff-4eec-a641-268d6e900290",
       "name": "Code — Normalizar users (schedule)"
     },
     {
@@ -940,13 +874,13 @@
         "responseMode": "lastNode",
         "options": {}
       },
-      "id": "bb6f2507-d3a1-46ac-aa3f-7305415b746d",
+      "id": "8fb95064-59d2-4cf5-89f2-a8333b6fcd89",
       "name": "Webhook — Buscar para user",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        8736,
-        4016
+        224,
+        400
       ],
       "webhookId": "buscar-para-user"
     },
@@ -957,10 +891,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        8960,
-        4016
+        448,
+        400
       ],
-      "id": "938e4a90-b3cc-4086-b00a-018bbdedf88c",
+      "id": "7bcc3396-9457-4c00-99cb-5a1a61ef1d11",
       "name": "Code — Normalizar (interno)"
     },
     {
@@ -973,16 +907,14 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        9408,
-        4432
+        896,
+        816
       ],
-      "id": "815403b3-8420-4053-8531-2b0e24f72172",
+      "id": "7b467b5e-3178-4bba-9027-7ae7c3869fc7",
       "name": "HTTP Request",
-      "retryOnFail": true,
+      "retryOnFail": false,
       "continueOnFail": true,
-      "onError": "continueRegularOutput",
-      "maxTries": 4,
-      "waitBetweenTries": 15000
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -991,10 +923,10 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        9632,
-        4432
+        1120,
+        816
       ],
-      "id": "2be67da1-5bde-45b1-b1e0-56a6ff553763",
+      "id": "1faf877b-f4fb-474b-9038-94e8de9f97f6",
       "name": "Wait",
       "webhookId": "ef05fdc3-b5eb-4ea7-9cbf-481eb31ca166"
     },
@@ -1005,10 +937,10 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        10304,
-        3856
+        672,
+        304
       ],
-      "id": "ffbcf5cc-61a9-453b-b992-98ab08665e4c",
+      "id": "cd22fab3-24d5-4dcb-a3b1-ad35819b5293",
       "name": "Wait - Rate Limit Groq",
       "webhookId": "67526489-e050-4c23-81de-88680d3415f0"
     },
@@ -1019,18 +951,16 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        8512,
-        5104
+        0,
+        1488
       ],
-      "id": "3902edcb-fc73-450d-93f1-dcd4c93f6195",
+      "id": "b129db44-e063-4b2c-87b4-1f16e49eed71",
       "name": "Code - Preparar Email Error1"
     },
     {
       "parameters": {
         "method": "POST",
         "url": "https://api.brevo.com/v3/smtp/email",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "sendInBlueApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -1044,15 +974,17 @@
         "contentType": "raw",
         "rawContentType": "application/json",
         "body": "={{ JSON.stringify({\n  sender: {name: 'N8N Error Monitor', email: 'veronica@usecookyourwebai.es'},\n  to: [{email: $json.to}],\n  subject: $json.subject,\n  htmlContent: $json.htmlContent\n}) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        8736,
-        5104
+        224,
+        1488
       ],
-      "id": "7379250d-c3ec-41f8-9bf2-809c8dec1ac4",
+      "id": "4d20d8bd-5edc-47dd-9a8d-b3f304601708",
       "name": "Brevo - Enviar Email Error1"
     },
     {
@@ -1062,10 +994,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        9184,
-        3920
+        580,
+        208
       ],
-      "id": "1ab7fb32-89a2-4d07-8fbb-c8a9dc774695",
+      "id": "loop-users-0001",
       "name": "Loop Over Users"
     },
     {
@@ -1076,10 +1008,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        9408,
-        3856
+        380,
+        460
       ],
-      "id": "1e373fdf-7b8f-4b46-97d3-61056d9925ec",
+      "id": "search-remotive-0001",
       "name": "Buscar en Remotive",
       "onError": "continueRegularOutput"
     },
@@ -1091,10 +1023,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        9632,
-        3856
+        560,
+        460
       ],
-      "id": "a96e2965-7e21-450b-a0a0-9a23fc5c3a37",
+      "id": "search-adzuna-0001",
       "name": "Buscar en Adzuna",
       "onError": "continueRegularOutput"
     },
@@ -1112,68 +1044,25 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        9856,
-        3856
+        740,
+        460
       ],
-      "id": "df0c7488-1df5-4048-b0da-fd12071a0fcc",
+      "id": "search-tecno-0001",
       "name": "Buscar en Tecnoempleo",
       "onError": "continueRegularOutput"
     },
     {
       "parameters": {
-        "jsCode": "// Junta 3 fuentes + filtra por el stack del usuario actual (multi-usuario).\nconst U = $('Loop Over Users').item.json;\nconst LT = String.fromCharCode(60);\nconst GT = String.fromCharCode(62);\nconst tagRe = new RegExp(LT + '[^' + GT + ']*' + GT, 'g');\nconst limpiar = (s) => (s || '').replace(tagRe, ' ').split('&nbsp;').join(' ').replace(/\\s+/g, ' ').trim();\n\n// ── Targeting del perfil de la usuaria: Frontend/React + AI/LLM + Tech Lead (frontend) ──\n// Señales del perfil (debe haber AL MENOS UNA en el TÍTULO de la oferta)\nconst INCLUIR = [\n  'react','frontend','front-end','front end','typescript','javascript','vue','angular',\n  'next.js','nextjs','svelte','ui engineer','ui developer','ux engineer','web developer',\n  'design system','head of frontend','frontend lead','front-end lead','frontend tech lead',\n  'ai engineer','ml engineer','machine learning engineer','llm','prompt engineer',\n  'ai developer','genai','generative ai'\n];\n// Backend / otros perfiles que NO son de ella: fuera salvo que el título tenga también señal del perfil\nconst EXCLUIR_PERFIL = ['java','spring','.net','c#','php','golang','rust','scala','kotlin',\n  'abap','sap','salesforce','dba','sql server','oracle','sysadmin','devops','sre',\n  'data engineer','data scientist','android','ios','embedded','c++','wordpress developer'];\n// Roles no técnicos / basura: fuera siempre\nconst EXCLUIR_DURO = ['administrador de sistemas','linux rhel','soporte','helpdesk','help desk',\n  'comercial','ventas','sales','contable','contabilidad','recruiter','reclutador','qa manual',\n  'qa engineer','tester manual','tester','becario','prácticas','beca','community manager'];\n\nconst matchea = (titulo, desc) => {\n  const tit = (titulo || '').toLowerCase();\n  if (EXCLUIR_DURO.some(k => tit.includes(k))) return false;       // basura/no-tech fuera\n  const tieneSenal   = INCLUIR.some(k => tit.includes(k));          // señal de su perfil en el título\n  const esOtroPerfil = EXCLUIR_PERFIL.some(k => tit.includes(k));   // backend puro (java, spring...)\n  if (esOtroPerfil && !tieneSenal) return false;                    // ej \"Java Developer\" fuera\n  return tieneSenal;                                                // exige señal del perfil\n};\n\n// ANTI-SPAM: links de ofertas que YA existen en Notion (no repetir)\nconst yaEnviadas = new Set();\ntry {\n  const resp = $('Notion - Ofertas existentes').first().json;\n  for (const page of (resp.results || [])) {\n    const u = page?.properties?.['Link oferta']?.url;\n    if (u) yaEnviadas.add(u.trim());\n  }\n} catch (e) {}\nconst esNueva = (link) => link && !yaEnviadas.has(String(link).trim());\n\nconst out = [];\n\n// Remotive\ntry {\n  const jobs = $('Buscar en Remotive').first().json.jobs || [];\n  for (const j of jobs.slice(0, 25)) {\n    const desc = limpiar(j.description).slice(0, 60);\n    if (!matchea(j.title, limpiar(j.description))) continue;\n    if (!esNueva(j.url)) continue;\n    out.push('[Remotive] ' + j.title + ' | ' + j.company_name + ' | ' + (j.candidate_required_location || 'Remoto') + ' | ' + (j.salary || 's/i') + ' | ' + j.url + ' | ' + desc);\n  }\n} catch (e) {}\n\n// Adzuna\ntry {\n  const results = ($('Buscar en Adzuna').first().json.results || []).slice(0, 25);\n  for (const j of results) {\n    const descFull = limpiar(j.description);\n    if (!matchea(j.title, descFull)) continue;\n    if (!esNueva(j.redirect_url)) continue;\n    const sal = j.salary_min ? Math.round(j.salary_min) + '-' + Math.round(j.salary_max || j.salary_min) : 's/i';\n    out.push('[Adzuna] ' + j.title + ' | ' + ((j.company||{}).display_name||'') + ' | ' + ((j.location||{}).display_name||'') + ' | ' + sal + ' | ' + j.redirect_url + ' | ' + descFull.slice(0, 60));\n  }\n} catch (e) {}\n\n// Tecnoempleo (RSS XML)\ntry {\n  const xml = $('Buscar en Tecnoempleo').first().json.data || $('Buscar en Tecnoempleo').first().json.body || '';\n  const parts = xml.split('<item>');\n  const slice = (s, a, b) => { const i = s.indexOf(a); if (i<0) return ''; const j = s.indexOf(b, i+a.length); return j<0 ? '' : s.substring(i+a.length, j); };\n  const cdata = (s) => s.split('<![CDATA[').join('').split(']]>').join('').trim();\n  for (let k = 1; k < parts.length && k <= 30; k++) {\n    const it = parts[k];\n    const title = cdata(slice(it, '<title>', '</title>'));\n    const link = cdata(slice(it, '<link>', '</link>'));\n    const descFull = limpiar(cdata(slice(it, '<description>', '</description>')));\n    if (!matchea(title, descFull)) continue;\n    if (!esNueva(link)) continue;\n    out.push('[Tecnoempleo] ' + title + ' | | España | s/i | ' + link + ' | ' + descFull.slice(0, 60));\n  }\n} catch (e) {}\n\n// CAP modo prueba: máx 12 ofertas a Groq (ahorra tokens del cupo diario free)\nconst MAX_OFERTAS = 12;\nconst recortadas = out.slice(0, MAX_OFERTAS);\n\nconst lista = recortadas.length\n  ? recortadas.map((l, i) => '#' + (i+1) + ' ' + l).join('\\n\\n')\n  : 'NO se encontraron ofertas NUEVAS que coincidan con el perfil del usuario hoy.';\n\n// Arrastra el contexto del usuario para Groq y para crear la oferta\nreturn [{ json: {\n  ofertas:       lista,\n  total:         out.length,\n  email_usuario: U.email_usuario || U.email || '',\n  nombre:        U.nombre || '',\n  perfil:        U.perfil || '',\n  rol:           U.rol || '',\n  stack:         U.stack || [],\n  salario:       U.salario || 0,\n  modalidad:     U.modalidad || [],\n  ciudad:        U.ciudad || '',\n  cv_master_url: U.cv_master_url || '',\n  user_id:       U.user_id || ''\n}}];\n"
+        "jsCode": "// Junta 3 fuentes + filtra por el stack del usuario actual (multi-usuario).\nconst U = $('Loop Over Users').item.json;\nconst LT = String.fromCharCode(60);\nconst GT = String.fromCharCode(62);\nconst tagRe = new RegExp(LT + '[^' + GT + ']*' + GT, 'g');\nconst limpiar = (s) => (s || '').replace(tagRe, ' ').split('&nbsp;').join(' ').replace(/\\s+/g, ' ').trim();\n\n// Keywords base (dev) + stack/rol del usuario\nconst BASE = ['developer','desarrollador','frontend','front-end','fullstack','full stack','full-stack','software engineer','ingeniero de software','tech lead','web developer'];\nconst userStack = (U.stack || []).map(s => String(s).toLowerCase());\nconst userRol = String(U.rol || '').toLowerCase().split(/\\s+/).filter(Boolean);\nconst KEYWORDS = [...new Set([...BASE, ...userStack, ...userRol])];\nconst EXCLUIR = ['dba','sql server','administrador de sistemas','sysadmin','linux rhel','redshift','oracle dba','soporte','helpdesk','help desk','comercial','ventas','sales','contable','contabilidad','recruiter','reclutador','qa manual','tester manual','becario','prácticas','beca'];\n\nconst matchea = (titulo, desc) => {\n  const tit = (titulo || '').toLowerCase();\n  const todo = (titulo + ' ' + desc).toLowerCase();\n  if (EXCLUIR.some(k => tit.includes(k))) return false;\n  return KEYWORDS.some(k => k && todo.includes(k));\n};\n\nconst out = [];\n\n// Remotive\ntry {\n  const jobs = $('Buscar en Remotive').first().json.jobs || [];\n  for (const j of jobs.slice(0, 25)) {\n    const desc = limpiar(j.description).slice(0, 130);\n    if (!matchea(j.title, limpiar(j.description))) continue;\n    out.push('[Remotive] ' + j.title + ' | ' + j.company_name + ' | ' + (j.candidate_required_location || 'Remoto') + ' | ' + (j.salary || 's/i') + ' | ' + j.url + ' | ' + desc);\n  }\n} catch (e) {}\n\n// Adzuna\ntry {\n  const results = ($('Buscar en Adzuna').first().json.results || []).slice(0, 25);\n  for (const j of results) {\n    const descFull = limpiar(j.description);\n    if (!matchea(j.title, descFull)) continue;\n    const sal = j.salary_min ? Math.round(j.salary_min) + '-' + Math.round(j.salary_max || j.salary_min) : 's/i';\n    out.push('[Adzuna] ' + j.title + ' | ' + ((j.company||{}).display_name||'') + ' | ' + ((j.location||{}).display_name||'') + ' | ' + sal + ' | ' + j.redirect_url + ' | ' + descFull.slice(0,130));\n  }\n} catch (e) {}\n\n// Tecnoempleo (RSS XML)\ntry {\n  const xml = $('Buscar en Tecnoempleo').first().json.data || $('Buscar en Tecnoempleo').first().json.body || '';\n  const parts = xml.split('<item>');\n  const slice = (s, a, b) => { const i = s.indexOf(a); if (i<0) return ''; const j = s.indexOf(b, i+a.length); return j<0 ? '' : s.substring(i+a.length, j); };\n  const cdata = (s) => s.split('<![CDATA[').join('').split(']]>').join('').trim();\n  for (let k = 1; k < parts.length && k <= 30; k++) {\n    const it = parts[k];\n    const title = cdata(slice(it, '<title>', '</title>'));\n    const link = cdata(slice(it, '<link>', '</link>'));\n    const descFull = limpiar(cdata(slice(it, '<description>', '</description>')));\n    if (!matchea(title, descFull)) continue;\n    out.push('[Tecnoempleo] ' + title + ' | | España | s/i | ' + link + ' | ' + descFull.slice(0,130));\n  }\n} catch (e) {}\n\nconst lista = out.length\n  ? out.map((l, i) => '#' + (i+1) + ' ' + l).join('\\n\\n')\n  : 'NO se encontraron ofertas que coincidan con el perfil del usuario hoy.';\n\n// Arrastra el contexto del usuario para Groq y para crear la oferta\nreturn [{ json: {\n  ofertas:       lista,\n  total:         out.length,\n  email_usuario: U.email_usuario || U.email || '',\n  nombre:        U.nombre || '',\n  perfil:        U.perfil || '',\n  rol:           U.rol || '',\n  stack:         U.stack || [],\n  salario:       U.salario || 0,\n  modalidad:     U.modalidad || [],\n  ciudad:        U.ciudad || '',\n  cv_master_url: U.cv_master_url || '',\n  user_id:       U.user_id || ''\n}}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        10080,
-        3856
+        920,
+        460
       ],
-      "id": "21f87772-4fcd-4d7d-a5ec-c160debe1007",
+      "id": "search-formatear-0001",
       "name": "Formatear ofertas",
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.notion.com/v1/databases/33d11515f4b281efa776d0ea698b748f/query",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Notion-Version",
-              "value": "2022-06-28"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ page_size: 100, sorts: [{ timestamp: 'created_time', direction: 'descending' }] }) }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        340,
-        520
-      ],
-      "id": "notion-ofertas-existentes-001",
-      "name": "Notion - Ofertas existentes",
-      "credentials": {
-        "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
-          "name": "Notion account"
-        }
-      },
-      "retryOnFail": true,
-      "maxTries": 4,
-      "waitBetweenTries": 4000,
       "onError": "continueRegularOutput"
     }
   ],
@@ -1370,7 +1259,7 @@
       "main": [
         [
           {
-            "node": "Respond to Webhook Aprobar",
+            "node": "Code - Extraer ID",
             "type": "main",
             "index": 0
           }
@@ -1525,6 +1414,17 @@
         ]
       ]
     },
+    "Brevo - Enviar Carta+CV": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook Aprobar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Wait - Rate Limit Groq": {
       "main": [
         [
@@ -1552,7 +1452,7 @@
         [],
         [
           {
-            "node": "Notion - Ofertas existentes",
+            "node": "Buscar en Remotive",
             "type": "main",
             "index": 0
           }
@@ -1613,28 +1513,6 @@
           }
         ]
       ]
-    },
-    "Respond to Webhook Aprobar": {
-      "main": [
-        [
-          {
-            "node": "Code - Extraer ID",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Notion - Ofertas existentes": {
-      "main": [
-        [
-          {
-            "node": "Buscar en Remotive",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "active": true,
@@ -1642,18 +1520,15 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "c14ec37e-5877-404a-8647-d0be135cc1b5",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "978ca6c3386e24023114a4d0fda8f5de4f9bcd0d2be345755c91084c08e81c50"
+    "instanceId": "412279af05874a91c71ab423a28785ca4794e6d25db2a0a9bd172e77d16fca29"
   },
-  "nodeGroups": [],
-  "id": "5pTwriXcc6aYHO1Y",
   "tags": [
     {
-      "updatedAt": "2026-06-09T14:32:43.730Z",
-      "createdAt": "2026-06-09T14:32:43.730Z",
-      "id": "J6Rca5lT6TpiNkim",
+      "updatedAt": "2026-04-14T09:02:31.940Z",
+      "createdAt": "2026-04-14T09:02:31.940Z",
+      "id": "rFUyorkQKFtOdv5b",
       "name": "optimizado"
     }
   ]

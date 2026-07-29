@@ -1,0 +1,402 @@
+{
+  "name": "Asistente Correo Outlook",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -288
+      ],
+      "id": "be3b08f7-bae6-4d18-b14e-b426894387ed",
+      "name": "Microsoft Outlook Trigger",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "7Q8DwTg5VtDH6iNH",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "= Asunto: {{ $json.subject }}\n  Remitente: {{ $json.from }}\n  Contenido: {{ $json.bodyPreview }}\n",
+        "categories": {
+          "categories": [
+            {
+              "category": "Trabajo",
+              "description": "=Propuestas de trabajo, ofertas de empleo, colaboraciones,    clientes o reclutadores"
+            },
+            {
+              "category": "Factura",
+              "description": "=Facturas y suscripciones DEL NEGOCIO (autónomo): herramientas profesionales, software de trabajo,servicios deducibles. NO incluye Netflix ni ocio, NO incluye compras personales como Amazon o Mercadona"
+            },
+            {
+              "category": "Importante",
+              "description": "=Algo personal o urgente que requiere mi atención directa y no encaja en ninguna de las otras categorías"
+            },
+            {
+              "category": "Basura",
+              "description": "Newsletters, marketing, promociones, publicidad,    spam"
+            },
+            {
+              "category": "Administracion",
+              "description": "=Notificaciones oficiales de organismos públicos: Seguridad Social, Hacienda/AEAT,    Agencia Tributaria, Comunidad de Madrid, ayuntamiento, trámites de autónomos, plazos y avisos    administrativos"
+            },
+            {
+              "category": "Compras",
+              "description": "Compras y suscripciones personales: Amazon, Mercadona, Netflix, tiendas online, ocio, entretenimiento, recibos personales"
+            },
+            {
+              "category": "Colegio",
+              "description": "Colegio, profesores, AMPA y clubs deportivos, míos o de mis hijos: avisos, reuniones, actividades,    excursiones, cuotas de esas actividades"
+            },
+            {
+              "category": " Personal ",
+              "description": " mensajes de amigos y familia (personas)"
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "Please classify the text provided by the user into one of the following categories: {categories}, and use the provided formatting instructions below. Don't explain, and only output the JSON.\n\nCRITICAL OUTPUT RULES:\n- Return ONLY a raw, valid JSON object.\n- Do NOT wrap the JSON in markdown.\n- Do NOT use code fences or backticks.\n- NEVER write ```json or ```.\n- The first character of your response must be { and the last must be }.",
+          "enableAutoFixing": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        -288
+      ],
+      "id": "b835cedd-3e5a-4c6d-84ca-7c97ec5540e4",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        320,
+        128
+      ],
+      "id": "4033ef99-3c0a-4b71-ae73-b511ad07c212",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "Ewz07GBHAM5voex1",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {},
+            {},
+            {},
+            {},
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        -864
+      ],
+      "id": "547da54e-2dfa-45b7-9805-aa632e667003",
+      "name": "Create a database page",
+      "credentials": {
+        "notionApi": {
+          "id": "J6I7Mvef33RqVDRr",
+          "name": "Notion account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-5279010974",
+        "text": "=📄 *FACTURA*\n\n*De:* {{ $json.from }}\n*Asunto:* {{ $json.subject }}\n\n{{ $json.bodyPreview }}\n\n_Revisa si hay que reenviar a la gestoría._",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        -480
+      ],
+      "id": "593c3e29-132f-4356-ae68-d529eed21135",
+      "name": "Aviso Factura",
+      "webhookId": "0a4b7fef-8a08-4dcf-a44c-74ea98a11270",
+      "credentials": {
+        "telegramApi": {
+          "id": "QTdaowpda3TIzz1k",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "37511515-f4b2-81a7-b863-fadf4c353b21",
+          "mode": "list",
+          "cachedResultName": "Facturas pendientes",
+          "cachedResultUrl": "https://app.notion.com/p/37511515f4b281a7b863fadf4c353b21"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {},
+            {},
+            {},
+            {},
+            {},
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        -288
+      ],
+      "id": "fd1a4fa2-ed46-4dc1-859a-401584f78137",
+      "name": "Registrar Factura",
+      "credentials": {
+        "notionApi": {
+          "id": "J6I7Mvef33RqVDRr",
+          "name": "Notion account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-5115876713",
+        "text": "=⚠️ *IMPORTANTE*\n\n*De:* {{ $json.from }}\n*Asunto:* {{ $json.subject }}\n\n{{ $json.bodyPreview }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        -96
+      ],
+      "id": "391f146a-bde3-406c-993f-7dd955176958",
+      "name": "Aviso Importante",
+      "webhookId": "71040f6d-cca7-4e83-a921-ae891725b200",
+      "credentials": {
+        "telegramApi": {
+          "id": "QTdaowpda3TIzz1k",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-5115876713",
+        "text": "=🏛️ *ADMINISTRACIÓN*\n\n*De:* {{ $json.from }}\n*Asunto:* {{ $json.subject }}\n\n{{ $json.bodyPreview }}\n\n_Posible plazo o trámite — no lo dejes pasar._",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        96
+      ],
+      "id": "88aa9b3f-d334-4b1a-b3fe-158b6fd9ee0d",
+      "name": "Aviso Administracion",
+      "webhookId": "646d86d4-cef3-4256-8d9a-b2ac6da83683",
+      "credentials": {
+        "telegramApi": {
+          "id": "QTdaowpda3TIzz1k",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-5115876713",
+        "text": "=🎒 *COLEGIO*\n\n*De:* {{ $json.from }}\n*Asunto:* {{ $json.subject }}\n\n{{ $json.bodyPreview }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        288
+      ],
+      "id": "f7c27432-a775-4548-8e88-e728df1bc8d4",
+      "name": "Aviso Colegio",
+      "webhookId": "6f58179a-67e6-45ca-afb4-25cb5b29ee64",
+      "credentials": {
+        "telegramApi": {
+          "id": "QTdaowpda3TIzz1k",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $json.id }}  ",
+          "mode": "id"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "AQMkADAwATE0YjUwLWIzMTAtYmFmNC0wMAItMDAKAC4AAAPksKQwvNTJQrR4UoJ7NYdMAQCsi09eQ_I9SbnsxJ3cdVBxAAkTmd15AAAA",
+          "mode": "list",
+          "cachedResultName": "Preborrar",
+          "cachedResultUrl": "https://outlook.office365.com/mail/AQMkADAwATE0YjUwLWIzMTAtYmFmNC0wMAItMDAKAC4AAAPksKQwvNTJQrR4UoJ7NYdMAQCsi09eQ_I9SbnsxJ3cdVBxAAkTmd15AAAA"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        592,
+        -672
+      ],
+      "id": "0f4c2a4b-c05b-4045-959e-5c8759994d04",
+      "name": "Move a message",
+      "webhookId": "560b29fc-7323-478d-aa09-70c8404da507",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "7Q8DwTg5VtDH6iNH",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Microsoft Outlook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Create a database page",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aviso Factura",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Registrar Factura",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aviso Importante",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Move a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aviso Administracion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Aviso Colegio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f1a9deba-4f62-431c-9d2a-7d598f26889c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "978ca6c3386e24023114a4d0fda8f5de4f9bcd0d2be345755c91084c08e81c50"
+  },
+  "nodeGroups": [],
+  "id": "tVLM6O2a5doN2XZr",
+  "tags": []
+}

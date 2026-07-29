@@ -1,0 +1,555 @@
+{
+  "name": "Captura Gmail (Facturas + Trabajo)",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        736,
+        -80
+      ],
+      "id": "81ddd69f-8d5f-4cb3-903a-07d424ee46fb",
+      "name": "Gmail hello.cookyourweb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mbwDuzxg0yi4XuhU",
+          "name": "Gmail account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        736,
+        64
+      ],
+      "id": "49255248-f3b5-46c8-96df-eec0a2763e04",
+      "name": "Gmail verserper",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mbwDuzxg0yi4XuhU",
+          "name": "Gmail account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        736,
+        208
+      ],
+      "id": "820aea62-a447-4824-a193-8ef80d1603bd",
+      "name": "Gmail laura.planesqiu",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mbwDuzxg0yi4XuhU",
+          "name": "Gmail account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        736,
+        352
+      ],
+      "id": "36ec8cf4-0bd3-4a15-9eec-3a89d470ad8c",
+      "name": "Gmail astrodef87",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mbwDuzxg0yi4XuhU",
+          "name": "Gmail account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        736,
+        480
+      ],
+      "id": "70e43904-20b4-4973-b541-875fb7da5bdd",
+      "name": "Gmail wunjocreations",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mbwDuzxg0yi4XuhU",
+          "name": "Gmail account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        736,
+        624
+      ],
+      "id": "1437b0d3-3159-43b5-8ca5-9528a8df521f",
+      "name": "Gmail agenda.tuvueltaalsol",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mbwDuzxg0yi4XuhU",
+          "name": "Gmail account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=Asunto: {{ $json.Subject }}\nRemitente: {{ $json.From }}\nContenido: {{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Factura",
+              "description": "=Facturas, recibos y suscripciones DEL NEGOCIO (autónomo): herramientas profesionales, software de trabajo, servicios deducibles, cobros. NO incluye compras personales ni ocio."
+            },
+            {
+              "category": "Trabajo",
+              "description": "=Propuestas de trabajo, ofertas de empleo, colaboraciones, clientes, reclutadores y proyectos profesionales."
+            },
+            {
+              "category": "Importante",
+              "description": "=Algo relevante, personal o urgente que requiere mi atención directa y NO es factura ni trabajo. NO es marketing."
+            },
+            {
+              "category": "Resto",
+              "description": "=Marketing, newsletters, promociones, publicidad, ofertas comerciales, redes sociales, notificaciones automáticas y cualquier cosa no relevante."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        1056,
+        224
+      ],
+      "id": "e4c07482-1deb-45b2-b6f2-21dde1e6c4df",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        976,
+        464
+      ],
+      "id": "7a2a4f7c-4fa1-4631-817b-f35549e17552",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "xtkFiLenKtYpcKzz",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "37511515-f4b2-81a7-b863-fadf4c353b21",
+          "mode": "list",
+          "cachedResultName": "Facturas pendientes",
+          "cachedResultUrl": "https://app.notion.com/p/37511515f4b281a7b863fadf4c353b21"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Concepto|title",
+              "title": "={{ $json.Subject }}"
+            },
+            {
+              "key": "Proveedor|rich_text",
+              "textContent": "={{ $json.From }}"
+            },
+            {
+              "key": "Resumen|rich_text",
+              "textContent": "={{ $json.snippet }}"
+            },
+            {
+              "key": "Estado|select",
+              "selectValue": "=Por descargar"
+            },
+            {
+              "key": "NIF OK|select",
+              "selectValue": "=Por revisar"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1424,
+        -80
+      ],
+      "id": "ce3f5226-8103-4d2d-98a4-5256b61abb63",
+      "name": "Registrar Factura",
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-5279010974",
+        "text": "=📄 *FACTURA (Gmail)*\n\n*De:* {{ $json.From }}\n*Asunto:* {{ $json.Subject }}\n\n{{ $json.snippet }}\n\n_Descárgala y regístrala._",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1424,
+        80
+      ],
+      "id": "38732826-860c-42f6-b81f-fbd8960ece56",
+      "name": "Aviso Factura",
+      "webhookId": "2e9fdaf2-b3ce-44c6-90b7-e6eb9b6558b3",
+      "credentials": {
+        "telegramApi": {
+          "id": "QTdaowpda3TIzz1k",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "37511515-f4b2-81e8-a984-f6563ec3a53e",
+          "mode": "list",
+          "cachedResultName": "Correos – Trabajo/Colaboración",
+          "cachedResultUrl": "https://app.notion.com/p/37511515f4b281e8a984f6563ec3a53e"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Asunto|title",
+              "title": "={{ $json.Subject }}"
+            },
+            {
+              "key": "Remitente|rich_text",
+              "textContent": "={{ $json.From }}"
+            },
+            {
+              "key": "Resumen|rich_text",
+              "textContent": "={{ $json.snippet }}"
+            },
+            {
+              "key": "Estado|select",
+              "selectValue": "=Nuevo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1424,
+        240
+      ],
+      "id": "d7423bb3-519e-4fb5-8633-cf6f79a49e4e",
+      "name": "Registrar Trabajo",
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-5115876713",
+        "text": "=💼 *TRABAJO (Gmail)*\n\n*De:* {{ $json.From }}\n*Asunto:* {{ $json.Subject }}\n\n{{ $json.snippet }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1424,
+        400
+      ],
+      "id": "518de63d-4f68-43ad-b1f4-f18de0204771",
+      "name": "Aviso Trabajo",
+      "webhookId": "aa4cd872-8342-43ff-8524-909da122d69f",
+      "credentials": {
+        "telegramApi": {
+          "id": "QTdaowpda3TIzz1k",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-5115876713",
+        "text": "=⚠️ *IMPORTANTE (Gmail)*\n\n*De:* {{ $json.From }}\n*Asunto:* {{ $json.Subject }}\n\n{{ $json.snippet }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1424,
+        560
+      ],
+      "id": "617a1f0c-900d-4611-b8b1-2716f7c4c013",
+      "name": "Aviso Importante",
+      "webhookId": "9ccb167f-42e1-419c-b8c0-26f6a103cc18",
+      "credentials": {
+        "telegramApi": {
+          "id": "QTdaowpda3TIzz1k",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        720,
+        -304
+      ],
+      "id": "24c25153-4b94-443f-9520-e541af172df7",
+      "name": "Gmail veronica4world",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mbwDuzxg0yi4XuhU",
+          "name": "Gmail account 8"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail hello.cookyourweb": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail verserper": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail laura.planesqiu": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail astrodef87": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail wunjocreations": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail agenda.tuvueltaalsol": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Registrar Factura",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aviso Factura",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registrar Trabajo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aviso Trabajo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aviso Importante",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail veronica4world": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0eeaf82a-ef41-480b-99ff-9d3f6b0cb7ef",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "978ca6c3386e24023114a4d0fda8f5de4f9bcd0d2be345755c91084c08e81c50"
+  },
+  "nodeGroups": [],
+  "id": "yfmYPJc4FN2425Dt",
+  "tags": []
+}

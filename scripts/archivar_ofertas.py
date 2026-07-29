@@ -12,16 +12,74 @@ Uso:
     python3 scripts/archivar_ofertas.py
 """
 
-import requests
+import os
+import json
+import urllib.request
+import urllib.error
 
-NOTION_API_KEY = input("Introduce tu NOTION_API_KEY: ").strip()
 DATABASE_ID = "33d11515-f4b2-81ef-a776-d0ea698b748f"
+
+# Nombres de variable posibles para el token (el tuyo puede ser cualquiera de estos)
+TOKEN_VARS = ["NOTION_TOKEN", "NOTION_API_KEY", "NOTION_KEY", "NOTION_SECRET"]
+
+# .env donde puede estar el token (se prueban en orden)
+ENV_PATHS = [
+    os.path.join(os.path.dirname(__file__), "..", ".env"),
+    os.path.join(os.path.dirname(__file__), "..", "..", "cv-server", ".env"),
+    ".env",
+]
+
+
+def _leer_env_file(path):
+    """Lee un .env sencillo y devuelve {VAR: valor} (sin dependencias externas)."""
+    valores = {}
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            for linea in f:
+                linea = linea.strip()
+                if not linea or linea.startswith("#") or "=" not in linea:
+                    continue
+                clave, _, valor = linea.partition("=")
+                valores[clave.strip()] = valor.strip().strip('"').strip("'")
+    except FileNotFoundError:
+        pass
+    return valores
+
+
+def obtener_token():
+    """Busca el token en variables de entorno, luego en .env, y si no, lo pide."""
+    for var in TOKEN_VARS:
+        if os.environ.get(var):
+            print(f"Token leído de la variable de entorno {var}.")
+            return os.environ[var].strip()
+    for path in ENV_PATHS:
+        valores = _leer_env_file(path)
+        for var in TOKEN_VARS:
+            if valores.get(var):
+                print(f"Token leído de {os.path.abspath(path)} ({var}).")
+                return valores[var].strip()
+    return input("No encontré el token en el entorno ni en .env. Pégalo aquí: ").strip()
+
+
+NOTION_API_KEY = obtener_token()
 
 HEADERS = {
     "Authorization": f"Bearer {NOTION_API_KEY}",
     "Notion-Version": "2022-06-28",
     "Content-Type": "application/json",
 }
+
+
+def _api(url, method="GET", body=None):
+    """Llamada HTTP a la API de Notion usando solo la stdlib (sin requests)."""
+    data = json.dumps(body).encode("utf-8") if body is not None else None
+    req = urllib.request.Request(url, data=data, headers=HEADERS, method=method)
+    try:
+        with urllib.request.urlopen(req) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        detalle = e.read().decode("utf-8", "replace")
+        raise RuntimeError(f"HTTP {e.code}: {detalle}") from None
 
 
 def listar_ofertas():
@@ -32,9 +90,7 @@ def listar_ofertas():
         payload = {"page_size": 100}
         if cursor:
             payload["start_cursor"] = cursor
-        r = requests.post(url, headers=HEADERS, json=payload)
-        r.raise_for_status()
-        data = r.json()
+        data = _api(url, method="POST", body=payload)
         for pg in data.get("results", []):
             props = pg.get("properties", {})
             empresa = _texto(props.get("Empresa"))
@@ -57,8 +113,7 @@ def _texto(prop):
 
 def archivar(page_id):
     url = f"https://api.notion.com/v1/pages/{page_id}"
-    r = requests.patch(url, headers=HEADERS, json={"archived": True})
-    r.raise_for_status()
+    _api(url, method="PATCH", body={"archived": True})
 
 
 def main():

@@ -66,10 +66,33 @@ dicen "y construyo cosas que funcionan".
 `wunjocreations`, `cookyourwebai`, `bespoke-finance-pro` y `calendarioAdvientoIA` no
 tienen descripción. Un repo sin descripción no dice nada aunque el código sea bueno.
 
-### 4. Las tres webs
-Comprobar que cada una enlaza a las otras y a LinkedIn. Si un recruiter llega a
-`cookyourwebai.es` desde el CV, debería poder llegar a `tuvueltalsol.es` sin volver
-al CV.
+### 4. `cookyourwebai.es` no enlaza a nada tuyo ⚠️
+
+**Verificado el 29-jul**: sus únicos enlaces salientes son `lovable.dev` y Google Tag
+Manager. Cero menciones a `tuvueltalsol.es`, `wunjocreations.com`, LinkedIn o GitHub.
+
+Importa porque es la web que va en **Website** de GitHub (y ya está en LinkedIn como
+Company): es la puerta de entrada a tu marca. Hoy quien entra no puede ir a ningún
+sitio.
+
+Añadir una sección de proyectos con:
+
+- Tu Vuelta al Sol → `tuvueltalsol.es`
+- Wunjo Creations → `wunjocreations.com`
+- GitHub → `github.com/cookyourweb`
+- LinkedIn → `linkedin.com/in/veronica4web`
+
+**Y quitar el badge de `lovable.dev`** si está visible en la página. Usar Lovable no es
+el problema; un badge de herramienta no-code en la web de tu propia agencia de
+desarrollo manda una señal que no conviene ante un recruiter técnico.
+
+### 4b. Website de GitHub: `cookyourwebai.es`, no `tuvueltalsol.es`
+
+En GitHub el campo `Website` se lee como *"quién eres profesionalmente"*. CookYourWeb es
+la marca (empresa actual en el CV, experiencia en LinkedIn, firma del correo); Tu Vuelta
+al Sol es **uno de sus productos**. Poner el producto obliga al lector a deducir la
+relación; poner la marca lo hace entrar por la puerta correcta. Además ya es el enlace
+que figura en LinkedIn: mismo enlace en los dos sitios.
 
 ### 5. Decidir sobre `buscartrabajo` (repo público)
 Hoy no tiene nada comprometedor **en `origin/main`** (verificado). Pero la rama
