@@ -86,6 +86,40 @@ a valorar por ese repo, y el coste de equivocarse es alto.
 
 ---
 
+## LinkedIn (más adelante, no urge)
+
+**El titular ya está bien y NO se toca.** Verificado el 29-jul contra el `Profile (8).pdf`
+exportado el 23-jul: es idéntico al del CV Master, palabra por palabra.
+
+```
+Frontend Tech Lead | Full-Stack Developer | AI Engineer | React · TypeScript · Node.js | +10 años en producto digital
+```
+
+> ⚠️ La vista pública de LinkedIn **sin sesión** muestra "Verónica S." y solo
+> `cookyourwebai`. Es un recorte de LinkedIn, no un problema del perfil. Para auditarlo,
+> usar el PDF exportado, no `WebFetch`.
+
+### Lo único a ajustar cuando toque
+
+En el **Extracto**:
+
+> *"Como Tech Lead **fui responsable de la migración frontend completa** de ALD Automotive a Ayvens"*
+
+Es la misma inflación de alcance que se quitó de los CVs el 28-jul (`sole technical
+authority`, `designed backend services`). Si alguien cruza LinkedIn con el CV, el sitio
+público dice **más** de lo que el CV sostiene, que es la dirección equivocada.
+
+Redacción propuesta:
+
+> *"Como Tech Lead **lideré el frontend de** la migración de ALD Automotive a Ayvens: no
+> solo el rebranding visual, sino la nueva arquitectura de componentes del design system,
+> coordinando con diseño, backend y producto."*
+
+El resto del Extracto está bien: el gancho de *"sé exactamente qué duele"* y el cierre
+con llamada a la acción funcionan.
+
+---
+
 ## Regla de fondo
 
 **Sumar no es acumular.** 61 repos públicos no suman más que 6 bien elegidos: si hay
