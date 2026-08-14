@@ -75,3 +75,7 @@ client_secret.json.xml
 # Temporales
 *.tmp
 *.temp
+
+# Material personal de busqueda de empleo: nunca se sube
+entrevistas/
+backups-master/
