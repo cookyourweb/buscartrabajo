@@ -26,7 +26,7 @@ FLASK CV SERVER (Render Free)
   POST /generar-cv      → genera CV adaptado al puesto y lo sube a Drive
                           (devuelve: link adaptado + cv_master_url)
   Capa LLM: CV y carta con Claude Sonnet 4.6 (Groq de fallback)
-            Resto: Groq openai/gpt-oss-120b → Gemini 1.5 flash → Claude Haiku 4.5
+            Resto: Groq openai/gpt-oss-120b → Gemini 3.6 flash → Claude Haiku 4.5
         │
         ▼
 n8n  ──  instancia: n8n-asistente-correo.onrender.com

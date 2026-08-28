@@ -59,7 +59,7 @@ Sistema multi-usuario de búsqueda de empleo que:
 │ Capa LLM:                                                │
 │  CV y carta: Claude Sonnet 4.6 (Groq de fallback)        │
 │  Resto: 1. Groq openai/gpt-oss-120b  ← primario          │
-│         2. Gemini 1.5 flash                              │
+│         2. Gemini 3.6 flash                              │
 │         3. Claude Haiku 4.5                              │
 └──────────────┬───────────────────────────────────────────┘
                ↓
@@ -104,7 +104,7 @@ Sistema multi-usuario de búsqueda de empleo que:
 | `GROQ_API_KEY` | Key Groq (obligatoria) |
 | `GROQ_MODEL` | `openai/gpt-oss-120b` (el anterior lo retiro Groq el 16-ago-2026) |
 | `GEMINI_API_KEY` | Fallback opcional |
-| `GEMINI_MODEL` | `gemini-1.5-flash` |
+| `GEMINI_MODEL` | `gemini-3.6-flash` (1.5 y 2.0 dan 404 desde antes del 28-ago-2026) |
 | `CLAUDE_API_KEY` | Fallback opcional |
 | `CLAUDE_MODEL` | `claude-3-haiku-20240307` |
 | `GOOGLE_CLIENT_ID` | OAuth Drive |
