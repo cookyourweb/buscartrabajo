@@ -6,7 +6,8 @@
 > - Instancia n8n viva: **`n8n-asistente-correo.onrender.com`** (NO `n8n-st1v` / `n8n-qwmu`).
 > - Workflow vigente: **`WF2-integrado-v3`** (NO `WF2-BuscarTrabajo-v2-Groq`).
 > - Ofertas **reales** (Remotive + Adzuna + Tecnoempleo) con anti-spam, NO inventadas.
-> - LLM de ofertas/cartas: **Groq** (`llama-3.3-70b-versatile`), NO Claude.
+> - LLM: ofertas con **Groq** (`openai/gpt-oss-120b`); CV y carta con **Claude Sonnet 4.6**,
+>   y ahi Groq queda de fallback. `llama-3.3-70b-versatile` lo retiro Groq el 16-ago-2026.
 > - Schema Ofertas: la carta va en **`Carta Enviada`** (no "Carta generada"); el email del user en **`Email Enviado`** (no "Email usuario"); campos nuevos `CV usado` (=CV master), `Link CV Drive` (=CV adaptado), `Fecha envio`, `Fecha Envio Empresa`, `Seguimiento`, `Usuario` (relation).
 > - Envío a empresa **híbrido con edición previa** (revisar carta/CV antes de mandar).
 >
@@ -55,10 +56,11 @@ Sistema multi-usuario de búsqueda de empleo que:
 │  POST /registro      → Crea usuario nuevo + dispara WF1  │
 │  POST /generar-cv    → Genera CV adaptado y sube a Drive │
 │                                                          │
-│ Capa LLM (orden de fallback):                            │
-│  1. Groq (llama-3.3-70b-versatile)  ← primario           │
-│  2. Gemini 1.5 flash                                     │
-│  3. Claude 3 haiku                                       │
+│ Capa LLM:                                                │
+│  CV y carta: Claude Sonnet 4.6 (Groq de fallback)        │
+│  Resto: 1. Groq openai/gpt-oss-120b  ← primario          │
+│         2. Gemini 1.5 flash                              │
+│         3. Claude Haiku 4.5                              │
 └──────────────┬───────────────────────────────────────────┘
                ↓
 ┌──────────────────────────────────────────────────────────┐
@@ -100,7 +102,7 @@ Sistema multi-usuario de búsqueda de empleo que:
 | Variable | Valor / Descripción |
 |----------|--------------------|
 | `GROQ_API_KEY` | Key Groq (obligatoria) |
-| `GROQ_MODEL` | `llama-3.3-70b-versatile` |
+| `GROQ_MODEL` | `openai/gpt-oss-120b` (el anterior lo retiro Groq el 16-ago-2026) |
 | `GEMINI_API_KEY` | Fallback opcional |
 | `GEMINI_MODEL` | `gemini-1.5-flash` |
 | `CLAUDE_API_KEY` | Fallback opcional |

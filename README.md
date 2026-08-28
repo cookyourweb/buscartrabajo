@@ -25,7 +25,8 @@ FLASK CV SERVER (Render Free)
   POST /registro        → crea usuario en Notion Usuarios + dispara WF1
   POST /generar-cv      → genera CV adaptado al puesto y lo sube a Drive
                           (devuelve: link adaptado + cv_master_url)
-  Capa LLM (fallback): Groq (llama-3.3-70b-versatile) → Gemini 1.5 flash → Claude 3 haiku
+  Capa LLM: CV y carta con Claude Sonnet 4.6 (Groq de fallback)
+            Resto: Groq openai/gpt-oss-120b → Gemini 1.5 flash → Claude Haiku 4.5
         │
         ▼
 n8n  ──  instancia: n8n-asistente-correo.onrender.com
@@ -71,7 +72,7 @@ n8n  ──  instancia: n8n-asistente-correo.onrender.com
 | Notion | api.notion.com | CRM Usuarios + Ofertas |
 | Google Drive | drive.google.com | CVs adaptados |
 | Brevo | api.brevo.com | Envío de emails |
-| Groq | api.groq.com | LLM ofertas + cartas (llama-3.3-70b-versatile) |
+| Groq | api.groq.com | LLM de ofertas y fallback de CV/carta (openai/gpt-oss-120b) |
 
 > ⚠️ **Instancia n8n activa = `n8n-asistente-correo`.** Las viejas (`n8n-st1v`, `n8n-qwmu`) están deprecadas. n8n NO permite dos workflows con el mismo webhook path activos a la vez → tener UNA sola instancia activa con estos paths.
 
