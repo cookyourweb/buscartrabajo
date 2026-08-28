@@ -64,13 +64,15 @@ Sistema multi-usuario de búsqueda de empleo que:
 └──────────────┬───────────────────────────────────────────┘
                ↓
 ┌──────────────────────────────────────────────────────────┐
-│ N8N-ST1V (Render Free) — workflows orquestadores         │
+│ n8n-asistente-correo (Render Free) — orquestador         │
 │                                                          │
-│ WF1 BuscarTrabajo-Usuarios (10 nodos):                   │
-│  Webhook /nuevo-usuario  → Code → Respond + HTTP→WF2     │
-│  Webhook /buscar-ahora   → Notion query → Code → HTTP→WF2│
+│ NO HAY WF1. Verificado el 28ago2026 barriendo los 10     │
+│ workflows nodo a nodo: los webhooks /nuevo-usuario y     │
+│ /buscar-ahora NO EXISTEN en ninguno. El cv-server les    │
+│ llamaba y se comia un 404 en silencio. Hoy llama a       │
+│ /buscar-para-user, que si existe.                        │
 │                                                          │
-│ WF2 BuscarTrabajo-v2-Groq (39 nodos):                    │
+│ UN solo workflow, CsvmtPcLVmGIZg6C (50 nodos):           │
 │  Trigger:                                                │
 │   - Schedule (9am UTC)                                   │
 │   - Webhook /buscar-para-user (interno desde WF1)        │
@@ -113,8 +115,8 @@ Sistema multi-usuario de búsqueda de empleo que:
 | `FOLDER_CV_MASTERS` | `1duJA_G3lLbOqiUYoSJcsXAvbtJUdcmzR` |
 | `NOTION_TOKEN` | Token integración Notion |
 | `NOTION_DB_USUARIOS` | `34811515f4b280f19a42f8da5e91a8fe` |
-| `WEBHOOK_NUEVO_USUARIO` | `https://n8n-st1v.onrender.com/webhook/nuevo-usuario` |
-| `WEBHOOK_BUSCAR_AHORA` | `https://n8n-st1v.onrender.com/webhook/buscar-ahora` |
+| ~~`WEBHOOK_NUEVO_USUARIO`~~ | **ELIMINADA el 28-ago-2026.** Apuntaba a un webhook que no existe. |
+| ~~`WEBHOOK_BUSCAR_AHORA`~~ | **No definirla.** El código apunta por defecto a `https://n8n-asistente-correo.onrender.com/webhook/buscar-para-user`. Si la defines, PISA al default. |
 
 ### Notion DBs
 
@@ -154,7 +156,7 @@ Sistema multi-usuario de búsqueda de empleo que:
 | Link CV Drive | URL | rellenado tras Aprobar |
 | Carta generada | Rich text | rellenado tras Aprobar |
 
-### Credenciales n8n (en n8n-st1v)
+### Credenciales n8n (en `n8n-asistente-correo`)
 
 - `Notion account` — token integración Notion
 - `Brevo` (o `Sendinblue`) — API key activa `n8napikey`
@@ -203,7 +205,7 @@ Sistema multi-usuario de búsqueda de empleo que:
 
 ### 7. 2 instancias n8n duplicadas
 - Sesión empezó con `n8n-qwmu` (vieja, vacía)
-- Trabajo se hizo en `n8n-st1v` (nueva, activa)
+- Trabajo se hizo en `n8n-st1v` (entonces la nueva; HOY TAMBIEN ESTA MUERTA, la viva es `n8n-asistente-correo`)
 - Env vars del CV Server apuntaban a la vieja → ningún workflow se disparaba
 - Lección: documentar QUÉ instancia usar y mantener UNA sola activa
 
@@ -244,18 +246,14 @@ curl https://cv-server-ggd8.onrender.com/health
 # 2. ¿LLM responde?
 curl https://cv-server-ggd8.onrender.com/debug
 
-# 3. ¿Webhook nuevo-usuario funciona?
-curl -X POST https://n8n-st1v.onrender.com/webhook/nuevo-usuario \
-  -H "Content-Type: application/json" \
-  -d '{"nombre":"Test","email":"test@test.com"}'
-
-# 4. ¿Webhook buscar-ahora funciona?
-curl -X POST https://n8n-st1v.onrender.com/webhook/buscar-ahora \
-  -H "Content-Type: application/json" \
-  -d '{"email":"hello.cookyourweb@gmail.com","nombre":"vero"}'
+# 3 y 4. Los webhooks /nuevo-usuario y /buscar-ahora NO EXISTEN.
+#         No los busques: nunca se dieron de alta en n8n.
+#         El alta de usuario la hace el cv-server contra Notion, y la
+#         busqueda inmediata sale por /buscar-para-user (el 5).
 
 # 5. ¿Webhook interno buscar-para-user funciona?
-curl -X POST https://n8n-st1v.onrender.com/webhook/buscar-para-user \
+#    OJO: dispara una busqueda REAL y manda correos.
+curl -X POST https://n8n-asistente-correo.onrender.com/webhook/buscar-para-user \
   -H "Content-Type: application/json" \
   -d '{"nombre":"vero","email":"...","perfil":"...","rol":"...","stack":["React"],"salario":50000,"modalidad":["Remoto"],"ciudad":"Madrid","source":"test"}'
 ```
