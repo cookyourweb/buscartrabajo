@@ -130,7 +130,7 @@ Antes de probar, verifica que estas credenciales estén configuradas en n8n:
 - **Database ID:** `33d11515-f4b2-81ef-a776-d0ea698b748f`
 
 ### 2. Claude API (Anthropic)
-- **API Key:** `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`
+- **API Key:** `sk-ant-TU_CLAVE_AQUI`
 
 ### 3. Brevo (Email)
 - **API Key:** `REEMPLAZAR_POR_TU_BREVO_API_KEY`
