@@ -79,3 +79,8 @@ client_secret.json.xml
 # Material personal de busqueda de empleo: nunca se sube
 entrevistas/
 backups-master/
+
+# Configuracion local del agente: no es del proyecto
+# OJO: .gitignore NO desindexa lo ya trackeado. Esto se saco con
+# `git rm -r --cached .claude` el 28-ago-2026.
+.claude/
