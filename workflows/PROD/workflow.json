@@ -1,0 +1,1783 @@
+{
+  "name": "BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/databases/33d11515f4b281efa776d0ea698b748f/query",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ page_size: 100, sorts: [{ timestamp: 'created_time', direction: 'descending' }] }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2096,
+        -624
+      ],
+      "id": "bb807c7b-f895-42b9-b800-9cb8152198ce",
+      "name": "Notion - Ofertas existentes",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/formatear-ofertas.js"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        -624
+      ],
+      "id": "25bbc9d2-f420-4f0f-b2a0-d04c1e66585b",
+      "name": "Formatear ofertas",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://www.tecnoempleo.com/alertas-empleo-rss.php",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1424,
+        -624
+      ],
+      "id": "2c948bc2-9951-489b-a4ec-55275b72b144",
+      "name": "Buscar en Tecnoempleo",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.adzuna.com/v1/api/jobs/es/search/1?app_id=524625d0&results_per_page=50&what={{ encodeURIComponent(($('Loop Over Users').item.json.rol || 'AI Engineer').split('·')[0].trim()) }}&salary_min={{ $('Loop Over Users').item.json.salario || 0 }}&sort_by=salary&max_days_old=30&content-type=application/json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1648,
+        -624
+      ],
+      "id": "d81c6dea-a0af-4321-a001-c38e6268198f",
+      "name": "Buscar en Adzuna",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "WhkI7ZJT2QCQ58OO",
+          "name": "Adzuna app_key"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://remotive.com/api/remote-jobs?category=software-dev",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1872,
+        -624
+      ],
+      "id": "6a5f791a-b8ae-4480-9987-dada41138986",
+      "name": "Buscar en Remotive",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2320,
+        -560
+      ],
+      "id": "259e59e1-9759-4c52-adda-530100d5c048",
+      "name": "Loop Over Users"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.brevo.com/v3/smtp/email",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  sender: {name: 'N8N Error Monitor', email: 'veronica@cookyourwebai.es'},\n  to: [{email: $json.to}],\n  subject: $json.subject,\n  htmlContent: $json.htmlContent\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2768,
+        224
+      ],
+      "id": "c435ff0f-63e0-4b86-b987-29da4ec639b1",
+      "name": "Brevo - Enviar Email Error1",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "rIV8aruieHBr9uC3",
+          "name": "Brevo account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/code-preparar-email-error1.js"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2992,
+        224
+      ],
+      "id": "a87c554e-29d8-499a-8da3-60f9e932aa02",
+      "name": "Code - Preparar Email Error1"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -976,
+        -624
+      ],
+      "id": "3fbfe82c-4883-4c51-8fb4-c089d1be064e",
+      "name": "Wait - Rate Limit Groq",
+      "webhookId": "67526489-e050-4c23-81de-88680d3415f0"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1648,
+        -1200
+      ],
+      "id": "56c023a2-ec10-4c1a-b022-77c3cd782962",
+      "name": "Wait",
+      "webhookId": "ef05fdc3-b5eb-4ea7-9cbf-481eb31ca166"
+    },
+    {
+      "parameters": {
+        "url": "https://cv-server-ggd8.onrender.com/health",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1872,
+        -1200
+      ],
+      "id": "c410a0b0-fc63-4129-89cf-dee16539a819",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 15000,
+      "continueOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/code-normalizar-interno.js"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2544,
+        -464
+      ],
+      "id": "d2a20f97-d9eb-46b0-b831-1d1fe3ce775e",
+      "name": "Code — Normalizar (interno)"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "buscar-para-user",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "3be69d38-b8a4-47af-a8a9-054fed19ff44",
+      "name": "Webhook — Buscar para user",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2768,
+        -464
+      ],
+      "webhookId": "buscar-para-user"
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/code-normalizar-users-schedule.js"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2544,
+        -656
+      ],
+      "id": "3ee7d5e6-f31c-40ea-bd30-184caf43f1e9",
+      "name": "Code — Normalizar users (schedule)"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/databases/34811515f4b280f19a42f8da5e91a8fe/query",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  filter: { property: 'Activo', checkbox: { equals: true } },\n  page_size: 100\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2768,
+        -656
+      ],
+      "id": "4a5cc42a-aaff-489c-bd62-54b757a1c87f",
+      "name": "Notion — Query usuarios activos",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "✅ Oferta aprobada - Generando carta y CV...",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -2768,
+        -1296
+      ],
+      "id": "fcc16e49-486f-4395-aaab-31a8695ee45a",
+      "name": "Respond to Webhook Aprobar"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "✅ Candidatura enviada a empresa correctamente",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -1648,
+        -16
+      ],
+      "id": "e6f6124b-7616-4341-addf-0a79fa700f10",
+      "name": "Respond to Webhook Mandar Empresa"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "✅ Oferta descartada correctamente",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -2544,
+        -240
+      ],
+      "id": "396bb502-cb23-4fec-9863-43c35d71c9b0",
+      "name": "Respond to Webhook Descartar"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.brevo.com/v3/smtp/email",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.brevoBody }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1872,
+        -16
+      ],
+      "id": "8b06bea5-b987-42e1-bee1-9dcd08e97a56",
+      "name": "Brevo - Email Confirmación",
+      "retryOnFail": true,
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "rIV8aruieHBr9uC3",
+          "name": "Brevo account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.notion.com/v1/pages/{{ $json.notionPageId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "@@FILE:nodes/notion-guardar-link-cv.body.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -976,
+        -1200
+      ],
+      "id": "e153128f-49b1-4146-b32a-705ce0e3ace8",
+      "name": "Notion - Guardar Link CV",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.brevo.com/v3/smtp/email",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  sender: {name: 'Verónica Serna', email: 'veronica@cookyourwebai.es'},\n  to: [{email: $json.emailDestino || 'hello.cookyourweb@gmail.com'}],\n  subject: '📝 Carta y CV — ' + ($json.empresa || '') + ' — ' + ($json.puesto || ''),\n  htmlContent: $json.htmlContent || '<p>Carta generada</p>',\n  trackClicks: false,\n  trackOpens: false\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -976,
+        -1392
+      ],
+      "id": "c84623c3-d463-4db6-b8be-bd53c87e38ad",
+      "name": "Brevo - Enviar Carta+CV",
+      "retryOnFail": true,
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "rIV8aruieHBr9uC3",
+          "name": "Brevo account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/code-preparar-email-carta-cv.js"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        -1296
+      ],
+      "id": "c3b49edf-fef7-479e-bb2b-3a6397155745",
+      "name": "Code - Preparar Email Carta+CV"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cv-server-ggd8.onrender.com/generar-cv",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  email:       $('Notion - Obtener Datos Oferta').first().json.properties['Email Enviado']?.email \n               || $('Notion - Obtener Datos Oferta').first().json.properties['Email Enviado']?.rich_text?.[0]?.plain_text \n               || 'hello.cookyourweb@gmail.com',\n  empresa:     $('Notion - Obtener Datos Oferta').first().json.properties.Empresa?.title?.[0]?.text?.content || '',\n  puesto:      $('Notion - Obtener Datos Oferta').first().json.properties.Puesto?.rich_text?.[0]?.text?.content || '',\n  descripcion: $('Notion - Obtener Datos Oferta').first().json.properties['Descripción']?.rich_text?.[0]?.text?.content || $('Notion - Obtener Datos Oferta').first().json.properties.Notas?.rich_text?.[0]?.text?.content || '',\n  idioma:      $('Notion - Obtener Datos Oferta').first().json.properties['Idioma']?.select?.name || ''\n}) }}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1424,
+        -1296
+      ],
+      "id": "5953a173-63b2-4b8b-a069-72229008614f",
+      "name": "CV Server - Generar CV",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cv-server-ggd8.onrender.com/generar-carta",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  email:       $('Notion - Obtener Datos Oferta').first().json.properties['Email Enviado']?.email \n               || $('Notion - Obtener Datos Oferta').first().json.properties['Email Enviado']?.rich_text?.[0]?.plain_text \n               || 'hello.cookyourweb@gmail.com',\n  empresa:     $('Notion - Obtener Datos Oferta').first().json.properties.Empresa?.title?.[0]?.text?.content || '',\n  puesto:      $('Notion - Obtener Datos Oferta').first().json.properties.Puesto?.rich_text?.[0]?.text?.content || '',\n  descripcion: $('Notion - Obtener Datos Oferta').first().json.properties['Descripción']?.rich_text?.[0]?.text?.content || $('Notion - Obtener Datos Oferta').first().json.properties.Notas?.rich_text?.[0]?.text?.content || '',\n  idioma:      $('Notion - Obtener Datos Oferta').first().json.properties['Idioma']?.select?.name || ''\n}) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1648,
+        -1392
+      ],
+      "id": "fdc5da7b-c914-4178-818e-174ad883cdf8",
+      "name": "Groq - Generar Carta",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 25000,
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1872,
+        -1392
+      ],
+      "id": "582fb85f-2987-48f4-a357-69367b9b45bd",
+      "name": "Notion - Obtener Datos Oferta",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"properties\":{\"Estado\":{\"select\":{\"name\":\"En proceso\"}}}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2096,
+        -1392
+      ],
+      "id": "0e73305f-7497-4cfd-9941-289a8c44bb13",
+      "name": "Notion - Marcar En Proceso",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"properties\":{\"Estado\":{\"select\":{\"name\":\"Aprobado\"}}}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2320,
+        -1392
+      ],
+      "id": "6ccacf33-b6ec-4566-abad-cfc870c45f5d",
+      "name": "Notion - Marcar Aprobado",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/code-extraer-id.js"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2544,
+        -1296
+      ],
+      "id": "f0521ff5-6a31-4415-b6cb-89e5ef01b3de",
+      "name": "Code - Extraer ID"
+    },
+    {
+      "parameters": {
+        "path": "oferta-aprobar",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2992,
+        -1296
+      ],
+      "id": "c80afa03-9a24-4e86-9fd7-e4c5e893bf37",
+      "name": "Webhook Aprobar",
+      "webhookId": "aprobar-id"
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/code-preparar-confirmacion.js"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2096,
+        -16
+      ],
+      "id": "0b733971-a900-4e45-8787-177cc39fb63a",
+      "name": "Code - Preparar Confirmación"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2320,
+        -16
+      ],
+      "id": "e7540bcd-cb95-4bf4-9d67-38625ec145ed",
+      "name": "Notion - Obtener Datos Mandar",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  properties: {\n    Estado: { select: { name: 'Enviado a empresa' } },\n    'Fecha Envio Empresa': { date: { start: $json.fechaEnvio } }\n  }\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2544,
+        -16
+      ],
+      "id": "8d0122a3-339c-4830-8870-e99be49648d3",
+      "name": "Notion - Marcar Enviado a empresa",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/code-extraer-id-mandar.js"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2768,
+        -16
+      ],
+      "id": "179becfc-45ef-47a1-88d6-5d15a9823ee3",
+      "name": "Code - Extraer ID Mandar"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.notion.com/v1/pages/{{ $json.query.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"properties\": {\"Estado\": {\"select\": {\"name\": \"Descartado\"}}}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2768,
+        -240
+      ],
+      "id": "a953ba71-1586-4ece-989d-c1b503dbb949",
+      "name": "Notion - Marcar Descartado",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "oferta-mandar-empresa",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2992,
+        -16
+      ],
+      "id": "c1d865a0-5960-41a2-91a5-5f2c718564c4",
+      "name": "Webhook Mandar Empresa",
+      "webhookId": "webhook-mandar-empresa-id-001"
+    },
+    {
+      "parameters": {
+        "path": "oferta-descartar",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2992,
+        -240
+      ],
+      "id": "fbdf15bd-4a41-4e61-b07a-bd784411d4a5",
+      "name": "Webhook Descartar",
+      "webhookId": "webhook-descartar-id-001"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.brevo.com/v3/smtp/email",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.brevoBody }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        384,
+        -560
+      ],
+      "id": "c41ca21a-f7e4-4d68-a024-1ad2e834d3f8",
+      "name": "Brevo - Enviar Notificacion",
+      "retryOnFail": true,
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "rIV8aruieHBr9uC3",
+          "name": "Brevo account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/code-preparar-email-notificacion.js"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -624
+      ],
+      "id": "05747893-7d2a-4fc2-8367-305662af3922",
+      "name": "Code - Preparar Email Notificacion"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.notion.com/v1/pages/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        -624
+      ],
+      "id": "ad10e16c-5326-4c70-a87f-0cbc0458b7a5",
+      "name": "Notion - Obtener Datos Recién Creada",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "33d11515f4b281efa776d0ea698b748f"
+        },
+        "title": "={{ $json.empresa || 'Sin nombre' }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Puesto|rich_text",
+              "textContent": "={{ $json.puesto }}"
+            },
+            {
+              "key": "Salario|rich_text",
+              "textContent": "={{ $json.salario }}"
+            },
+            {
+              "key": "Modalidad|select",
+              "selectValue": "={{ $json.modalidad }}"
+            },
+            {
+              "key": "Ubicación|rich_text",
+              "textContent": "={{ $json.ubicacion }}"
+            },
+            {
+              "key": "Link oferta|url",
+              "urlValue": "={{ $json.link }}"
+            },
+            {
+              "key": "Notas|rich_text",
+              "textContent": "={{ $json.descripcion_corta }}"
+            },
+            {
+              "key": "Estado|select",
+              "selectValue": "=Pendiente"
+            },
+            {
+              "key": "Nombre Contacto|rich_text",
+              "textContent": "={{ $json.nombre_contacto || '' }}"
+            },
+            {
+              "key": "Email empresa|email",
+              "emailValue": "={{ $json.email_contacto && $json.email_contacto.includes('@') ? $json.email_contacto : null }}"
+            },
+            {
+              "key": "Fecha Publicacion|date",
+              "date": "={{ /^\\d{4}-\\d{2}-\\d{2}/.test(($json.fecha_publicacion || \"\").toString()) ? $json.fecha_publicacion : $now.toFormat(\"yyyy-MM-dd\") }}"
+            },
+            {
+              "key": "Usuario|relation",
+              "relationValue": "={{ $json.user_id ? [$json.user_id] : [] }}"
+            },
+            {
+              "key": "Email Enviado|email",
+              "emailValue": "={{ $('Code - Normalizar Modalidad').item.json.email_usuario || '' }}"
+            },
+            {
+              "key": "Idioma|select",
+              "selectValue": "={{ $json.idioma || 'es' }}"
+            },
+            {
+              "key": "Descripción|rich_text",
+              "textContent": "={{ $json.descripcion_full }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        -624
+      ],
+      "id": "5d2349df-f106-4c4a-908a-133a22375d48",
+      "name": "Notion - Crear Oferta",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 4000,
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/code-normalizar-modalidad.js"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        -624
+      ],
+      "id": "84349c78-ab7c-4436-82b0-860aa2c40d78",
+      "name": "Code - Normalizar Modalidad"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "@@FILE:nodes/groq-generar-ofertas.body.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -752,
+        -624
+      ],
+      "id": "486446d5-325f-4ea6-97bd-f6bdf69f0edf",
+      "name": "Groq - Generar Ofertas",
+      "retryOnFail": true,
+      "executeOnce": false,
+      "maxTries": 4,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NDntqAlYPkuWbKRh",
+          "name": "Header Auth account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2992,
+        -752
+      ],
+      "id": "9b85d606-d400-4f3f-9c1a-f4af2a1adb31",
+      "name": "Schedule Trigger (9am)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2992,
+        -560
+      ],
+      "id": "a9c69022-eab9-4446-965f-726d8ae7d575",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.brevo.com/v3/smtp/email",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  sender: {name: 'N8N Error Monitor', email: 'veronica@cookyourwebai.es'},\n  to: [{email: $json.to}],\n  subject: $json.subject,\n  htmlContent: $json.htmlContent\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2544,
+        -976
+      ],
+      "id": "536cabd2-50b7-44d5-9430-2a677f9c6e98",
+      "name": "Brevo - Enviar Email Error",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "rIV8aruieHBr9uC3",
+          "name": "Brevo account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/code-preparar-email-error.js"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2768,
+        -976
+      ],
+      "id": "b10fe2c4-df08-45e8-b89a-1c22ba3be8c5",
+      "name": "Code - Preparar Email Error"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2992,
+        -976
+      ],
+      "id": "4a926f64-7c22-4293-8111-ca9f532f9a7a",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/15 * * * *"
+            }
+          ]
+        }
+      },
+      "name": "Cron - Revisar Aprobadas",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2992,
+        -1488
+      ],
+      "id": "5c25dd06-e0cf-4de7-92ba-7073b0397c11"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/databases/33d11515f4b281efa776d0ea698b748f/query",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ filter: { property: 'Estado', select: { equals: 'Aprobado' } }, page_size: 25 }) }}",
+        "options": {}
+      },
+      "name": "Notion - Buscar Aprobadas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2768,
+        -1488
+      ],
+      "id": "27523076-cb1f-43a4-b8e5-afedbd42683e",
+      "credentials": {
+        "notionApi": {
+          "id": "ip1cxJYN655BWVcw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "@@FILE:nodes/extraer-ids-aprobadas.js"
+      },
+      "name": "Extraer IDs Aprobadas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2544,
+        -1488
+      ],
+      "id": "cd765179-5813-45c2-930f-d6a3939269d4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Notion - Ofertas existentes": {
+      "main": [
+        [
+          {
+            "node": "Buscar en Remotive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar en Tecnoempleo": {
+      "main": [
+        [
+          {
+            "node": "Formatear ofertas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar en Adzuna": {
+      "main": [
+        [
+          {
+            "node": "Buscar en Tecnoempleo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar en Remotive": {
+      "main": [
+        [
+          {
+            "node": "Buscar en Adzuna",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear ofertas": {
+      "main": [
+        [
+          {
+            "node": "Wait - Rate Limit Groq",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Users": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Notion - Ofertas existentes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Preparar Email Error1": {
+      "main": [
+        [
+          {
+            "node": "Brevo - Enviar Email Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait - Rate Limit Groq": {
+      "main": [
+        [
+          {
+            "node": "Groq - Generar Ofertas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Normalizar (interno)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook — Buscar para user": {
+      "main": [
+        [
+          {
+            "node": "Code — Normalizar (interno)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Normalizar users (schedule)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion — Query usuarios activos": {
+      "main": [
+        [
+          {
+            "node": "Code — Normalizar users (schedule)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo - Email Confirmación": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook Mandar Empresa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook Aprobar": {
+      "main": [
+        [
+          {
+            "node": "Code - Extraer ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "CV Server - Generar CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Preparar Email Carta+CV": {
+      "main": [
+        [
+          {
+            "node": "Notion - Guardar Link CV",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Brevo - Enviar Carta+CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CV Server - Generar CV": {
+      "main": [
+        [
+          {
+            "node": "Code - Preparar Email Carta+CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq - Generar Carta": {
+      "main": [
+        [
+          {
+            "node": "CV Server - Generar CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion - Obtener Datos Oferta": {
+      "main": [
+        [
+          {
+            "node": "Groq - Generar Carta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion - Marcar En Proceso": {
+      "main": [
+        [
+          {
+            "node": "Notion - Obtener Datos Oferta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion - Marcar Aprobado": {
+      "main": [
+        [
+          {
+            "node": "Notion - Marcar En Proceso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Extraer ID": {
+      "main": [
+        [
+          {
+            "node": "Notion - Marcar Aprobado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Aprobar": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook Aprobar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Preparar Confirmación": {
+      "main": [
+        [
+          {
+            "node": "Brevo - Email Confirmación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion - Obtener Datos Mandar": {
+      "main": [
+        [
+          {
+            "node": "Code - Preparar Confirmación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion - Marcar Enviado a empresa": {
+      "main": [
+        [
+          {
+            "node": "Notion - Obtener Datos Mandar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Extraer ID Mandar": {
+      "main": [
+        [
+          {
+            "node": "Notion - Marcar Enviado a empresa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion - Marcar Descartado": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook Descartar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Mandar Empresa": {
+      "main": [
+        [
+          {
+            "node": "Code - Extraer ID Mandar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Descartar": {
+      "main": [
+        [
+          {
+            "node": "Notion - Marcar Descartado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo - Enviar Notificacion": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Preparar Email Notificacion": {
+      "main": [
+        [
+          {
+            "node": "Brevo - Enviar Notificacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion - Obtener Datos Recién Creada": {
+      "main": [
+        [
+          {
+            "node": "Code - Preparar Email Notificacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion - Crear Oferta": {
+      "main": [
+        [
+          {
+            "node": "Notion - Obtener Datos Recién Creada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Normalizar Modalidad": {
+      "main": [
+        [
+          {
+            "node": "Notion - Crear Oferta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq - Generar Ofertas": {
+      "main": [
+        [
+          {
+            "node": "Code - Normalizar Modalidad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger (9am)": {
+      "main": [
+        [
+          {
+            "node": "Notion — Query usuarios activos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Notion — Query usuarios activos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Preparar Email Error": {
+      "main": [
+        [
+          {
+            "node": "Brevo - Enviar Email Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code - Preparar Email Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron - Revisar Aprobadas": {
+      "main": [
+        [
+          {
+            "node": "Notion - Buscar Aprobadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion - Buscar Aprobadas": {
+      "main": [
+        [
+          {
+            "node": "Extraer IDs Aprobadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer IDs Aprobadas": {
+      "main": [
+        [
+          {
+            "node": "Notion - Marcar Aprobado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c6506c7b-7beb-4ed9-96fb-2f53bb83a5a4",
+  "meta": {
+    "instanceId": "978ca6c3386e24023114a4d0fda8f5de4f9bcd0d2be345755c91084c08e81c50"
+  },
+  "nodeGroups": [],
+  "id": "CsvmtPcLVmGIZg6C",
+  "tags": []
+}
