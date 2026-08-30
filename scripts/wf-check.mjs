@@ -124,6 +124,21 @@ for (const [k, usos] of porCredencial) {
     `un nodo que llama fuera (${otros.map(u => u.nombre).join(', ')}): al cambiar una, se rompe la otra`);
 }
 
+// ── 8. Ningun secreto en lo que se commitea ──────────────────────────────
+// 30-ago-2026: el webhook de busqueda se protege por un `path` impredecible, y
+// este repositorio es PUBLICO. Si ese path acaba en workflow.json, el primer
+// commit lo publica y la proteccion dura lo que tarda un `git push`.
+// wf-split lo saca a secrets.local.json; esta regla vigila que asi sea.
+for (const n of wf.nodes) {
+  if (!n.type.endsWith('webhook')) continue;
+  const path = n.parameters?.path;
+  if (typeof path !== 'string') continue;
+  const pareceSecreto = /[a-z]-?[0-9][a-z0-9]{4,}/i.test(path) || path.length > 28;
+  warn(!pareceSecreto || path.startsWith('@@SECRET:'),
+    `el webhook "${n.name}" lleva un path que parece secreto ("${path}") sin redactar: ` +
+    `pasalo por wf-split antes de commitear`);
+}
+
 // ── informe ──────────────────────────────────────────────────────────────
 console.log(`${wf.nodes.length} nodos | ${code.length} de codigo`);
 for (const a of avisos) console.log(`  AVISO  ${a}`);

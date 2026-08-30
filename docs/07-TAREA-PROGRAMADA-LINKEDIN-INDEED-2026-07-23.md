@@ -113,7 +113,56 @@ devolviendo cero, no merece la pena mantener la parte local.
 **"Busqueda empleos mejor pagados"**. Reemplazar las instrucciones enteras.
 
 **Copia suelta:** `~/Downloads/prompt-tarea-empleos-linkedin-indeed-v2-2026-07-23.txt`
-(mismo contenido, en texto plano, para pegar sin arrastrar el markdown).
+
+> ⚠️ **30-jul-2026: el fichero .txt ya NO es igual que el prompt de más abajo.** Es la
+> versión buena y es la que hay que pegar. El de este documento se quedó en la v2.
+>
+> **Qué cambió y por qué.** El aviso `SIN VERIFICAR` se escribía solo dentro del campo
+> `Notas`, que en la vista de tabla de Notion no se ve. Vero aprobó dos ofertas
+> caducadas seguidas (Personio y Cactus) porque el sistema la avisó en un sitio donde
+> no iba a mirar. Se añadió a la base de datos una casilla **`Verificada`**
+> (checkbox, sin marcar por defecto) y el prompt ahora la rellena:
+>
+> - `Verificada = __YES__` solo si abrió el enlace y confirmó que la oferta sigue publicada
+> - `Verificada = __NO__` en cualquier otro caso, incluido "no se pudo comprobar"
+> - La casilla y el prefijo `SIN VERIFICAR:` de `Notas` tienen que decir siempre lo mismo
+>
+> Regla que se añadió al prompt: **nunca marcar la casilla por defecto ni porque la
+> fuente parezca fiable.** Una casilla marcada sin comprobar es peor que una sin marcar,
+> porque es justo la que Vero mira antes de aprobar.
+>
+> **Segundo cambio del 30-jul: filtro de antigüedad.** El prompt guardaba
+> `Fecha Publicacion` pero no la usaba NUNCA para filtrar. Vero se encontró la búsqueda
+> devolviendo una oferta **publicada hacía tres años** ("Fullstack Developer (mid &
+> senior) - Hybrid Madrid", 0 solicitudes). Añadido al paso 2:
+>
+> - **Descartar** publicadas hace más de 30 días
+> - **Descartar** zombis: más de 6 meses Y 0 solicitudes
+> - **Marcar** `ANTIGUA: publicada hace N días` entre 15 y 30 días, que ahí sí hay duda
+>
+> **Tercer cambio: la regla de seniority era un buscar-palabra.** Decía "sin Senior,
+> Staff, Lead, Principal o Architect no entra", así que un título como
+> `Fullstack Developer (mid & senior)` la pasaba: contiene la palabra "senior". Ahora
+> se lee el RANGO COMPLETO y solo entra si el SUELO del rango es senior o superior.
+>
+> **Cuarto cambio: el anti-duplicados no comparaba las candidatas entre sí.** La
+> ejecución del 30-jul creó ~20 ofertas y seis venían por duplicado: Builder.io,
+> Trivelta, CapsLock, Luxoft, Workato, Trimble e Iristrace.
+>
+> La regla del paso 3 comparaba cada candidata contra **lo que ya estaba en Notion**,
+> nunca contra las otras candidatas de la misma tanda. Builder.io, Trivelta, CapsLock
+> y Luxoft se crearon las dos copias en la misma ejecución: al consultar Notion no
+> existía ninguna de las dos, así que pasaron las dos. La regla hizo exactamente lo
+> que decía y aun así fallaron.
+>
+> Añadido al paso 3: agrupar las candidatas por Empresa + Puesto normalizados y crear
+> una sola por grupo, y una verificación obligatoria de que la consulta a Notion se
+> ejecutó de verdad antes de crear nada.
+no >
+> **SIN RESOLVER:** Workato, Trimble e Iristrace ya existían desde el 23-jul con
+> Empresa y Puesto idénticos. Esas SÍ las tenía que haber cazado la regla vieja. O la
+> consulta no llegó a ejecutarse, o volvió truncada. No se puede diagnosticar sin ver
+> la ejecución.
 
 Cambios respecto al original:
 

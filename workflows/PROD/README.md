@@ -17,9 +17,26 @@ sus 100 líneas propias. Se cazó por casualidad. Eso es lo que este directorio 
 
 ```
 workflow.json        estructura y conexiones. Los cuerpos largos son "@@FILE:nodes/…"
+                     y los paths de webhook, "@@SECRET:<nodo>"
 nodes/*.js           un fichero por nodo de código  -> git diff legible, node --check
 nodes/*.body.txt     un fichero por cuerpo de petición (el prompt de Groq, por ejemplo)
+secrets.local.json   los paths de webhook. NO ESTÁ EN GIT (.gitignore)
 ```
+
+## Por qué los paths de webhook no se commitean
+
+Desde el 30-ago-2026 el webhook de búsqueda se protege por un **path impredecible**:
+el nombre viejo (`buscar-para-user`) estaba publicado en este repositorio y cualquiera
+podía dispararlo — comprobado con `curl`, sin credenciales, HTTP 200.
+
+Este repositorio es **público**. Si el path nuevo acabara en `workflow.json`, el primer
+`git push` lo publicaría y la protección duraría lo que tarda un commit. Por eso
+`wf-split` lo saca a `secrets.local.json`, que está en `.gitignore`, y `wf-check`
+avisa si aparece un path sin redactar.
+
+Si `secrets.local.json` se pierde, `wf-join` **para** y dice qué webhooks le faltan:
+hay que recuperar esos paths de n8n. Es la contrapartida honesta de que el secreto
+no viva en git.
 
 ## El ciclo
 

@@ -24,9 +24,19 @@ const nodesDir = join(dest, 'nodes');
 if (existsSync(nodesDir)) rmSync(nodesDir, { recursive: true });   // sin restos de nodos borrados
 mkdirSync(nodesDir, { recursive: true });
 
+// Los `path` de los webhook son SECRETOS: desde el 30-ago-2026 el webhook de
+// busqueda se protege por path impredecible, y este repositorio es PUBLICO.
+// Se sacan a secrets.local.json (ignorado por git) y en workflow.json queda un
+// marcador. Sin esto, el primer commit publicaria el secreto.
+const secretos = {};
+
 let js = 0, bodies = 0;
 for (const n of wf.nodes) {
   const p = n.parameters || {};
+  if (n.type.endsWith('webhook') && typeof p.path === 'string') {
+    secretos[n.name] = p.path;
+    p.path = `@@SECRET:${n.name}`;
+  }
   if (typeof p.jsCode === 'string') {
     const f = `${slug(n.name)}.js`;
     writeFileSync(join(nodesDir, f), p.jsCode);
@@ -41,5 +51,7 @@ for (const n of wf.nodes) {
   }
 }
 writeFileSync(join(dest, 'workflow.json'), JSON.stringify(wf, null, 2) + '\n');
+writeFileSync(join(dest, 'secrets.local.json'), JSON.stringify(secretos, null, 2) + '\n');
 console.log(`${basename(src)} -> ${dest}`);
 console.log(`  ${wf.nodes.length} nodos | ${js} de codigo | ${bodies} cuerpos extraidos`);
+console.log(`  ${Object.keys(secretos).length} paths de webhook -> secrets.local.json (FUERA de git)`);
