@@ -102,6 +102,28 @@ if (crear) {
   check(props.some(p => p.startsWith('Ubicación')), '`Notion - Crear Oferta` no escribe la propiedad Ubicación');
 }
 
+// ── 7. Un webhook y un nodo HTTP no pueden compartir credencial ───────────
+// 30-ago-2026: al proteger `buscar-para-user` con Header Auth, n8n ofrecio la
+// credencial que YA existia — la misma que `Groq - Generar Ofertas` usaba para su
+// `Authorization: Bearer gsk_...`. Al ponerle encima `X-Webhook-Token`, Groq se
+// quedo sin autorizacion y empezo a devolver 401. Una credencial, dos usos, y el
+// segundo pisa al primero en silencio.
+const porCredencial = new Map();
+for (const n of wf.nodes) {
+  for (const [tipo, v] of Object.entries(n.credentials || {})) {
+    const k = `${tipo}:${v.name}`;
+    if (!porCredencial.has(k)) porCredencial.set(k, []);
+    porCredencial.get(k).push({ nombre: n.name, esWebhook: n.type.endsWith('webhook') });
+  }
+}
+for (const [k, usos] of porCredencial) {
+  const webhooks = usos.filter(u => u.esWebhook);
+  const otros = usos.filter(u => !u.esWebhook);
+  check(!(webhooks.length && otros.length),
+    `la credencial "${k}" la comparten un webhook (${webhooks.map(u => u.nombre).join(', ')}) y ` +
+    `un nodo que llama fuera (${otros.map(u => u.nombre).join(', ')}): al cambiar una, se rompe la otra`);
+}
+
 // ── informe ──────────────────────────────────────────────────────────────
 console.log(`${wf.nodes.length} nodos | ${code.length} de codigo`);
 for (const a of avisos) console.log(`  AVISO  ${a}`);
