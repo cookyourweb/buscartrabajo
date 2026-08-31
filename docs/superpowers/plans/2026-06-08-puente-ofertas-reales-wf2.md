@@ -11,13 +11,13 @@ tocar el flujo de aprobar que ya funciona.
 **Arquitectura:** Extender el workflow "Búsqueda Empleo Diaria" (Opción A). Las
 ofertas reales pasan por filtro → dedupe contra Notion → ranker → se crean en
 Notion (Estado=Pendiente) → un email diario con botones Aprobar/Descartar/Mandar.
-Los botones pegan a los webhooks ya existentes (`oferta-aprobar`, etc.).
+Los botones pegan a los webhooks ya existentes (`<RUTA_OCULTA>`, etc.).
 
 **Datos reales (no cambiar a ciegas):**
 - Notion DB id: `33d11515f4b281efa776d0ea698b748f`
 - Campos Notion: Empresa (título), Puesto (rich_text), Salario (rich_text),
   Modalidad (select), Link oferta (url), Notas (rich_text), Estado (select="Pendiente")
-- Webhooks WF2: `oferta-aprobar`, `oferta-descartar`, `oferta-mandar-empresa`
+- Webhooks WF2: `<RUTA_OCULTA>`, `<RUTA_OCULTA>`, `<RUTA_OCULTA>`
 - Brevo: `POST https://api.brevo.com/v3/smtp/email`, header `api-key` (SECRETO → en n8n)
 - Archivo base a editar: `~/Downloads/Busqueda Empleo Diaria - ADZUNA.json`
 - Fuente de nodos a reusar: `buscartrabajo/workflows/WF2-BuscarTrabajo-v2-Groq.json`
@@ -158,9 +158,9 @@ Notificacion` desde WF2; agrupar las N ofertas en UN email
     const link = d.properties?.['Link oferta']?.url || '#';
     return `<div style="margin:16px 0;padding:12px;border:1px solid #eee">
       <b>${empresa}</b><br><a href="${link}">Ver oferta</a><br>
-      <a href="${base}/oferta-aprobar?id=${id}">✅ Aprobar</a> &nbsp;
-      <a href="${base}/oferta-descartar?id=${id}">❌ Descartar</a> &nbsp;
-      <a href="${base}/oferta-mandar-empresa?id=${id}">📤 Mandar</a>
+      <a href="${base}/<RUTA_OCULTA>?id=${id}">✅ Aprobar</a> &nbsp;
+      <a href="${base}/<RUTA_OCULTA>?id=${id}">❌ Descartar</a> &nbsp;
+      <a href="${base}/<RUTA_OCULTA>?id=${id}">📤 Mandar</a>
     </div>`;
   }).join('');
   const brevoBody = JSON.stringify({

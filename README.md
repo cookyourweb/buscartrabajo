@@ -32,14 +32,14 @@ FLASK CV SERVER (Render Free)
 n8n  ──  instancia: n8n-asistente-correo.onrender.com
   ┌───────────────────────────────────────────────────────────┐
   │ WF1 — BuscarTrabajo-Usuarios                              │
-  │   Webhook /nuevo-usuario   → crea/normaliza → HTTP → WF2  │
-  │   Webhook /buscar-ahora    → query Notion → HTTP → WF2    │
+  │   Webhook alta de usuario  → crea/normaliza → HTTP → WF2  │
+  │   Webhook buscar ahora     → query Notion → HTTP → WF2    │
   ├───────────────────────────────────────────────────────────┤
   │ WF2 — WF2-integrado-v3 (multi-usuario)                    │
   │   Triggers:                                               │
   │     · Schedule 9am  → query usuarios activos → Loop       │
-  │     · Webhook /buscar-para-user (interno desde WF1)       │
-  │     · Webhooks /oferta-aprobar /-descartar /-mandar-empresa│
+  │     · Webhook interno, llamado desde WF1                  │
+  │     · Webhooks de aprobar / descartar / mandar a empresa   │
   │                                                           │
   │   Búsqueda (por usuario):                                 │
   │     Remotive + Adzuna + Tecnoempleo → Formatear           │
@@ -80,14 +80,16 @@ n8n  ──  instancia: n8n-asistente-correo.onrender.com
 
 ## Webhooks n8n
 
-| Método | Path | Workflow |
-|--------|------|----------|
-| POST | `/webhook/nuevo-usuario` | WF1 |
-| POST | `/webhook/buscar-ahora` | WF1 |
-| POST | `/webhook/buscar-para-user` | Interno (WF1 → WF2) |
-| GET | `/webhook/oferta-aprobar?id=` | WF2 |
-| GET | `/webhook/oferta-descartar?id=` | WF2 |
-| GET | `/webhook/oferta-mandar-empresa?id=` | WF2 |
+Los workflows exponen webhooks para dar de alta un usuario, lanzar una búsqueda y
+resolver una oferta (aprobar, descartar o mandarla a la empresa).
+
+**Las rutas no se publican aquí.** Ejecutan acciones con efectos externos y hoy no
+exigen credencial, así que la ruta es lo único que las protege (issue #1). Viven en
+`workflows/PROD/secrets.local.json`, que está fuera de git, y en el workflow versionado
+aparecen como `@@SECRET:<nodo>`.
+
+Para recuperarlas en local: exportar el workflow desde n8n y pasarlo por
+`node scripts/wf-split.mjs <export.json>`, que las separa a ese fichero.
 
 ---
 
@@ -147,10 +149,11 @@ curl https://cv-server-ggd8.onrender.com/health
 # 2. ¿LLM responde?
 curl https://cv-server-ggd8.onrender.com/debug
 
-# 3. ¿Webhook buscar-ahora funciona? (instancia NUEVA)
-curl -X POST https://n8n-asistente-correo.onrender.com/webhook/buscar-ahora \
+# 3. ¿El webhook de búsqueda responde?
+#    La URL sale de workflows/PROD/secrets.local.json (fuera de git)
+curl -X POST "$N8N_HOST/webhook/$RUTA_BUSCAR_AHORA" \
   -H "Content-Type: application/json" \
-  -d '{"email":"hello.cookyourweb@gmail.com","nombre":"vero"}'
+  -d '{"email":"tu@correo.com","nombre":"tu-nombre"}'
 ```
 
 Si responden 200 → el problema está en el flujo interno (revisar Executions en n8n).

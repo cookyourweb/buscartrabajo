@@ -132,8 +132,8 @@ curl https://cv-server-ggd8.onrender.com/health
 # Test LLM
 curl https://cv-server-ggd8.onrender.com/debug
 
-# Disparar buscar-ahora desde fuera
-curl -X POST https://n8n-st1v.onrender.com/webhook/buscar-ahora \
+# Disparar <RUTA_OCULTA> desde fuera
+curl -X POST https://n8n-st1v.onrender.com/webhook/<RUTA_OCULTA> \
   -H "Content-Type: application/json" \
   -d '{"email":"hello.cookyourweb@gmail.com","nombre":"vero"}'
 ```

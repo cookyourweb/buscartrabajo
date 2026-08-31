@@ -67,8 +67,8 @@ Sistema multi-usuario de búsqueda de empleo que:
 │ n8n-asistente-correo (Render Free) — orquestador         │
 │                                                          │
 │ NO HAY WF1. Verificado el 28ago2026 barriendo los 10     │
-│ workflows nodo a nodo: los webhooks /nuevo-usuario y     │
-│ /buscar-ahora NO EXISTEN en ninguno. El cv-server les    │
+│ workflows nodo a nodo: los webhooks /<RUTA_OCULTA> y     │
+│ /<RUTA_OCULTA> NO EXISTEN en ninguno. El cv-server les    │
 │ llamaba y se comia un 404 en silencio. Hoy llama a       │
 │ /buscar-para-user, que si existe.                        │
 │                                                          │
@@ -76,8 +76,8 @@ Sistema multi-usuario de búsqueda de empleo que:
 │  Trigger:                                                │
 │   - Schedule (9am UTC)                                   │
 │   - Webhook /buscar-para-user (interno desde WF1)        │
-│   - Webhooks /oferta-aprobar /oferta-descartar           │
-│              /oferta-mandar-empresa (botones email)      │
+│   - Webhooks /<RUTA_OCULTA> /<RUTA_OCULTA>           │
+│              /<RUTA_OCULTA> (botones email)      │
 │                                                          │
 │  Flujo búsqueda:                                         │
 │   → Wait 30s → Groq genera 1 oferta                      │
@@ -246,7 +246,7 @@ curl https://cv-server-ggd8.onrender.com/health
 # 2. ¿LLM responde?
 curl https://cv-server-ggd8.onrender.com/debug
 
-# 3 y 4. Los webhooks /nuevo-usuario y /buscar-ahora NO EXISTEN.
+# 3 y 4. Los webhooks /<RUTA_OCULTA> y /<RUTA_OCULTA> NO EXISTEN.
 #         No los busques: nunca se dieron de alta en n8n.
 #         El alta de usuario la hace el cv-server contra Notion, y la
 #         busqueda inmediata sale por /buscar-para-user (el 5).

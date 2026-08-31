@@ -4,7 +4,7 @@
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "nuevo-usuario",
+        "path": "@@SECRET:Webhook — Nuevo usuario",
         "responseMode": "responseNode",
         "options": {}
       },
@@ -16,7 +16,7 @@
         176,
         848
       ],
-      "webhookId": "nuevo-usuario"
+      "webhookId": "@@SECRET:Webhook — Nuevo usuario"
     },
     {
       "parameters": {
@@ -49,7 +49,7 @@
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "buscar-ahora",
+        "path": "@@SECRET:Webhook — Buscar ahora",
         "responseMode": "responseNode",
         "options": {}
       },
@@ -61,7 +61,7 @@
         176,
         1264
       ],
-      "webhookId": "buscar-ahora"
+      "webhookId": "@@SECRET:Webhook — Buscar ahora"
     },
     {
       "parameters": {
@@ -113,10 +113,10 @@
     },
     {
       "parameters": {
-        "jsCode": "// Extrae el perfil del usuario encontrado (shape normalizado)\nconst results = $input.first().json.results || [];\nif (!results.length) {\n  throw new Error('Usuario no encontrado o inactivo: ' + $('Code — Extraer email').first().json.email);\n}\nconst u = results[0];\nconst p = u.properties || {};\n\nreturn [{ json: {\n  user_id:    u.id,\n  nombre:     p.Name?.title?.[0]?.plain_text || '',\n  email:      p.Email?.email || '',\n  perfil:     p.Perfil?.rich_text?.[0]?.plain_text || '',\n  rol:        p['Rol objetivo']?.rich_text?.[0]?.plain_text || '',\n  stack:      (p.Stack?.multi_select || []).map(s => s.name),\n  salario:    p['Salario min']?.number || 0,\n  modalidad:  (p.Modalidad?.multi_select || []).map(m => m.name),\n  ciudad:     p.Ciudad?.rich_text?.[0]?.plain_text || '',\n  linkedin:   p.LinkedIn?.url || '',\n  cv_master_url: p['CV Master URL']?.url || '',\n  source:     'buscar-ahora'\n}}];"
+        "jsCode": "// Extrae el perfil del usuario encontrado (shape normalizado)\nconst results = $input.first().json.results || [];\nif (!results.length) {\n  throw new Error('Usuario no encontrado o inactivo: ' + $('Code — Extraer email').first().json.email);\n}\nconst u = results[0];\nconst p = u.properties || {};\n\nreturn [{ json: {\n  user_id:    u.id,\n  nombre:     p.Name?.title?.[0]?.plain_text || '',\n  email:      p.Email?.email || '',\n  perfil:     p.Perfil?.rich_text?.[0]?.plain_text || '',\n  rol:        p['Rol objetivo']?.rich_text?.[0]?.plain_text || '',\n  stack:      (p.Stack?.multi_select || []).map(s => s.name),\n  salario:    p['Salario min']?.number || 0,\n  modalidad:  (p.Modalidad?.multi_select || []).map(m => m.name),\n  ciudad:     p.Ciudad?.rich_text?.[0]?.plain_text || '',\n  linkedin:   p.LinkedIn?.url || '',\n  cv_master_url: p['CV Master URL']?.url || '',\n  source:     '@@SECRET:Webhook — Buscar ahora'\n}}];"
       },
       "id": "41e40e4c-9aee-43ff-be1a-6c1fc5307cc3",
-      "name": "Code — Normalizar perfil (buscar-ahora)",
+      "name": "Code — Normalizar perfil (@@SECRET:Webhook — Buscar ahora)",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
@@ -154,7 +154,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  nombre:       $json.nombre,\n  email:        $json.email,\n  perfil:       $json.perfil,\n  rol:          $json.rol,\n  stack:        $json.stack,\n  salario:      $json.salario,\n  modalidad:    $json.modalidad,\n  ciudad:       $json.ciudad,\n  linkedin:     $json.linkedin,\n  cv_master_url: $json.cv_master_url,\n  user_id:      $json.user_id,\n  source:       'buscar-ahora'\n}) }}",
+        "jsonBody": "={{ JSON.stringify({\n  nombre:       $json.nombre,\n  email:        $json.email,\n  perfil:       $json.perfil,\n  rol:          $json.rol,\n  stack:        $json.stack,\n  salario:      $json.salario,\n  modalidad:    $json.modalidad,\n  ciudad:       $json.ciudad,\n  linkedin:     $json.linkedin,\n  cv_master_url: $json.cv_master_url,\n  user_id:      $json.user_id,\n  source:       '@@SECRET:Webhook — Buscar ahora'\n}) }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -164,7 +164,7 @@
         1360
       ],
       "id": "7b01b219-a482-4abc-9ef1-710b6ba07671",
-      "name": "HTTP — Disparar búsqueda (buscar-ahora)",
+      "name": "HTTP — Disparar búsqueda (@@SECRET:Webhook — Buscar ahora)",
       "continueOnFail": true
     },
     {
@@ -182,13 +182,13 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  nombre:       $json.nombre,\n  email:        $json.email,\n  perfil:       $json.perfil,\n  rol:          $json.rol || '',\n  stack:        $json.stack || [],\n  salario:      $json.salario || 0,\n  modalidad:    $json.modalidad || [],\n  ciudad:       $json.ciudad || '',\n  linkedin:     $json.linkedin || '',\n  cv_master_url: $json.cv_master_url || '',\n  user_id:      $json.user_id || '',\n  source:       'nuevo-usuario'\n}) }}",
+        "jsonBody": "={{ JSON.stringify({\n  nombre:       $json.nombre,\n  email:        $json.email,\n  perfil:       $json.perfil,\n  rol:          $json.rol || '',\n  stack:        $json.stack || [],\n  salario:      $json.salario || 0,\n  modalidad:    $json.modalidad || [],\n  ciudad:       $json.ciudad || '',\n  linkedin:     $json.linkedin || '',\n  cv_master_url: $json.cv_master_url || '',\n  user_id:      $json.user_id || '',\n  source:       '@@SECRET:Webhook — Nuevo usuario'\n}) }}",
         "options": {
           "timeout": 10000
         }
       },
       "id": "89e49625-8960-4051-bc95-6bbd8ba287bc",
-      "name": "HTTP — Disparar búsqueda (nuevo-usuario)",
+      "name": "HTTP — Disparar búsqueda (@@SECRET:Webhook — Nuevo usuario)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
@@ -220,7 +220,7 @@
             "index": 0
           },
           {
-            "node": "HTTP — Disparar búsqueda (nuevo-usuario)",
+            "node": "HTTP — Disparar búsqueda (@@SECRET:Webhook — Nuevo usuario)",
             "type": "main",
             "index": 0
           }
@@ -253,14 +253,14 @@
       "main": [
         [
           {
-            "node": "Code — Normalizar perfil (buscar-ahora)",
+            "node": "Code — Normalizar perfil (@@SECRET:Webhook — Buscar ahora)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code — Normalizar perfil (buscar-ahora)": {
+    "Code — Normalizar perfil (@@SECRET:Webhook — Buscar ahora)": {
       "main": [
         [
           {
@@ -269,7 +269,7 @@
             "index": 0
           },
           {
-            "node": "HTTP — Disparar búsqueda (buscar-ahora)",
+            "node": "HTTP — Disparar búsqueda (@@SECRET:Webhook — Buscar ahora)",
             "type": "main",
             "index": 0
           }

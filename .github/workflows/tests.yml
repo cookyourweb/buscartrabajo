@@ -1,0 +1,24 @@
+name: tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Sin secrets.local.json (esta fuera de git) solo corre la comprobacion
+      # POR FORMA: un nodo webhook cuyo `path` no sea @@SECRET: es una ruta en
+      # claro. No hace falta conocer el valor para detectarlo.
+      - name: rutas de webhook fuera del repositorio
+        run: node scripts/check-secretos.mjs
+
+      - name: tests
+        run: npm test

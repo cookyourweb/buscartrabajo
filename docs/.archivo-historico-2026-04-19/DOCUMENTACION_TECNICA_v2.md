@@ -36,8 +36,8 @@ Sistema automatizado multi-usuario de búsqueda de empleo. Cualquier persona se 
 ┌──────────────────────────────────────────────────┐
 │  N8N — WORKFLOW 1: USUARIOS                      │
 │  (el "portero")                                  │
-│  - POST /webhook/nuevo-usuario                   │
-│  - POST /webhook/buscar-ahora                    │
+│  - POST /webhook/<RUTA_OCULTA>                   │
+│  - POST /webhook/<RUTA_OCULTA>                    │
 │  - Crea/busca en Notion DB Usuarios              │
 │  - Dispara HTTP interno al workflow 2            │
 └──────────────┬───────────────────────────────────┘
@@ -78,7 +78,7 @@ Workflow 1 termina con un nodo HTTP que hace `POST /webhook/buscar-para-user` al
 ### Flujo "Nuevo usuario"
 
 ```
-POST /webhook/nuevo-usuario
+POST /webhook/<RUTA_OCULTA>
   body: { nombre, email, perfil, rol_objetivo, stack, modalidad, 
           salario_min, ciudad, linkedin, cv_master_url }
     ↓
@@ -93,13 +93,13 @@ Notion — Crear usuario
   │
   └→ HTTP — Disparar búsqueda (nuevo)
       POST /webhook/buscar-para-user → Workflow 2
-      (source: 'nuevo-usuario')
+      (source: '<RUTA_OCULTA>')
 ```
 
 ### Flujo "Buscar ahora"
 
 ```
-POST /webhook/buscar-ahora
+POST /webhook/<RUTA_OCULTA>
   body: { email, nombre }
     ↓
 Code — Extraer email
@@ -115,7 +115,7 @@ Code — Normalizar perfil
   │
   └→ HTTP — Disparar búsqueda (ahora)
       POST /webhook/buscar-para-user → Workflow 2
-      (source: 'buscar-ahora')
+      (source: '<RUTA_OCULTA>')
 ```
 
 ---
@@ -153,7 +153,7 @@ Code — Normalizar users (schedule)          (ya está plano)
 ### Flujo aprobar oferta
 
 ```
-GET /webhook/oferta-aprobar?id=PAGE_ID
+GET /webhook/<RUTA_OCULTA>?id=PAGE_ID
     ↓
 Code — Extraer ID
     ↓
@@ -181,7 +181,7 @@ Notion — Guardar Link CV + Email Enviado + contactos
 ### Flujo descartar
 
 ```
-GET /webhook/oferta-descartar?id=PAGE_ID
+GET /webhook/<RUTA_OCULTA>?id=PAGE_ID
     ↓
 Notion — Marcar Descartado
     ↓
@@ -191,7 +191,7 @@ Respond OK
 ### Flujo mandar a empresa
 
 ```
-GET /webhook/oferta-mandar-empresa?id=PAGE_ID
+GET /webhook/<RUTA_OCULTA>?id=PAGE_ID
     ↓
 Code — Extraer ID Mandar
     ├→ Respond (rápido)
@@ -322,11 +322,11 @@ Respuesta:
 
 | Método | Path | Workflow | Disparado por |
 |:-:|------|----------|---------------|
-| POST | `/webhook/nuevo-usuario` | Workflow 1 | Flask al detectar email nuevo |
-| POST | `/webhook/buscar-ahora` | Workflow 1 | Flask al pulsar "Buscar ahora" |
-| GET | `/webhook/oferta-aprobar?id=` | Workflow 2 | Click ✅ en email |
-| GET | `/webhook/oferta-descartar?id=` | Workflow 2 | Click ❌ en email |
-| GET | `/webhook/oferta-mandar-empresa?id=` | Workflow 2 | Click "Mandar" |
+| POST | `/webhook/<RUTA_OCULTA>` | Workflow 1 | Flask al detectar email nuevo |
+| POST | `/webhook/<RUTA_OCULTA>` | Workflow 1 | Flask al pulsar "Buscar ahora" |
+| GET | `/webhook/<RUTA_OCULTA>?id=` | Workflow 2 | Click ✅ en email |
+| GET | `/webhook/<RUTA_OCULTA>?id=` | Workflow 2 | Click ❌ en email |
+| GET | `/webhook/<RUTA_OCULTA>?id=` | Workflow 2 | Click "Mandar" |
 
 ### Interno (workflow-to-workflow)
 
@@ -347,7 +347,7 @@ Body del webhook interno:
   "ciudad": "...",
   "linkedin": "...",
   "cv_master_url": "...",
-  "source": "nuevo-usuario" | "buscar-ahora"
+  "source": "<RUTA_OCULTA>" | "<RUTA_OCULTA>"
 }
 ```
 
@@ -392,8 +392,8 @@ Ver `ROADMAP.md` para detalle.
 | `NOTION_DB_USUARIOS` | `34811515f4b280f19a42f8da5e91a8fe` |
 | `FOLDER_GENERADOS` | ID Drive carpeta output CVs |
 | `FOLDER_CV_MASTERS` | ID Drive carpeta CV masters |
-| `N8N_WEBHOOK_NUEVO` | `https://n8n-qwmu.onrender.com/webhook/nuevo-usuario` |
-| `N8N_WEBHOOK_BUSCAR` | `https://n8n-qwmu.onrender.com/webhook/buscar-ahora` |
+| `N8N_WEBHOOK_NUEVO` | `https://n8n-qwmu.onrender.com/webhook/<RUTA_OCULTA>` |
+| `N8N_WEBHOOK_BUSCAR` | `https://n8n-qwmu.onrender.com/webhook/<RUTA_OCULTA>` |
 
 ---
 
@@ -452,7 +452,7 @@ buscartrabajo/
     -d '{"email":"test@test.com","nombre":"Test","perfil":"test"}'
   ```
 - [ ] Importar `workflow-1-usuarios.json` y activar
-- [ ] Los 5 webhooks externos respondiendo (nuevo-usuario, buscar-ahora, aprobar, descartar, mandar)
+- [ ] Los 5 webhooks externos respondiendo (<RUTA_OCULTA>, <RUTA_OCULTA>, aprobar, descartar, mandar)
 
 ### 5. Tests end-to-end
 - [ ] Registro con email nuevo → email mañana a las 9

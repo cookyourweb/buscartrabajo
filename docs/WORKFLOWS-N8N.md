@@ -14,8 +14,8 @@ tener que abrir n8n.
 > Ver `19-RUNBOOK-SISTEMA-PARADO-2026-08-05.md`, "Engaño 4".
 
 > **¿Buscas los endpoints de webhook?** Están en [`../README.md`](../README.md), sección
-> **"Webhooks n8n"** (`/webhook/oferta-aprobar?id=`, `/-descartar`, `/-mandar-empresa`,
-> `/nuevo-usuario`, `/buscar-ahora`, `/buscar-para-user`), sobre el host
+> **"Webhooks n8n"** (`/webhook/<RUTA_OCULTA>?id=`, `/-descartar`, `/-mandar-empresa`,
+> `/<RUTA_OCULTA>`, `/<RUTA_OCULTA>`, `/buscar-para-user`), sobre el host
 > `https://n8n-asistente-correo.onrender.com`.
 >
 > No se duplican aquí a propósito: dos copias de la misma tabla se desincronizan y acabas
@@ -48,11 +48,11 @@ Barridos los 10 workflows nodo a nodo el 28-ago-2026.
 | Path | ¿Existe? | Dónde |
 |------|----------|-------|
 | `buscar-para-user` | ✅ | `CsvmtPcLVmGIZg6C`. Es por donde el cv-server pide una búsqueda para un usuario. |
-| `oferta-aprobar` | ✅ | `CsvmtPcLVmGIZg6C` |
-| `oferta-descartar` | ✅ | `CsvmtPcLVmGIZg6C` |
-| `oferta-mandar-empresa` | ✅ | `CsvmtPcLVmGIZg6C` |
-| `nuevo-usuario` | ❌ **NO EXISTE** | En ninguno. Lo que la documentación llamaba "WF1" nunca llegó a estar dado de alta. |
-| `buscar-ahora` | ❌ **NO EXISTE** | En ninguno. El cv-server le llamaba y se comía un 404 en silencio hasta el 28-ago-2026. |
+| `<RUTA_OCULTA>` | ✅ | `CsvmtPcLVmGIZg6C` |
+| `<RUTA_OCULTA>` | ✅ | `CsvmtPcLVmGIZg6C` |
+| `<RUTA_OCULTA>` | ✅ | `CsvmtPcLVmGIZg6C` |
+| `<RUTA_OCULTA>` | ❌ **NO EXISTE** | En ninguno. Lo que la documentación llamaba "WF1" nunca llegó a estar dado de alta. |
+| `<RUTA_OCULTA>` | ❌ **NO EXISTE** | En ninguno. El cv-server le llamaba y se comía un 404 en silencio hasta el 28-ago-2026. |
 
 Otros workflows menores comparten la credencial Groq viva `Groq account 2`
 (`Ewz07GBHAM5voex1`): **Digest** y **Outlook FIX**. Estado no verificado en detalle aquí.

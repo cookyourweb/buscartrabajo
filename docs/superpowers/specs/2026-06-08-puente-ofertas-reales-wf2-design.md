@@ -56,7 +56,7 @@ la búsqueda diaria, reutilizando los nodos de creación en Notion + email con b
 ```
 
 La **Mitad B** del WF2 no se toca: los botones del email pegan a los webhooks ya
-existentes (`oferta-aprobar`, `oferta-descartar`, `oferta-mandar-empresa`), que
+existentes (`<RUTA_OCULTA>`, `<RUTA_OCULTA>`, `<RUTA_OCULTA>`), que
 disparan carta + CV + email de revisión.
 
 ## Componentes y cambios

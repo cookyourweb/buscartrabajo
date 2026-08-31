@@ -112,7 +112,7 @@ const linkCV = cvResponse.link || cvResponse.cv_link || '';
 
 ---
 
-### Flujo "Aprobar" (Webhook `/oferta-aprobar`)
+### Flujo "Aprobar" (Webhook `/<RUTA_OCULTA>`)
 
 ```
 ┌──────────────────────┐
@@ -163,7 +163,7 @@ const linkCV = cvResponse.link || cvResponse.cv_link || '';
 
 ---
 
-### Flujo "Descartar" (Webhook `/oferta-descartar`)
+### Flujo "Descartar" (Webhook `/<RUTA_OCULTA>`)
 
 ```
 ┌──────────────────────┐
@@ -179,7 +179,7 @@ const linkCV = cvResponse.link || cvResponse.cv_link || '';
 
 ---
 
-### Flujo "Mandar a Empresa" (Webhook `/oferta-mandar-empresa`)
+### Flujo "Mandar a Empresa" (Webhook `/<RUTA_OCULTA>`)
 
 ```
 ┌──────────────────────┐
@@ -281,7 +281,7 @@ const linkCV = cvResponse.link || cvResponse.cv_link || '';
 ### Test 2: Flujo Aprobar
 
 1. Obtener `page_id` de una oferta en Notion
-2. Ejecutar: `curl "https://n8n-qwmu.onrender.com/webhook/oferta-aprobar?id=PAGE_ID"`
+2. Ejecutar: `curl "https://n8n-qwmu.onrender.com/webhook/<RUTA_OCULTA>?id=PAGE_ID"`
 3. Verificar:
    - ✅ Notion actualizado a "Aprobado"
    - ✅ Email #2 recibido con carta + link CV + botón
@@ -301,9 +301,9 @@ const linkCV = cvResponse.link || cvResponse.cv_link || '';
 |----------|-----|--------|
 | **n8n** | `https://n8n-qwmu.onrender.com` | ⚠️ Render Free (puede dormir) |
 | **CV Server** | `https://cv-server-production.up.railway.app` | ✅ Producción |
-| **Webhook Aprobar** | `/webhook/oferta-aprobar` | ✅ |
-| **Webhook Descartar** | `/webhook/oferta-descartar` | ✅ |
-| **Webhook Mandar Empresa** | `/webhook/oferta-mandar-empresa` | ✅ |
+| **Webhook Aprobar** | `/webhook/<RUTA_OCULTA>` | ✅ |
+| **Webhook Descartar** | `/webhook/<RUTA_OCULTA>` | ✅ |
+| **Webhook Mandar Empresa** | `/webhook/<RUTA_OCULTA>` | ✅ |
 
 ---
 
