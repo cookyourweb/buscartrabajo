@@ -40,6 +40,23 @@ export function redactarPaths(workflowOriginal) {
     p.path = `${PREFIJO_SECRETO}${nodo.name}`;
   }
 
+  // Las rutas no viven solo en el campo `path`. Los nodos de codigo que arman
+  // los enlaces de los correos las llevan ESCRITAS DENTRO del jsCode:
+  //   '<a href="https://host/webhook/' + RUTA + '?id=' + pageId + '">'
+  // Redactar solo el campo `path` las dejaba ahi, y bastaba con rotar y volver a
+  // partir el workflow para publicarlas otra vez. Segunda pasada por texto.
+  for (const [nombre, path] of Object.entries(secretos)) {
+    for (const nodo of workflow.nodes ?? []) {
+      const p = nodo.parameters;
+      if (!p) continue;
+      for (const campo of ['jsCode', 'jsonBody', 'text', 'html']) {
+        if (typeof p[campo] === 'string' && p[campo].includes(path)) {
+          p[campo] = p[campo].split(path).join(`${PREFIJO_SECRETO}${nombre}`);
+        }
+      }
+    }
+  }
+
   return { workflow, secretos };
 }
 

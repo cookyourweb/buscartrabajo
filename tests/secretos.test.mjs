@@ -175,3 +175,46 @@ test('fusionar no muta lo que ya habia', () => {
 
   assert.deepEqual(vivos, { 'Webhook Buscar': 'path-vivo' });
 });
+
+// ── Las rutas tambien viven DENTRO del codigo de los nodos ───────────────────
+// 31-ago-2026: redactar solo el campo `path` del nodo webhook dejaba la ruta en
+// los nodos de codigo que construyen los enlaces de los correos:
+//
+//   '<a href="https://.../webhook/' + RUTA + '?id=' + pageId + '">Aprobar</a>'
+//
+// Sin esto, rotar la ruta y volver a partir el workflow la publica otra vez.
+
+test('redactar alcanza a las rutas escritas dentro del codigo de un nodo', () => {
+  const wf = {
+    nodes: [
+      { name: 'Webhook Aprobar', type: 'n8n-nodes-base.webhook', parameters: { path: 'ruta-de-aprobar' } },
+      {
+        name: 'Code - Email',
+        type: 'n8n-nodes-base.code',
+        parameters: { jsCode: `const u = 'https://host/webhook/ruta-de-aprobar?id=' + id;` },
+      },
+    ],
+  };
+
+  const { workflow } = redactarPaths(wf);
+  const codigo = workflow.nodes.find((n) => n.name === 'Code - Email').parameters.jsCode;
+
+  assert.ok(!codigo.includes('ruta-de-aprobar'), 'la ruta sigue dentro del codigo del nodo');
+  assert.ok(codigo.includes(`${PREFIJO_SECRETO}Webhook Aprobar`), 'no dejo el marcador para poder rehacerlo');
+});
+
+test('el marcador dentro del codigo sobrevive a redactar dos veces', () => {
+  const wf = {
+    nodes: [
+      { name: 'Webhook Aprobar', type: 'n8n-nodes-base.webhook', parameters: { path: 'ruta-de-aprobar' } },
+      { name: 'Code - Email', type: 'n8n-nodes-base.code', parameters: { jsCode: `'/webhook/ruta-de-aprobar?id='` } },
+    ],
+  };
+  const una = redactarPaths(wf);
+  const dos = redactarPaths(una.workflow);
+
+  assert.equal(
+    dos.workflow.nodes[1].parameters.jsCode,
+    una.workflow.nodes[1].parameters.jsCode,
+  );
+});
