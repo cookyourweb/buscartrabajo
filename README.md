@@ -1,13 +1,57 @@
-# Sistema Automatizado de Búsqueda de Empleo — v3 (Ofertas Reales, Multi-usuario)
+# BuscarTrabajo
 
-## Descripción
+[![tests](https://github.com/cookyourweb/buscartrabajo/actions/workflows/tests.yml/badge.svg)](https://github.com/cookyourweb/buscartrabajo/actions/workflows/tests.yml)
 
-Sistema **multi-usuario** de búsqueda de empleo. Cada persona se registra en un formulario web; cada mañana el sistema busca **ofertas REALES** (Remotive + Adzuna + Tecnoempleo), las filtra por su perfil, y se las manda por email con botones. Al aprobar, genera **carta + CV adaptado al puesto** y permite enviarlo a la empresa.
+Sistema multiusuario que busca ofertas de empleo reales cada mañana, las filtra por
+el perfil de cada persona y se las manda por correo. Al aprobar una, genera el CV y
+la carta adaptados al puesto y permite enviarlos a la empresa.
 
-**v3 vs v2:**
-- v2 = ofertas **inventadas** por el LLM.
-- v3 = ofertas **reales** scrapeadas de 3 fuentes + filtro por stack del usuario + anti-spam (no repite ofertas ya guardadas en Notion).
-- v3 = envío a empresa **híbrido con edición previa** (revisás carta/CV en Notion/Drive antes de mandar).
+En producción desde julio de 2026.
+
+## Qué tiene de interesante
+
+**Las ofertas son reales.** La versión anterior se las pedía a un modelo de lenguaje,
+que devolvía ofertas plausibles e inexistentes. Ahora vienen de tres fuentes
+(Remotive, Adzuna, Tecnoempleo), se filtran por el stack del usuario y se descartan
+las que ya están guardadas.
+
+**El texto lo escribe un modelo, la verdad no.** La generación de CV y carta vive en
+[`cv-server`](https://github.com/cookyourweb/cv-server), un servicio aparte con
+guardrails de veracidad y casos de evaluación construidos sobre fallos reales de
+producción. Un modelo no falla con una excepción: devuelve algo verosímil y peor.
+
+**Los secretos no dependen de que nadie se acuerde.** Los webhooks de n8n ejecutan
+acciones con efectos externos, así que sus rutas no pueden entrar en un repositorio
+público. `check-secretos` lo comprueba en el hook de pre-commit y en CI, y falla si
+encuentra una. Se escribió después de descubrir que llevaban meses publicadas: una
+regla escrita no es un control, un control es código que falla.
+Ver [ADR-001](docs/ADR-001-proteccion-de-los-webhooks.md).
+
+**El workflow de n8n se puede diffear.** Un export de n8n es un JSON de 91k con cada
+nodo de código dentro de un string escapado: un cambio de tres líneas es invisible en
+`git diff`. `wf-split` lo parte en piezas legibles, `wf-join` lo rehace, y `wf-check`
+tiene ocho reglas que salieron de averías reales. Ver [workflows/PROD](workflows/PROD/README.md).
+
+## Arranque rápido
+
+```bash
+npm install          # sin dependencias: solo fija la version de node
+npm test             # 15 tests con el runner de node
+npm run check:secretos
+npm run hooks        # activa el hook de pre-commit
+```
+
+Requiere Node 20 o superior. Los scripts de Python necesitan `pip install -r requirements.txt`.
+
+## Piezas
+
+| Pieza | Qué hace |
+|---|---|
+| `workflows/` | El workflow de n8n, partido en ficheros que git puede diffear |
+| `scripts/wf-*.mjs` | Partir, rehacer, verificar y redactar el workflow |
+| `scripts/*.py` | Utilidades sobre Notion y Drive |
+| `docs/` | Decisiones, runbooks y reglas del sistema |
+| `tests/` | Tests del núcleo de secretos |
 
 ---
 
