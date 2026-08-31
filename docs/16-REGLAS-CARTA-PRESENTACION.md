@@ -1,104 +1,132 @@
 # Reglas para las cartas de presentación
 
-**29 jul 2026** · Salieron de escribir la de Malwarebytes y corregirla cuatro veces.
+**31 ago 2026** · Reescrito entero. La versión anterior (29 jul) mandaba lo contrario
+de lo que se decide aquí, y siguió vigente dos días después de que la regla cambiara.
 
 ---
 
 ## La regla que manda sobre las demás
 
-**Hechos, no afirmaciones.**
+**La carta no argumenta. Abre la puerta.**
 
-Una lista de herramientas es indiscutible. Una afirmación sobre lo que lograste
-te obliga a defenderla en la entrevista.
+Sus palabras, corrigiendo tres borradores seguidos:
 
-| Invita a que te interroguen | Indiscutible |
-|---|---|
-| *"I set up the automated testing practice"* | *"testing with Jest, React Testing Library and Cypress"* |
-| *"deep focus on clean code and maintainability"* | *(las herramientas ya lo demuestran)* |
-| *"I own the typed data contracts"* | *"I coordinated data contracts with the backend team"* |
+> *"Estoy justificando antes de hablar."*
 
-La carta abre puertas. **No hace falta que gane la entrevista: hace falta que no
-te obligue a defender nada que no puedas.**
+Nadie ha preguntado todavía por qué encajas. Una carta que responde a esa pregunta
+compite con el CV y pierde: el reclutador lee dos textos que dicen lo mismo, y ninguno
+con atención. **El que argumenta es el CV. La carta solo consigue que lo abran.**
 
 ---
 
 ## Las seis reglas
 
-### 1. Di dónde está tu profundidad
+### 1. Cero justificación
 
-> *"My depth is on the frontend."*
+No se nombra ninguna razón, ningún logro, ninguna competencia. **Ni una.**
 
-Esa frase sola te protege de media entrevista. Dice dónde eres fuerte y, por
-implicación, dónde no, sin pedir perdón. Si luego preguntan por backend, ya
-avisaste.
+Esto incluye las que suenan bien y son verdad. Cualquiera de estas sobra:
 
-### 2. Nunca amplíes el alcance del rol respecto al Master
-
-Es el error que más se repite, y no es de tecnologías inventadas ni de cifras
-falsas: es del **verbo**.
-
-| Master | Amplificación a evitar |
+| Sobra | Por qué |
 |---|---|
-| `coordinated data contracts` | `own the data contracts` |
-| `Integrated REST APIs` | `Designed and integrated APIs` |
-| `Frontend lead on international projects` | `sole frontend technical authority` |
-| *(solo en Skills)* | `I set up the testing practice` |
+| *"I make LLM behaviour testable"* | Es un mérito. Ya está en el CV. |
+| *"I measure a tool before adopting it"* | Es un mérito. Ya está en el CV. |
+| *"llevo tiempo poniendo modelos en producción"* | Es un mérito. Ya está en el CV. |
+| *"con código público que podéis revisar"* | Es darse bombo. |
 
-**Comprobación:** cada verbo de la carta tiene que existir en el Master, o ser
-más débil que el que hay allí. Nunca más fuerte.
+### 2. Lenguaje no afirmativo
 
-### 3. No nombres nada que no puedas explicar treinta segundos
+> ✅ *"creo que **puede encajar** con lo que hago en mi trabajo"*
+> ❌ *"este puesto **está hecho para mí**"*
 
-En la carta de Malwarebytes se coló `Identity Cloud`, su producto. No hay
-información pública de qué es. Mencionarlo habría invitado a la única pregunta
-imposible de responder.
+Es una hipótesis, no una sentencia. Que lo confirmen ellos.
 
-Si aparece en su oferta pero no lo entiendes, o lo investigas o lo quitas.
+### 3. Tres movimientos, y ninguno más
 
-### 4. Una sola frase de su oferta
+1. Me presento.
+2. La oferta me ha parecido interesante y creo que puede encajar con lo que hago.
+3. Remito al CV: *"El detalle está en mi CV."*
 
-Una demuestra que la leíste. Dos o más suenan a eco, y el eco es lo que hace que
-un CV o una carta parezcan generados.
+### 4. Un solo guiño, y apunta a LA OFERTA
 
-### 5. Lo que ya está en el CV, aquí va en una línea
+Una sola frase de su oferta demuestra que la leíste. Dos o más suenan a eco, y el eco
+es lo que hace que una carta parezca generada.
 
-La IA aplicada es el diferencial, pero ya está en el CV entero. En la carta basta
-una línea que señale interés. Repetir el CV en prosa no aporta y alarga.
+**El guiño apunta a lo que ELLOS piden, nunca a tus méritos.** Esa es la diferencia
+entre demostrar que leíste el anuncio y volver a justificarte:
 
-### 6. Corta
+> ✅ *"en particular la parte de Google Cloud y Gemini"*
+> ❌ *"vengo de años diseñando arquitecturas y hoy diseño arquitecturas con LLMs"*
 
-Tres o cuatro párrafos breves. Nadie lee una carta larga, y cada párrafo de más
-es una afirmación más que defender.
+Si el título de la oferta es genérico (*"Senior AI Engineer"* a secas) y no tienes su
+texto delante, **la carta va sin guiño**. No se inventa qué piden.
+
+### 5. Cita bien el nombre del puesto
+
+El de la vacante, entero y tal cual lo escriben ellos. Si se llama
+*"Arquitecto de Soluciones IA y GenAI"*, no se recorta a *"Arquitecto de Soluciones IA"*.
+
+### 6. Corta, y en español con tildes
+
+~50-70 palabras. Máximo 100. Cero guiones largos (—) y cero flechas (→).
+
+Las tildes no son un detalle: el 29-ago salieron dos cartas al mercado español
+**sin una sola tilde en el cuerpo**, con el membrete de encima bien acentuado. El
+contraste dentro del mismo folio es lo que canta.
 
 ---
 
-## Estructura que funciona
+## La plantilla
 
 ```
-1. A qué puesto aplicas.                        (1 línea)
-2. El solape de stack, como LISTA de hechos.    (2-3 líneas)
-3. Dónde está tu profundidad, con 2 hechos      (3-4 líneas)
-   concretos del Master.
-4. Tu diferencial, en una línea.                (1-2 líneas)
-5. Cierre con interés por su producto.          (1 línea)
+Hola,
+
+Soy Verónica Serna, ingeniera de IA. Me ha parecido muy interesante vuestra
+oferta de {PUESTO EXACTO}{, en particular {GUIÑO A LA OFERTA}} y creo que
+puede encajar con lo que hago en mi trabajo.
+
+El detalle está en mi CV. Quedo a vuestra disposición.
+
+Un saludo,
+Verónica Serna Pérez
 ```
 
-El cierre `"I would be glad to talk about the role and about how the platform is
-built"` dice que te interesa el producto **sin fingir que sabes cómo funciona**, y
-deja una pregunta abierta para la entrevista.
+En inglés, mismo esqueleto: *"I found your {PUESTO} opening very interesting and I
+think it could fit with what I do in my work."*
+
+**Sin guiño, dos cartas a empresas distintas salen casi idénticas. Está bien:**
+nadie compara tus cartas entre empresas, y el trabajo pesado lo hace el CV.
 
 ---
 
 ## Antes de enviarla
 
-- [ ] ¿Cada verbo existe en el Master, o es más débil que el suyo?
-- [ ] ¿Hay algún nombre de producto o tecnología que no podrías explicar?
-- [ ] ¿Cuántas frases vienen de su oferta? Máximo una.
-- [ ] ¿Dice dónde está tu profundidad?
-- [ ] ¿Cabe en pantalla sin hacer scroll?
+- [ ] ¿Nombra algún mérito, logro o competencia? Si sí, **fuera**.
+- [ ] ¿Dice "puede encajar" y no "está hecho para mí"?
+- [ ] ¿Cita el nombre de la vacante entero?
+- [ ] ¿El guiño apunta a la oferta, y no a ella?
+- [ ] ¿Menos de 100 palabras?
+- [ ] Si va en español, ¿lleva todas las tildes?
+- [ ] ¿Cero guiones largos y cero flechas?
+
+Las dos últimas las verifica sola `scripts/render_carta.py`: **aborta el render** si
+encuentra un guion largo o una flecha.
+
+---
+
+## Qué se ha quedado por el camino
+
+La versión del 29-jul mandaba *"tres o cuatro párrafos breves"*, *"el solape de stack
+como lista de hechos"* y *"dónde está tu profundidad, con 2 hechos concretos"*. Todo eso
+**es justificarse**, y se ha eliminado.
+
+Sobrevive una sola de sus reglas, la 4: *una sola frase de su oferta*.
+
+Su regla maestra —**hechos, no afirmaciones**— sigue siendo cierta y ahora vive en el CV,
+que es donde toca. En la carta no hace falta: sin méritos no hay nada que defender.
 
 ---
 
 **Relacionado:** `~/Desktop/cv/LEEME.md` (líneas rojas y datos canónicos),
-`scripts/revisar_cv_generado.py` (los mismos fallos, aplicados al CV),
-`docs/09-RUNBOOK-OFERTA-CONTACTO-DIRECTO`.
+`cv-server/server.py` → `PROMPT_CARTA` (**pendiente de alinear**: aún pide
+"UNA SOLA ancla concreta", que esta versión elimina).
