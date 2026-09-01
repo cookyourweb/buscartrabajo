@@ -1,78 +1,172 @@
-# Sistema Automatizado de Búsqueda de Empleo v2
+# BuscarTrabajo
 
-## Descripción
+[![tests](https://github.com/cookyourweb/buscartrabajo/actions/workflows/tests.yml/badge.svg)](https://github.com/cookyourweb/buscartrabajo/actions/workflows/tests.yml)
 
-Sistema **multi-usuario** automatizado de búsqueda de empleo. Cualquier persona se registra vía formulario web y cada mañana recibe 5 ofertas personalizadas + CVs adaptados + cartas listas para enviar.
+Sistema multiusuario que busca ofertas de empleo reales cada mañana, las filtra por
+el perfil de cada persona y se las manda por correo. Al aprobar una, genera el CV y
+la carta adaptados al puesto y permite enviarlos a la empresa.
 
-**v2 vs v1:**
-- v1 = solo para Verónica (todo hardcoded)
-- v2 = multi-user con formulario de registro + CV dinámico por usuario
-- v2 = arquitectura modular con **2 workflows separados** en n8n
+En producción desde julio de 2026.
 
-## Arquitectura v2 — 2 Workflows Separados
+## Qué tiene de interesante
+
+**Las ofertas son reales.** La versión anterior se las pedía a un modelo de lenguaje,
+que devolvía ofertas plausibles e inexistentes. Ahora vienen de tres fuentes
+(Remotive, Adzuna, Tecnoempleo), se filtran por el stack del usuario y se descartan
+las que ya están guardadas.
+
+**El texto lo escribe un modelo, la verdad no.** La generación de CV y carta vive en
+[`cv-server`](https://github.com/cookyourweb/cv-server), un servicio aparte con
+guardrails de veracidad y casos de evaluación construidos sobre fallos reales de
+producción. Un modelo no falla con una excepción: devuelve algo verosímil y peor.
+
+**Los secretos no dependen de que nadie se acuerde.** Los webhooks de n8n ejecutan
+acciones con efectos externos, así que sus rutas no pueden entrar en un repositorio
+público. `check-secretos` lo comprueba en el hook de pre-commit y en CI, y falla si
+encuentra una. Se escribió después de descubrir que llevaban meses publicadas: una
+regla escrita no es un control, un control es código que falla.
+Ver [ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md).
+
+**El workflow de n8n se puede diffear.** Un export de n8n es un JSON de 91k con cada
+nodo de código dentro de un string escapado: un cambio de tres líneas es invisible en
+`git diff`. `wf-split` lo parte en piezas legibles, `wf-join` lo rehace, y `wf-check`
+tiene ocho reglas que salieron de averías reales. Ver [workflows/PROD](workflows/PROD/README.md).
+
+## Arranque rápido
+
+```bash
+npm install          # sin dependencias: solo fija la version de node
+npm test             # 22 tests con el runner de node, sin framework
+npm run check:secretos
+npm run hooks        # activa el hook de pre-commit
+```
+
+Requiere Node 20 o superior. Los scripts de Python necesitan `pip install -r requirements.txt`.
+
+## Qué cubre ese verde
+
+El badge y `npm test` cubren **una sola pieza**: `scripts/lib/secretos.mjs`, con 22
+casos. Se eligió esa y no otra porque es la única cuyo fallo no tiene vuelta atrás:
+si una ruta de webhook se escapa al repositorio, ya está publicada.
+
+Lo que no cubre, dicho aquí para que nadie lo deduzca de un badge en verde:
+
+| Pieza | Cobertura |
+|---|---|
+| `scripts/lib/secretos.mjs` | 22 tests |
+| `scripts/wf-*.mjs` | sin tests propios |
+| `scripts/*.py` y `tools/*.py` (14 ficheros, 2.116 líneas) | sin tests, y CI no los ejecuta |
+
+CI corre sobre Node 20 y no instala Python. Es deuda declarada, no un descuido:
+está anotada en [CONTRIBUTING](CONTRIBUTING.md).
+
+## Qué falta
+
+Lo que está por hacer se abre como
+[issue](https://github.com/cookyourweb/buscartrabajo/issues), no se escribe aquí.
+Una lista de próximos pasos a mano envejece, y en este README ya pasó una vez: el
+pie decía julio con cincuenta y un commits por detrás. Las issues etiquetadas
+`seguridad` van primero.
+
+Lo que sí queda escrito es lo que no es una tarea sino un estado del sistema, y
+está en [CONTRIBUTING](CONTRIBUTING.md): las reglas de negocio del filtro viven
+dentro de un prompt sin ningún test que las cubra, y las pruebas cubren una pieza
+de diecinueve. Eso no caduca porque describe cómo está hecho, no qué se piensa
+hacer.
+
+## Piezas
+
+| Pieza | Qué hace |
+|---|---|
+| `workflows/` | El workflow de n8n, partido en ficheros que git puede diffear |
+| `scripts/wf-*.mjs` | Partir, rehacer, verificar y redactar el workflow |
+| `scripts/*.py` | Utilidades sobre Notion y Drive |
+| `docs/` | Decisiones, runbooks y reglas del sistema |
+| `tests/` | Tests del núcleo de secretos |
+
+---
+
+## Arquitectura v3
 
 ```
-┌──────────────────────────────────────────────────┐
-│  USUARIO                                         │
-│  Abre: cv-server-ggd8.onrender.com/registro      │
-└──────────────┬───────────────────────────────────┘
-               ↓
-┌──────────────────────────────────────────────────┐
-│  FLASK CV SERVER (Render)                        │
-│  - Sirve formulario HTML                         │
-│  - POST /registro (nuevo vs existente)           │
-│  - POST /generar-cv multi-user                   │
-└──────────────┬───────────────────────────────────┘
-               ↓
-┌──────────────────────────────────────────────────┐
-│  N8N — WORKFLOW 1: USUARIOS (11 nodos)           │
-│  - POST /webhook/nuevo-usuario                   │
-│  - POST /webhook/buscar-ahora                    │
-│  - Crea/busca en Notion DB Usuarios              │
-│  - Dispara HTTP interno al workflow 2            │
-└──────────────┬───────────────────────────────────┘
-               ↓ POST /webhook/buscar-para-user
-┌──────────────────────────────────────────────────┐
-│  N8N — WORKFLOW 2: PRINCIPAL (38 nodos)          │
-│  - Schedule 9am (lee todos los users activos)    │
-│  - Webhook /buscar-para-user (individual)        │
-│  - Claude genera ofertas con PROMPT DINÁMICO     │
-│  - Notion crea oferta + Brevo envía email        │
-│  - Webhooks aprobar/descartar/mandar             │
-└──────────────────────────────────────────────────┘
+USUARIO
+  → cv-server-ggd8.onrender.com/   (formulario alta: nuevo / existente)
+        │
+        ▼
+FLASK CV SERVER (Render Free)
+  GET  /                → formulario alta + acciones
+  POST /check-email     → ¿el email ya existe en Notion?
+  POST /accion-existente→ "Buscar ahora" / "Programar 9am"
+  POST /registro        → crea usuario en Notion Usuarios + dispara WF1
+  POST /generar-cv      → genera CV adaptado al puesto y lo sube a Drive
+                          (devuelve: link adaptado + cv_master_url)
+  Capa LLM: CV y carta con Claude Sonnet 4.6 (Groq de fallback)
+            Resto: Groq openai/gpt-oss-120b → Gemini 3.6 flash → Claude Haiku 4.5
+        │
+        ▼
+n8n  ──  instancia: n8n-asistente-correo.onrender.com
+  ┌───────────────────────────────────────────────────────────┐
+  │ WF1 — BuscarTrabajo-Usuarios                              │
+  │   Webhook alta de usuario  → crea/normaliza → HTTP → WF2  │
+  │   Webhook buscar ahora     → query Notion → HTTP → WF2    │
+  ├───────────────────────────────────────────────────────────┤
+  │ WF2 — WF2-integrado-v3 (multi-usuario)                    │
+  │   Triggers:                                               │
+  │     · Schedule 9am  → query usuarios activos → Loop       │
+  │     · Webhook interno, llamado desde WF1                  │
+  │     · Webhooks de aprobar / descartar / mandar a empresa   │
+  │                                                           │
+  │   Búsqueda (por usuario):                                 │
+  │     Remotive + Adzuna + Tecnoempleo → Formatear           │
+  │     (filtra por stack/rol del usuario + ANTI-SPAM contra  │
+  │      ofertas ya en Notion) → cap 12 ofertas (Groq free)   │
+  │     → Groq formatea → Notion crea Oferta → Brevo email    │
+  │                                                           │
+  │   Aprobar:                                                │
+  │     Respond inmediato → Marcar Aprobado/En Proceso        │
+  │     → Obtener Datos Oferta → Groq Carta                   │
+  │     → CV Server /generar-cv (usa Email Enviado del user)  │
+  │     → Brevo "revisar y enviar" + Notion guarda            │
+  │       (Carta Enviada, CV usado=master, Link CV Drive=adaptado, Fecha envio)│
+  │                                                           │
+  │   Enviar a empresa (híbrido):                             │
+  │     lee Carta Enviada YA EDITADA → si hay Email empresa:  │
+  │       manda carta+CV a la empresa (replyTo = email user)  │
+  │     si no: mail al user "aplicar a mano" con link oferta  │
+  └───────────────────────────────────────────────────────────┘
 ```
 
-## Servicios Conectados
+---
 
-| Servicio | Estado | URL | Propósito |
-|----------|--------|-----|-----------|
-| Claude API | ✅ | api.anthropic.com | Generar ofertas, cartas, CV |
-| Notion | ✅ | api.notion.com | CRM Usuarios + Ofertas |
-| Google Drive | ✅ | drive.google.com | Almacenar CVs |
-| Brevo | ✅ | api.brevo.com | Enviar emails |
-| CV Server | ✅ | cv-server-ggd8.onrender.com | Generar CVs multi-user |
-| N8N | ⚠️ | n8n-qwmu.onrender.com | Orquestador (Render Free) |
+## Servicios
 
-## Endpoints CV Server
+| Servicio | URL | Propósito |
+|----------|-----|-----------|
+| CV Server | cv-server-ggd8.onrender.com | Formulario alta + generar CV adaptado |
+| n8n | **n8n-asistente-correo.onrender.com** | Orquestador (WF1 + WF2) |
+| Notion | api.notion.com | CRM Usuarios + Ofertas |
+| Google Drive | drive.google.com | CVs adaptados |
+| Brevo | api.brevo.com | Envío de emails |
+| Groq | api.groq.com | LLM de ofertas y fallback de CV/carta (openai/gpt-oss-120b) |
 
-| Método | Ruta | Función |
-|--------|------|---------|
-| GET | `/health` | Estado + variables de entorno |
-| GET | `/debug` | Diagnóstico: Claude + Drive + Notion |
-| GET | `/registro` | Formulario de registro |
-| POST | `/registro` | Procesa registro (nuevo/existente) |
-| POST | `/generar-cv` | Genera CV adaptado (requiere `email`) |
+> ⚠️ **Instancia n8n activa = `n8n-asistente-correo`.** Las viejas (`n8n-st1v`, `n8n-qwmu`) están deprecadas. n8n NO permite dos workflows con el mismo webhook path activos a la vez → tener UNA sola instancia activa con estos paths.
+
+---
 
 ## Webhooks n8n
 
-| Método | Path | Workflow |
-|--------|------|----------|
-| POST | `/webhook/nuevo-usuario` | Workflow 1 |
-| POST | `/webhook/buscar-ahora` | Workflow 1 |
-| POST | `/webhook/buscar-para-user` | Interno (1 → 2) |
-| GET | `/webhook/oferta-aprobar?id=` | Workflow 2 |
-| GET | `/webhook/oferta-descartar?id=` | Workflow 2 |
-| GET | `/webhook/oferta-mandar-empresa?id=` | Workflow 2 |
+Los workflows exponen webhooks para dar de alta un usuario, lanzar una búsqueda y
+resolver una oferta (aprobar, descartar o mandarla a la empresa).
+
+**Las rutas no se publican aquí.** Ejecutan acciones con efectos externos y hoy no
+exigen credencial, así que la ruta es lo único que las protege (issue #1). Viven en
+`workflows/PROD/secrets.local.json`, que está fuera de git, y en el workflow versionado
+aparecen como `@@SECRET:<nodo>`.
+
+Para recuperarlas en local: exportar el workflow desde n8n y pasarlo por
+`node scripts/wf-split.mjs <export.json>`, que las separa a ese fichero.
+
+---
 
 ## Base de Datos Notion
 
@@ -82,47 +176,78 @@ Sistema **multi-usuario** automatizado de búsqueda de empleo. Cualquier persona
 |---------|------|
 | Name | Title |
 | Email | Email (único) |
-| Perfil | Rich Text |
-| Activo | Checkbox |
-| Rol objetivo | Rich Text |
+| Perfil | Rich text |
+| Rol objetivo | Rich text |
 | Stack | Multi-select |
 | Salario min | Number |
 | Modalidad | Multi-select |
-| Ciudad | Rich Text |
+| Ciudad | Rich text |
 | LinkedIn | URL |
 | CV Master URL | URL |
+| cv_master_file_id | Rich text |
+| Activo | Checkbox |
 
-### DB Ofertas — `33d11515-f4b2-81ef-a776-d0ea698b748f`
+### DB Ofertas — `33d11515f4b281efa776d0ea698b748f`
 
-| Columna | Tipo |
-|---------|------|
-| Empresa | Title |
-| Puesto | Rich Text |
-| Estado | Select |
-| Email usuario | Email (asocia al user) |
-| Link CV Drive | URL |
+| Columna | Tipo | Qué guarda |
+|---------|------|------------|
+| Empresa | Title | nombre empresa |
+| Puesto | Rich text | |
+| Salario | Rich text | |
+| Modalidad | Select | Remoto / Hibrido / Presencial |
+| Link oferta | URL | url original (clave anti-spam) |
+| Notas | Rich text | descripción corta |
+| Estado | Select | Pendiente / Aprobado / Descartado / En proceso / Enviado a empresa |
+| **Email Enviado** | Email | **email del usuario destinatario** |
+| Usuario | Relation | relación a DB Usuarios |
+| Nombre Contacto | Rich text | RRHH de la oferta |
+| Email empresa | Email | contacto de la empresa (para envío auto) |
+| Teléfono Contacto | Phone | |
+| Fecha Publicacion | Date | |
+| Fecha envio | Date | cuándo se generó carta+CV |
+| Fecha Envio Empresa | Date | cuándo se mandó a la empresa |
+| **Link CV Drive** | URL | **CV adaptado** a la oferta |
+| **CV usado** | Rich text | **CV master** (referencia del que se partió) |
+| **Carta Enviada** | Rich text | carta de presentación generada/editada |
+| Seguimiento | Date | seguimiento manual |
 
-## Debugging
-
-```bash
-# 1. ¿Servidor vivo?
-curl https://cv-server-ggd8.onrender.com/health
-
-# 2. Diagnóstico total
-curl https://cv-server-ggd8.onrender.com/debug
-
-# 3. ¿Webhook interno responde?
-curl -X POST https://n8n-qwmu.onrender.com/webhook/buscar-para-user \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@test.com","nombre":"Test","perfil":"test"}'
-```
-
-## Documentación
-
-- [`DOCUMENTACION_TECNICA_v2.md`](DOCUMENTACION_TECNICA_v2.md) - Arquitectura completa
-- [`CLAUDE.md`](CLAUDE.md) - Memoria del proyecto para IAs
+> 🔑 **CV usado = master (referencia)** · **Link CV Drive = CV adaptado (resultado)**. Son dos CVs distintos.
 
 ---
 
-**Última actualización:** 21 Abril 2026  
-**Estado:** ✅ v2 Multi-User en producción
+## Debugging rápido
+
+```bash
+# 1. ¿CV Server vivo? (Render Free duerme ~15min → cold start ~50s)
+curl https://cv-server-ggd8.onrender.com/health
+
+# 2. ¿LLM responde?
+curl https://cv-server-ggd8.onrender.com/debug
+
+# 3. ¿El webhook de búsqueda responde?
+#    La URL sale de workflows/PROD/secrets.local.json (fuera de git)
+curl -X POST "$N8N_HOST/webhook/$RUTA_BUSCAR_AHORA" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"tu@correo.com","nombre":"tu-nombre"}'
+```
+
+Si responden 200 → el problema está en el flujo interno (revisar Executions en n8n).
+
+---
+
+## Gotchas y deuda conocida
+
+- **Groq Free TPD = 100.000 tokens/día** es el cuello de botella real (no el RPM). Por eso el cap de **12 ofertas** en modo prueba. Agotarlo da 429 hasta el reset diario.
+- **Env vars Render del CV Server** (`WEBHOOK_NUEVO_USUARIO`, `WEBHOOK_BUSCAR_AHORA`) DEBEN apuntar a `n8n-asistente-correo`. Si quedaron en `n8n-st1v`, el alta de usuario nuevo dispara a la instancia muerta.
+- **API keys**: tras rotarlas hay que actualizarlas en DOS sitios — credenciales n8n (Notion, Brevo) **y** env vars Render (Groq, Gemini, Notion, Google OAuth).
+- **n8n**: al importar un workflow desde otra instancia, los IDs de credencial NO se mapean → reasignar credencial nodo por nodo. Importar con *Import from File* SOBRE el workflow abierto (si no, se duplica).
+- **Notion**: nombres de propiedad case-sensitive y con tildes (`Teléfono Contacto`, `Email empresa`). Mandar una propiedad con tipo equivocado da 400; mandar una que no existe en el payload no falla, pero escribir en un nombre inexistente sí rompe el PATCH.
+- **Tipografía del CV/carta (cv-server)**: el `cv-server` sanea el texto antes de renderizar (`sanear_tipografia`): fuera guiones largos y flechas, que son rastro de IA y NO pueden salir a una empresa. Cuidado: el DOCX detecta la línea de empresa usando el guion largo como marcador, así que la detección sigue leyendo la línea cruda y solo se limpia el texto que se escribe. No metas un saneado global antes de parsear o pierdes las negritas.
+- **Credencial Groq del workflow Telegram**: caso real del gotcha de importar workflows. "Búsqueda Empleo Diaria" fallaba a diario porque su nodo Groq apuntaba a una credencial borrada (`2b1f3WOTcvKNLpgy`). Reapuntado a la credencial viva `Groq account 2` (`Ewz07GBHAM5voex1`, la misma que usan Digest y Outlook FIX) el 20-jul-2026.
+
+---
+
+El estado de este repositorio lo cuenta `git log`, no una línea escrita a mano al
+final del README: la anterior decía julio y llevaba 51 commits de retraso. El
+workflow que corre en producción está en [`workflows/PROD/`](workflows/PROD/README.md),
+partido en piezas que git puede diffear.

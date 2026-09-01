@@ -1,0 +1,20 @@
+{
+  "name": "buscartrabajo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sistema de busqueda y seguimiento de ofertas: captacion en n8n, generacion de CV y carta en cv-server, y seguimiento en Notion.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "check:secretos": "node scripts/check-secretos.mjs",
+    "wf:split": "node scripts/wf-split.mjs",
+    "wf:join": "node scripts/wf-join.mjs",
+    "wf:check": "node scripts/wf-check.mjs",
+    "wf:redact": "node scripts/wf-redact.mjs",
+    "hooks": "git config core.hooksPath .githooks"
+  },
+  "license": "MIT"
+}
