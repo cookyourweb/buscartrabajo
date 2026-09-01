@@ -1,6 +1,6 @@
 # Runbook. Cerrar la rotación de los webhooks
 
-**Fecha:** 1 sep 2026 · **Issue:** #1 · **Relacionado:** [ADR-001](ADR-001-proteccion-de-los-webhooks.md)
+**Fecha:** 1 sep 2026 · **Issue:** #1 · **Relacionado:** [ADR-001](../adr/ADR-001-proteccion-de-los-webhooks.md)
 
 Este documento cierra lo que ADR-001 dejó a medias. No decide nada nuevo: aplica
 la decisión que ya está tomada.

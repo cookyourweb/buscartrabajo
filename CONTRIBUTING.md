@@ -42,7 +42,7 @@ El workflow expone cuatro webhooks. Tres ejecutan acciones con efectos externos
 irreversibles y **no piden ninguna credencial**. Lo único que los separa de
 cualquiera que sepa leer el repositorio es que su ruta sea impredecible. El
 porqué, y por qué no se usa autenticación por cabecera, está en
-[ADR-001](docs/ADR-001-proteccion-de-los-webhooks.md).
+[ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md).
 
 Consecuencia práctica, y no admite excepción:
 
@@ -127,7 +127,7 @@ queda con lo que solo un modelo puede hacer.
 
 ## 6. Lo que no se cambia sin un ADR
 
-- Cómo se protegen los webhooks ([ADR-001](docs/ADR-001-proteccion-de-los-webhooks.md))
+- Cómo se protegen los webhooks ([ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md))
 - Qué framework usa el frontend cuando exista
 - Que `secrets.local.json` no entre en git
 

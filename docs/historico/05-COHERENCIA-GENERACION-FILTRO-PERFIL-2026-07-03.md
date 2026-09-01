@@ -5,7 +5,7 @@
 > ingesta. Conclusión: el código del filtro **no se toca**; lo que hay que alinear es el
 > **perfil del usuario en Notion**.
 
-**Estado:** ✅ verificado · **Fuente de verdad operativa:** [`../README.md`](../README.md)
+**Estado:** ✅ verificado · **Fuente de verdad operativa:** [`../README.md`](../../README.md)
 
 ---
 

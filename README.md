@@ -25,7 +25,7 @@ acciones con efectos externos, así que sus rutas no pueden entrar en un reposit
 público. `check-secretos` lo comprueba en el hook de pre-commit y en CI, y falla si
 encuentra una. Se escribió después de descubrir que llevaban meses publicadas: una
 regla escrita no es un control, un control es código que falla.
-Ver [ADR-001](docs/ADR-001-proteccion-de-los-webhooks.md).
+Ver [ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md).
 
 **El workflow de n8n se puede diffear.** Un export de n8n es un JSON de 91k con cada
 nodo de código dentro de un string escapado: un cambio de tres líneas es invisible en

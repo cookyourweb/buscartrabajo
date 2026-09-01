@@ -9,7 +9,7 @@ Responde a las tres preguntas que importan:
   3. Los crons siguen donde deben (nadie los ha vuelto a poner a cada minuto)
 
 Lee las credenciales del .env y NUNCA las imprime.
-Documentado en docs/19-RUNBOOK-SISTEMA-PARADO-2026-08-05.md
+Documentado en docs/runbooks/19-RUNBOOK-SISTEMA-PARADO-2026-08-05.md
 """
 import json
 import re

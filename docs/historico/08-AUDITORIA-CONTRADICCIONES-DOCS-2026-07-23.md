@@ -107,20 +107,20 @@ histórico y quitarle los comandos ejecutables.
 
 - `buscartrabajo/README.md:173`: "Archivo canónico workflow: `workflows/WF2-integrado-v3.json`".
 - `git status`: ese fichero aparece como **borrado** (`D`).
-- `docs/WORKFLOWS-N8N.md:70`: los exports de `workflows/` **NO son la fuente de verdad**.
-- `docs/WORKFLOWS-N8N.md:26`: ese workflow está **OFF** en n8n y "NO se usa".
+- `docs/referencia/WORKFLOWS-N8N.md:70`: los exports de `workflows/` **NO son la fuente de verdad**.
+- `docs/referencia/WORKFLOWS-N8N.md:26`: ese workflow está **OFF** en n8n y "NO se usa".
 
 Cuatro afirmaciones sobre el mismo fichero, incompatibles entre sí.
 
 **Corregir en:** `buscartrabajo/README.md:173`. Quitar la línea o sustituirla por un puntero a
-`docs/WORKFLOWS-N8N.md`.
+`docs/referencia/WORKFLOWS-N8N.md`.
 
 ### 5. El dominio del remitente de correo
 
 | Fuente | Remitente |
 |---|---|
 | `cv-server/README.md:100` | `veronica@`**`use`**`cookyourwebai.es` |
-| `docs/WORKFLOWS-N8N.md:25` | `veronica@cookyourwebai.es` |
+| `docs/referencia/WORKFLOWS-N8N.md:25` | `veronica@cookyourwebai.es` |
 
 Son dominios distintos. Uno de los dos está mal, y ninguno de los dos documentos lo sabe.
 
@@ -178,7 +178,7 @@ Sin esa propiedad, los CVs en español salen del master inglés.
 
 ### 9. `WORKFLOWS-N8N.md` señala un workflow de producción que ya no lo es
 
-- `docs/WORKFLOWS-N8N.md:25`: PROD = `5pTwriXcc6aYHO1Y`, estado ACTIVE.
+- `docs/referencia/WORKFLOWS-N8N.md:25`: PROD = `5pTwriXcc6aYHO1Y`, estado ACTIVE.
 - Verificado el 21-jul contra la API de n8n: el PROD activo pasó a ser
   **`OVoFiXTQwXmiyMfW`** ("BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)", 50 nodos).
   `5pTwriXcc6aYHO1Y` (47 nodos) quedó apagado.
@@ -186,7 +186,7 @@ Sin esa propiedad, los CVs en español salen del master inglés.
 El propio documento avisa: "Estado verificado vía n8n API el 20-jul-2026". El cambio ocurrió
 el 21. El documento no miente, **caducó**.
 
-**Corregir en:** `docs/WORKFLOWS-N8N.md:21-26`, reverificando contra la API antes de escribir.
+**Corregir en:** `docs/referencia/WORKFLOWS-N8N.md:21-26`, reverificando contra la API antes de escribir.
 
 ### 10. Cuántas ofertas llegan al día
 
@@ -244,7 +244,7 @@ Ese fue exactamente el método que produjo esta lista.
    listadas en la contradicción 2. Queda alinear los tres documentos con ellas.
 3. Corregir `buscartrabajo/README.md`: capa LLM, archivo canónico, schema con `CV Master URL ES`
    (contradicciones 1, 4, 8).
-4. Actualizar `docs/WORKFLOWS-N8N.md` reverificando contra la API de n8n (contradicción 9).
+4. Actualizar `docs/referencia/WORKFLOWS-N8N.md` reverificando contra la API de n8n (contradicción 9).
 5. Actualizar `cv-server/README.md`: FAQ de ofertas reales y versión (contradicción 6).
 6. Marcar `docs/01` y `docs/05` como históricos, o quitarles los comandos ejecutables
    (contradicciones 3, 11).

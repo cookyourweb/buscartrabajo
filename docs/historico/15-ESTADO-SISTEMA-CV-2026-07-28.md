@@ -82,7 +82,7 @@ Las ofertas llegan a dos buzones y se habían creado dos registros. El segundo q
 el Master a medias (4.689 chars **sin `PERFIL BASE`**, frente a 8.702 del bueno), sin
 `Email CV` y con la ciudad en minúsculas.
 
-El CV de PANEL salió con cabecera `verseper@hotmail.com`, titular haciendo **eco
+El CV de PANEL salió con cabecera `<correo antiguo>`, titular haciendo **eco
 literal de la vacante** (`Tech Lead Full Stack | Java · Angular · Microservicios`) y
 tecnologías ajenas (Maven, Oracle).
 
@@ -112,7 +112,7 @@ variantes.
 
 - `emails_de_usuario()` / `usuario_tiene_email()` — un usuario, N cuentas.
   `buscar_usuario_por_email` hace dos pasadas y **verifica exacto en Python**, porque el
-  `contains` de Notion es de subcadena: `vero@gmail.com` casa con `notvero@gmail.com`.
+  `contains` de Notion es de subcadena: `ana@ejemplo.com` casa con `mariana@ejemplo.com`.
 
 - **Bug latente arreglado en `api.py`** — `GenerarCVResponse` no declaraba ningún
   guardrail. `response_model` filtra lo no declarado, así que al desplegar FastAPI los
@@ -131,7 +131,7 @@ variantes.
 
 ## Migración de Notion (ya ejecutada por API)
 
-1. `Email alias = verseper@hotmail.com` en el registro bueno
+1. `Email alias = <correo antiguo>` en el registro bueno
 2. Cinco ofertas reapuntadas: Grupo NS, PANEL, Clipster, A.Team, EXDESIS
 3. Registro `veronica serna` **desactivado, no borrado** (si algo lo referencia, la
    relación sobrevive)
