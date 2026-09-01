@@ -7,6 +7,7 @@ reportlab llevan Latin-1.
 
 Uso: python render_carta.py entrada.txt salida.pdf
 """
+import os
 import sys
 
 from reportlab.lib.colors import HexColor
@@ -16,9 +17,40 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import cm
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
-NOMBRE = "Verónica Serna Pérez"
-CONTACTO = ("Valdemorillo, Madrid · +34 655 133 839 · verserper@gmail.com · "
-            "linkedin.com/in/veronica4web")
+# Los datos de contacto de una persona NO viven en el codigo. Este repositorio
+# es publico: escribir aqui el telefono o el correo es publicarlos. Salen del
+# .env de la raiz, que esta en .gitignore, igual que el resto de secretos.
+ENV_PATH = os.path.join(os.path.dirname(__file__), "..", ".env")
+
+
+def cargar_env(path=ENV_PATH):
+    """Lee el .env a mano (sin dependencias extra) y lo vuelca a os.environ."""
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8") as f:
+        for linea in f:
+            linea = linea.strip()
+            if not linea or linea.startswith("#") or "=" not in linea:
+                continue
+            clave, _, valor = linea.partition("=")
+            os.environ.setdefault(clave.strip(), valor.strip().strip('"').strip("'"))
+
+
+def dato(var: str) -> str:
+    valor = os.environ.get(var, "").strip()
+    if not valor:
+        raise SystemExit(
+            f"ABORTADO: falta {var}.\n"
+            f"Los datos de contacto no se escriben en el codigo. Anade a .env:\n"
+            f'  CARTA_NOMBRE="Nombre Apellidos"\n'
+            f'  CARTA_CONTACTO="Ciudad · +34 000 000 000 · correo@ejemplo.com"'
+        )
+    return valor
+
+
+cargar_env()
+NOMBRE = dato("CARTA_NOMBRE")
+CONTACTO = dato("CARTA_CONTACTO")
 
 DARK = HexColor("#1A1A1A")
 GREY = HexColor("#666666")
