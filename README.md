@@ -60,6 +60,20 @@ Lo que no cubre, dicho aquí para que nadie lo deduzca de un badge en verde:
 CI corre sobre Node 20 y no instala Python. Es deuda declarada, no un descuido:
 está anotada en [CONTRIBUTING](CONTRIBUTING.md).
 
+## Qué falta
+
+Lo que está por hacer se abre como
+[issue](https://github.com/cookyourweb/buscartrabajo/issues), no se escribe aquí.
+Una lista de próximos pasos a mano envejece, y en este README ya pasó una vez: el
+pie decía julio con cincuenta y un commits por detrás. Las issues etiquetadas
+`seguridad` van primero.
+
+Lo que sí queda escrito es lo que no es una tarea sino un estado del sistema, y
+está en [CONTRIBUTING](CONTRIBUTING.md): las reglas de negocio del filtro viven
+dentro de un prompt sin ningún test que las cubra, y las pruebas cubren una pieza
+de diecinueve. Eso no caduca porque describe cómo está hecho, no qué se piensa
+hacer.
+
 ## Piezas
 
 | Pieza | Qué hace |
