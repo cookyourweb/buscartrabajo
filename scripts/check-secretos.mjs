@@ -22,7 +22,7 @@
 // Uso:  node scripts/check-secretos.mjs
 import { readFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';
-import { pathsSinRedactar } from './lib/secretos.mjs';
+import { pathsSinRedactar, rutasLiterales } from './lib/secretos.mjs';
 
 const FICHERO_SECRETOS = 'workflows/PROD/secrets.local.json';
 const ROJO = '\x1b[31m', VERDE = '\x1b[32m', AMBAR = '\x1b[33m', FIN = '\x1b[0m';
@@ -65,6 +65,41 @@ if (existsSync(FICHERO_SECRETOS)) {
   }
 } else {
   console.log(`${AMBAR}aviso: no hay ${FICHERO_SECRETOS}, solo se comprueba la forma${FIN}`);
+}
+
+// ── 3. Por forma, en el texto: CUALQUIER ruta escrita a mano ─────────────────
+//
+// 1-sep-2026. Las dos comprobaciones de arriba dieron verde durante dias con
+// tres rutas escritas a mano en el codigo de los nodos que arman los correos
+// (`oferta-aprobar`, `oferta-descartar`, `oferta-mandar-empresa`) y una en dos
+// documentos. La 1 no las vio porque no estan en un campo `path`. La 2 tampoco,
+// porque ya estaban rotadas y solo busca las VIVAS.
+//
+// Una ruta muerta no filtra nada, y por eso nadie la miraba. El dano es el
+// contrario: `wf-join` la devuelve a n8n y el enlace del correo lleva a un 404.
+// Asi que no se permite ninguna ruta literal, viva o muerta. O marcador, o el
+// hueco `<RUTA>` en la documentacion.
+//
+// Quedan fuera a proposito, y solo estos:
+//   - `tests/`, cuyas fixtures tienen que nombrar las rutas viejas para
+//     demostrar que se detectan.
+//   - los archivos congelados (`.archivo-historico-*`, `_archivo-exports-*`),
+//     que son un registro de lo que hubo y nadie importa a n8n. Sus rutas
+//     vivas las siguen cazando las comprobaciones 1 y 2, que si los miran.
+const CONGELADO = /(^|\/)(\.archivo-historico-|_archivo-exports-)/;
+const alcance = (f) => !f.startsWith('tests/') && !CONGELADO.test(f);
+
+for (const ruta of versionados.filter(alcance)) {
+  let texto;
+  try {
+    texto = readFileSync(ruta, 'utf8');
+  } catch {
+    continue;                       // binario o ilegible
+  }
+  const literales = rutasLiterales(texto);
+  if (literales.length) {
+    fallos.push(`${ruta}: ruta(s) de webhook escritas a mano (${literales.join(', ')})`);
+  }
 }
 
 // ── Veredicto ────────────────────────────────────────────────────────────────

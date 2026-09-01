@@ -12,7 +12,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { redactarPaths, pathsSinRedactar, fusionarSecretos, PREFIJO_SECRETO } from '../scripts/lib/secretos.mjs';
+import { redactarPaths, pathsSinRedactar, fusionarSecretos, restaurarSecretosEnTexto, rutasLiterales, PREFIJO_SECRETO } from '../scripts/lib/secretos.mjs';
 
 /** Un export de n8n reducido a lo que importa aqui. */
 const workflowDePrueba = () => ({
@@ -217,4 +217,78 @@ test('el marcador dentro del codigo sobrevive a redactar dos veces', () => {
     dos.workflow.nodes[1].parameters.jsCode,
     una.workflow.nodes[1].parameters.jsCode,
   );
+});
+
+// ── Restaurar: la vuelta del marcador, DENTRO del codigo de un nodo ──────────
+//
+// 1-sep-2026. `redactarPaths` ya sacaba la ruta del `jsCode` y dejaba el
+// marcador (test de arriba), pero `wf-join` solo sabia restaurar el campo
+// `path`. El texto del nodo volvia a produccion tal cual.
+//
+// Consecuencia medida en PROD: los tres ficheros que arman los enlaces de los
+// correos seguian con la ruta VIEJA escrita a mano. Al rotar, esos correos
+// quedaron apuntando a rutas muertas. Aprobar y descartar desde el correo no
+// funcionan, y nada avisa porque una ruta muerta no es una fuga.
+
+test('el marcador dentro de un texto vuelve a ser la ruta viva', () => {
+  const texto = "'https://host/webhook/@@SECRET:Webhook Aprobar?id=' + id";
+
+  const salida = restaurarSecretosEnTexto(texto, { 'Webhook Aprobar': 'ruta-viva-nueva' });
+
+  assert.equal(salida, "'https://host/webhook/ruta-viva-nueva?id=' + id");
+});
+
+test('un nombre de nodo que es prefijo de otro no se come al largo', () => {
+  const texto = '@@SECRET:Webhook Aprobar y @@SECRET:Webhook Aprobar Todo';
+
+  const salida = restaurarSecretosEnTexto(texto, {
+    'Webhook Aprobar': 'corta',
+    'Webhook Aprobar Todo': 'larga',
+  });
+
+  assert.equal(salida, 'corta y larga');
+});
+
+test('restaurar y redactar son ida y vuelta', () => {
+  const secretos = { 'Webhook Aprobar': 'ruta-viva-nueva' };
+  const original = "'/webhook/ruta-viva-nueva?id='";
+
+  const wf = {
+    nodes: [
+      { name: 'Webhook Aprobar', type: 'n8n-nodes-base.webhook', parameters: { path: 'ruta-viva-nueva' } },
+      { name: 'Code - Email', type: 'n8n-nodes-base.code', parameters: { jsCode: original } },
+    ],
+  };
+  const redactado = redactarPaths(wf).workflow.nodes[1].parameters.jsCode;
+
+  assert.equal(restaurarSecretosEnTexto(redactado, secretos), original);
+});
+
+// ── Rutas literales: la comprobacion que faltaba ─────────────────────────────
+//
+// `check-secretos` solo miraba las rutas VIVAS, y por eso dejo pasar durante
+// dias tres rutas muertas escritas a mano. Una ruta muerta no filtra nada, pero
+// vuelve a produccion en el siguiente `wf-join` y rompe los correos. Se prohibe
+// cualquier ruta literal, viva o muerta: o marcador, o nada.
+
+test('una ruta de webhook escrita a mano se detecta', () => {
+  const texto = "'https://n8n.example.com/webhook/oferta-aprobar?id=' + id";
+
+  assert.deepEqual(rutasLiterales(texto), ['oferta-aprobar']);
+});
+
+test('el marcador no cuenta como ruta literal', () => {
+  const texto = "'https://n8n.example.com/webhook/@@SECRET:Webhook Aprobar?id=' + id";
+
+  assert.deepEqual(rutasLiterales(texto), []);
+});
+
+test('el hueco de la documentacion tampoco cuenta', () => {
+  assert.deepEqual(rutasLiterales('https://n8n.example.com/webhook/<RUTA>?id=...'), []);
+});
+
+test('se detectan varias rutas distintas y sin repetir', () => {
+  const texto = '/webhook/oferta-aprobar /webhook/oferta-descartar /webhook/oferta-aprobar';
+
+  assert.deepEqual(rutasLiterales(texto).sort(), ['oferta-aprobar', 'oferta-descartar']);
 });

@@ -116,7 +116,7 @@ Sistema multi-usuario de búsqueda de empleo que:
 | `NOTION_TOKEN` | Token integración Notion |
 | `NOTION_DB_USUARIOS` | `34811515f4b280f19a42f8da5e91a8fe` |
 | ~~`WEBHOOK_NUEVO_USUARIO`~~ | **ELIMINADA el 28-ago-2026.** Apuntaba a un webhook que no existe. |
-| ~~`WEBHOOK_BUSCAR_AHORA`~~ | **No definirla.** El código apunta por defecto a `https://n8n-asistente-correo.onrender.com/webhook/buscar-para-user`. Si la defines, PISA al default. |
+| ~~`WEBHOOK_BUSCAR_AHORA`~~ | **No definirla.** El código apunta por defecto a `https://n8n-asistente-correo.onrender.com/webhook/<RUTA>`. Si la defines, PISA al default. |
 
 ### Notion DBs
 
@@ -253,7 +253,7 @@ curl https://cv-server-ggd8.onrender.com/debug
 
 # 5. ¿Webhook interno buscar-para-user funciona?
 #    OJO: dispara una busqueda REAL y manda correos.
-curl -X POST https://n8n-asistente-correo.onrender.com/webhook/buscar-para-user \
+curl -X POST https://n8n-asistente-correo.onrender.com/webhook/<RUTA> \
   -H "Content-Type: application/json" \
   -d '{"nombre":"vero","email":"...","perfil":"...","rol":"...","stack":["React"],"salario":50000,"modalidad":["Remoto"],"ciudad":"Madrid","source":"test"}'
 ```

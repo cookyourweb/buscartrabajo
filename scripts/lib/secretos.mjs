@@ -98,3 +98,57 @@ export function fusionarSecretos(existentes, nuevos) {
   }
   return fusion;
 }
+
+/**
+ * Vuelve a poner las rutas vivas donde `redactarPaths` dejo marcadores, DENTRO
+ * de un texto cualquiera: el `jsCode` de un nodo, el cuerpo de una peticion.
+ *
+ * 1-sep-2026. Faltaba la mitad de la ida y vuelta. `redactarPaths` ya sacaba la
+ * ruta del codigo de los nodos, pero `wf-join` solo restauraba el campo `path`,
+ * asi que el texto volvia a n8n con lo que hubiera. En PROD habia rutas VIEJAS
+ * escritas a mano, y al rotar los enlaces de aprobar y descartar de los correos
+ * quedaron muertos. Nada aviso: una ruta muerta no es una fuga.
+ *
+ * No se parsea el nombre del nodo del texto, se buscan los nombres CONOCIDOS.
+ * Un nombre lleva espacios y guiones y no hay forma fiable de saber donde
+ * acaba: `@@SECRET:Webhook Aprobar?id=` no dice si el nombre incluye el `?`.
+ * Los largos van primero para que un nombre que es prefijo de otro no lo parta.
+ *
+ * @param {string} texto
+ * @param {Record<string,string>} secretos  nombre de nodo -> ruta viva
+ * @returns {string}
+ */
+export function restaurarSecretosEnTexto(texto, secretos) {
+  let salida = texto;
+  const nombres = Object.keys(secretos ?? {}).sort((a, b) => b.length - a.length);
+
+  for (const nombre of nombres) {
+    salida = salida.split(`${PREFIJO_SECRETO}${nombre}`).join(secretos[nombre]);
+  }
+
+  return salida;
+}
+
+/**
+ * Devuelve las rutas de webhook escritas a mano en un texto, sin repetir.
+ *
+ * `check-secretos` solo sabia buscar las rutas VIVAS, y por eso tres rutas ya
+ * rotadas sobrevivieron en el repositorio: como no filtraban nada, nadie las
+ * miraba. El problema es el otro: `wf-join` las devuelve a produccion y rompe
+ * los correos. Aqui se prohibe cualquier ruta literal, viva o muerta.
+ *
+ * Un marcador (`@@SECRET:...`) y el hueco de la documentacion (`<RUTA>`) no
+ * casan, porque `@` y `<` quedan fuera de la clase de caracteres.
+ *
+ * @param {string} texto
+ * @returns {string[]}
+ */
+export function rutasLiterales(texto) {
+  const encontradas = new Set();
+
+  for (const [, ruta] of (texto ?? '').matchAll(/\/webhook(?:-test)?\/([A-Za-z0-9_-]+)/g)) {
+    encontradas.add(ruta);
+  }
+
+  return [...encontradas];
+}

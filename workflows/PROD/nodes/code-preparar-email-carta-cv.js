@@ -45,7 +45,7 @@ const htmlContent = '<div style="font-family:Arial;padding:20px;max-width:600px"
   + (linkCV ? '&nbsp;&nbsp;|&nbsp;&nbsp;<a href="' + linkCV + '" style="color:#1F5C8B;font-weight:bold;text-decoration:underline" target="_blank">✏️ Editar el CV en Drive</a>' : '')
   + '</p>'
   + '<p style="color:#666;font-size:13px">Cuando la carta y el CV estén como querés, pulsá Enviar:</p>'
-  + '<a href="https://n8n-asistente-correo.onrender.com/webhook/oferta-mandar-empresa?id=' + pageId + '" style="background:#22C55E;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;font-weight:bold">🚀 Enviar a empresa</a>'
+  + '<a href="https://n8n-asistente-correo.onrender.com/webhook/@@SECRET:Webhook Mandar Empresa?id=' + pageId + '" style="background:#22C55E;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;font-weight:bold">🚀 Enviar a empresa</a>'
   + '</div>';
 
 const brevoBody = JSON.stringify({

@@ -37,9 +37,9 @@ return $input.all().map((item, idx) => {
     + (nombreContacto ? '<p><b>Contacto:</b> ' + nombreContacto + '</p>' : '')
     + (emailContacto  ? '<p><b>Email empresa:</b> ' + emailContacto + '</p>' : '')
     + (linkOferta ? '<p><a href="' + linkOferta + '" style="color:#1F5C8B;font-weight:bold;text-decoration:underline" target="_blank">🔗 Ver oferta completa</a></p>' : '')
-    + '<br><a href="https://n8n-asistente-correo.onrender.com/webhook/oferta-aprobar?id=' + pageId
+    + '<br><a href="https://n8n-asistente-correo.onrender.com/webhook/@@SECRET:Webhook Aprobar?id=' + pageId
     + '" style="background:#22C55E;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block">Aprobar</a> '
-    + '<a href="https://n8n-asistente-correo.onrender.com/webhook/oferta-descartar?id=' + pageId
+    + '<a href="https://n8n-asistente-correo.onrender.com/webhook/@@SECRET:Webhook Descartar?id=' + pageId
     + '" style="background:#EF4444;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;margin-left:12px">Descartar</a>'
     + '</div>';
 
