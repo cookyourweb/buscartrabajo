@@ -1,13 +1,88 @@
-# Sistema Automatizado de Búsqueda de Empleo — v3 (Ofertas Reales, Multi-usuario)
+# BuscarTrabajo
 
-## Descripción
+[![tests](https://github.com/cookyourweb/buscartrabajo/actions/workflows/tests.yml/badge.svg)](https://github.com/cookyourweb/buscartrabajo/actions/workflows/tests.yml)
 
-Sistema **multi-usuario** de búsqueda de empleo. Cada persona se registra en un formulario web; cada mañana el sistema busca **ofertas REALES** (Remotive + Adzuna + Tecnoempleo), las filtra por su perfil, y se las manda por email con botones. Al aprobar, genera **carta + CV adaptado al puesto** y permite enviarlo a la empresa.
+Sistema multiusuario que busca ofertas de empleo reales cada mañana, las filtra por
+el perfil de cada persona y se las manda por correo. Al aprobar una, genera el CV y
+la carta adaptados al puesto y permite enviarlos a la empresa.
 
-**v3 vs v2:**
-- v2 = ofertas **inventadas** por el LLM.
-- v3 = ofertas **reales** scrapeadas de 3 fuentes + filtro por stack del usuario + anti-spam (no repite ofertas ya guardadas en Notion).
-- v3 = envío a empresa **híbrido con edición previa** (revisás carta/CV en Notion/Drive antes de mandar).
+En producción desde julio de 2026.
+
+## Qué tiene de interesante
+
+**Las ofertas son reales.** La versión anterior se las pedía a un modelo de lenguaje,
+que devolvía ofertas plausibles e inexistentes. Ahora vienen de tres fuentes
+(Remotive, Adzuna, Tecnoempleo), se filtran por el stack del usuario y se descartan
+las que ya están guardadas.
+
+**El texto lo escribe un modelo, la verdad no.** La generación de CV y carta vive en
+[`cv-server`](https://github.com/cookyourweb/cv-server), un servicio aparte con
+guardrails de veracidad y casos de evaluación construidos sobre fallos reales de
+producción. Un modelo no falla con una excepción: devuelve algo verosímil y peor.
+
+**Los secretos no dependen de que nadie se acuerde.** Los webhooks de n8n ejecutan
+acciones con efectos externos, así que sus rutas no pueden entrar en un repositorio
+público. `check-secretos` lo comprueba en el hook de pre-commit y en CI, y falla si
+encuentra una. Se escribió después de descubrir que llevaban meses publicadas: una
+regla escrita no es un control, un control es código que falla.
+Ver [ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md).
+
+**El workflow de n8n se puede diffear.** Un export de n8n es un JSON de 91k con cada
+nodo de código dentro de un string escapado: un cambio de tres líneas es invisible en
+`git diff`. `wf-split` lo parte en piezas legibles, `wf-join` lo rehace, y `wf-check`
+tiene ocho reglas que salieron de averías reales. Ver [workflows/PROD](workflows/PROD/README.md).
+
+## Arranque rápido
+
+```bash
+npm install          # sin dependencias: solo fija la version de node
+npm test             # 22 tests con el runner de node, sin framework
+npm run check:secretos
+npm run hooks        # activa el hook de pre-commit
+```
+
+Requiere Node 20 o superior. Los scripts de Python necesitan `pip install -r requirements.txt`.
+
+## Qué cubre ese verde
+
+El badge y `npm test` cubren **una sola pieza**: `scripts/lib/secretos.mjs`, con 22
+casos. Se eligió esa y no otra porque es la única cuyo fallo no tiene vuelta atrás:
+si una ruta de webhook se escapa al repositorio, ya está publicada.
+
+Lo que no cubre, dicho aquí para que nadie lo deduzca de un badge en verde:
+
+| Pieza | Cobertura |
+|---|---|
+| `scripts/lib/secretos.mjs` | 22 tests |
+| `scripts/wf-*.mjs` | sin tests propios |
+| `scripts/*.py` y `tools/*.py` (14 ficheros, 2.116 líneas) | sin tests, y CI no los ejecuta |
+
+CI corre sobre Node 20 y no instala Python. Es deuda declarada, no un descuido:
+está anotada en [CONTRIBUTING](CONTRIBUTING.md).
+
+## Qué falta
+
+Lo que está por hacer se abre como
+[issue](https://github.com/cookyourweb/buscartrabajo/issues), no se escribe aquí.
+Una lista de próximos pasos a mano envejece, y en este README ya pasó una vez: el
+pie decía julio con cincuenta y un commits por detrás. Las issues etiquetadas
+`seguridad` van primero.
+
+Lo que sí queda escrito es lo que no es una tarea sino un estado del sistema, y
+está en [CONTRIBUTING](CONTRIBUTING.md): las reglas de negocio del filtro viven
+dentro de un prompt sin ningún test que las cubra, y las pruebas cubren una pieza
+de diecinueve. Eso no caduca porque describe cómo está hecho, no qué se piensa
+hacer.
+
+## Piezas
+
+| Pieza | Qué hace |
+|---|---|
+| `workflows/` | El workflow de n8n, partido en ficheros que git puede diffear |
+| `scripts/wf-*.mjs` | Partir, rehacer, verificar y redactar el workflow |
+| `scripts/*.py` | Utilidades sobre Notion y Drive |
+| `docs/` | Decisiones, runbooks y reglas del sistema |
+| `tests/` | Tests del núcleo de secretos |
 
 ---
 
@@ -32,14 +107,14 @@ FLASK CV SERVER (Render Free)
 n8n  ──  instancia: n8n-asistente-correo.onrender.com
   ┌───────────────────────────────────────────────────────────┐
   │ WF1 — BuscarTrabajo-Usuarios                              │
-  │   Webhook /nuevo-usuario   → crea/normaliza → HTTP → WF2  │
-  │   Webhook /buscar-ahora    → query Notion → HTTP → WF2    │
+  │   Webhook alta de usuario  → crea/normaliza → HTTP → WF2  │
+  │   Webhook buscar ahora     → query Notion → HTTP → WF2    │
   ├───────────────────────────────────────────────────────────┤
   │ WF2 — WF2-integrado-v3 (multi-usuario)                    │
   │   Triggers:                                               │
   │     · Schedule 9am  → query usuarios activos → Loop       │
-  │     · Webhook /buscar-para-user (interno desde WF1)       │
-  │     · Webhooks /oferta-aprobar /-descartar /-mandar-empresa│
+  │     · Webhook interno, llamado desde WF1                  │
+  │     · Webhooks de aprobar / descartar / mandar a empresa   │
   │                                                           │
   │   Búsqueda (por usuario):                                 │
   │     Remotive + Adzuna + Tecnoempleo → Formatear           │
@@ -80,14 +155,16 @@ n8n  ──  instancia: n8n-asistente-correo.onrender.com
 
 ## Webhooks n8n
 
-| Método | Path | Workflow |
-|--------|------|----------|
-| POST | `/webhook/nuevo-usuario` | WF1 |
-| POST | `/webhook/buscar-ahora` | WF1 |
-| POST | `/webhook/buscar-para-user` | Interno (WF1 → WF2) |
-| GET | `/webhook/oferta-aprobar?id=` | WF2 |
-| GET | `/webhook/oferta-descartar?id=` | WF2 |
-| GET | `/webhook/oferta-mandar-empresa?id=` | WF2 |
+Los workflows exponen webhooks para dar de alta un usuario, lanzar una búsqueda y
+resolver una oferta (aprobar, descartar o mandarla a la empresa).
+
+**Las rutas no se publican aquí.** Ejecutan acciones con efectos externos y hoy no
+exigen credencial, así que la ruta es lo único que las protege (issue #1). Viven en
+`workflows/PROD/secrets.local.json`, que está fuera de git, y en el workflow versionado
+aparecen como `@@SECRET:<nodo>`.
+
+Para recuperarlas en local: exportar el workflow desde n8n y pasarlo por
+`node scripts/wf-split.mjs <export.json>`, que las separa a ese fichero.
 
 ---
 
@@ -147,10 +224,11 @@ curl https://cv-server-ggd8.onrender.com/health
 # 2. ¿LLM responde?
 curl https://cv-server-ggd8.onrender.com/debug
 
-# 3. ¿Webhook buscar-ahora funciona? (instancia NUEVA)
-curl -X POST https://n8n-asistente-correo.onrender.com/webhook/buscar-ahora \
+# 3. ¿El webhook de búsqueda responde?
+#    La URL sale de workflows/PROD/secrets.local.json (fuera de git)
+curl -X POST "$N8N_HOST/webhook/$RUTA_BUSCAR_AHORA" \
   -H "Content-Type: application/json" \
-  -d '{"email":"hello.cookyourweb@gmail.com","nombre":"vero"}'
+  -d '{"email":"tu@correo.com","nombre":"tu-nombre"}'
 ```
 
 Si responden 200 → el problema está en el flujo interno (revisar Executions en n8n).
@@ -169,6 +247,7 @@ Si responden 200 → el problema está en el flujo interno (revisar Executions e
 
 ---
 
-**Última actualización:** 20 julio 2026
-**Estado:** ✅ v3 multi-usuario con ofertas reales. Flujo de aprobación con carta y CV operativo. Fix de tipografía (sin guiones largos ni flechas) en cv-server y credencial Telegram reparada el 20-jul.
-**Archivo canónico workflow:** `workflows/WF2-integrado-v3.json`
+El estado de este repositorio lo cuenta `git log`, no una línea escrita a mano al
+final del README: la anterior decía julio y llevaba 51 commits de retraso. El
+workflow que corre en producción está en [`workflows/PROD/`](workflows/PROD/README.md),
+partido en piezas que git puede diffear.

@@ -1,0 +1,9 @@
+#!/bin/sh
+# Impide commitear una ruta de webhook. Se activa con `npm run hooks`.
+#
+# El 31-ago-2026 se descubrio que las rutas de tres webhooks GET sin
+# autenticacion llevaban meses publicadas en este repositorio, que es publico.
+# Nadie lo vio porque nada lo miraba. Esto lo mira.
+set -e
+node scripts/check-secretos.mjs
+npm test --silent
