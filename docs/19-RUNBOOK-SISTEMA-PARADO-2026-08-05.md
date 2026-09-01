@@ -32,7 +32,7 @@ La cadena completa:
 
 `Cron - Revisar Aprobadas` pasa de `* * * * *` a `*/15 * * * *`. De 1.440 ejecuciones diarias a 96.
 
-Verificado releyendo el workflow del servidor y observando 6 minutos sin ningún disparo. Backup previo en `workflows/BACKUP-CsvmtPcLVmGIZg6C-2026-08-05-0832-antes-fix-cron.json`.
+Verificado releyendo el workflow del servidor y observando 6 minutos sin ningún disparo. Backup previo en el historial: `git show 1a868f3:workflows/BACKUP-CsvmtPcLVmGIZg6C-2026-08-05-0832-antes-fix-cron.json`.
 
 ---
 

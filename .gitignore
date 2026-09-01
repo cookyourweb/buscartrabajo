@@ -84,3 +84,19 @@ backups-master/
 # OJO: .gitignore NO desindexa lo ya trackeado. Esto se saco con
 # `git rm -r --cached .claude` el 28-ago-2026.
 .claude/
+
+# Copias de seguridad de workflows de n8n: solo se versiona workflows/PROD/.
+#
+# 1-sep-2026. Habia 46 exports del mismo workflow ocupando unas 38.000 de las
+# 67.500 lineas de la rama. Un fichero llamado `antes-fix-adzuna.json` es un
+# commit disfrazado de fichero: git YA es la copia de seguridad, y desde que
+# existe `wf-split` el workflow se puede diffear de verdad.
+#
+# Ademas costaban trabajo: redactar las rutas de webhook tuvo que tocar los
+# once backups, y por eso ese commit mide 14.614 lineas.
+#
+# Siguen en el historial:  git log --all -- 'workflows/BACKUP-*'
+# OJO: .gitignore NO desindexa lo ya trackeado. Esto se saco con
+# `git rm -r --cached` el 1-sep-2026, y los ficheros siguen en el disco local.
+workflows/*
+!workflows/PROD/
