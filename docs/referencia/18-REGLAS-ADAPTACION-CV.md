@@ -115,5 +115,4 @@ Sigue aplicando el punto 4: solo si es verdad.
 ## Relacionado
 
 - `16-REGLAS-CARTA-PRESENTACION.md`: hechos y no afirmaciones. Manda en la carta.
-- `14-ESTRATEGIA-BUSQUEDA-PAN-VS-TECHO.md`: cuándo la IA es el plato y cuándo la guinda.
 - Memoria engram `buscartrabajo/osapiens-feedback`: el rechazo por bloquearse con nombres de librerías, que es el origen de la regla 4.

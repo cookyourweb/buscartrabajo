@@ -154,4 +154,4 @@ variantes.
 
 **Relacionado:** `cv-server/docs/ADR-002-modelo-del-cv.md`,
 `cv-server/docs/ADR-003-usuario-multicuenta.md`,
-`docs/09-RUNBOOK-OFERTA-CONTACTO-DIRECTO`, `docs/14-ESTRATEGIA-BUSQUEDA-PAN-VS-TECHO`
+`docs/runbooks/09-RUNBOOK-OFERTA-CONTACTO-DIRECTO`
