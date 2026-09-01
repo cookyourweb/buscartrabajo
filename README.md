@@ -36,12 +36,29 @@ tiene ocho reglas que salieron de averías reales. Ver [workflows/PROD](workflow
 
 ```bash
 npm install          # sin dependencias: solo fija la version de node
-npm test             # 15 tests con el runner de node
+npm test             # 22 tests con el runner de node, sin framework
 npm run check:secretos
 npm run hooks        # activa el hook de pre-commit
 ```
 
 Requiere Node 20 o superior. Los scripts de Python necesitan `pip install -r requirements.txt`.
+
+## Qué cubre ese verde
+
+El badge y `npm test` cubren **una sola pieza**: `scripts/lib/secretos.mjs`, con 22
+casos. Se eligió esa y no otra porque es la única cuyo fallo no tiene vuelta atrás:
+si una ruta de webhook se escapa al repositorio, ya está publicada.
+
+Lo que no cubre, dicho aquí para que nadie lo deduzca de un badge en verde:
+
+| Pieza | Cobertura |
+|---|---|
+| `scripts/lib/secretos.mjs` | 22 tests |
+| `scripts/wf-*.mjs` | sin tests propios |
+| `scripts/*.py` y `tools/*.py` (14 ficheros, 2.116 líneas) | sin tests, y CI no los ejecuta |
+
+CI corre sobre Node 20 y no instala Python. Es deuda declarada, no un descuido:
+está anotada en [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Piezas
 
@@ -216,6 +233,7 @@ Si responden 200 → el problema está en el flujo interno (revisar Executions e
 
 ---
 
-**Última actualización:** 20 julio 2026
-**Estado:** ✅ v3 multi-usuario con ofertas reales. Flujo de aprobación con carta y CV operativo. Fix de tipografía (sin guiones largos ni flechas) en cv-server y credencial Telegram reparada el 20-jul.
-**Archivo canónico workflow:** `workflows/WF2-integrado-v3.json`
+El estado de este repositorio lo cuenta `git log`, no una línea escrita a mano al
+final del README: la anterior decía julio y llevaba 51 commits de retraso. El
+workflow que corre en producción está en [`workflows/PROD/`](workflows/PROD/README.md),
+partido en piezas que git puede diffear.

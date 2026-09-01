@@ -125,6 +125,16 @@ queda con lo que solo un modelo puede hacer.
 
 ---
 
+**Los tests cubren una pieza de diecinueve.** Las 22 pruebas y el badge verde son
+todas de `scripts/lib/secretos.mjs`. Los cuatro `wf-*.mjs` no tienen pruebas
+propias, y los 14 ficheros de Python (2.116 líneas, Notion y Drive) no tienen
+ninguna ni las ejecuta CI, que corre solo sobre Node 20.
+
+Se eligió cubrir secretos primero porque es la única pieza cuyo fallo es
+irreversible: una ruta publicada ya no se despublica. El resto falla de forma
+ruidosa y recuperable. Está escrito aquí y en el README para que un badge verde no
+diga más de lo que cubre.
+
 ## 6. Lo que no se cambia sin un ADR
 
 - Cómo se protegen los webhooks ([ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md))
