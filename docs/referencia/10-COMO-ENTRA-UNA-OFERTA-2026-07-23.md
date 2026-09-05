@@ -123,7 +123,7 @@ git y desconectada de Notion.
 | Qué contiene | Documentación, exports de n8n, scripts | La aplicación, 1.695 líneas Flask |
 | Código que corre | Ninguno | Sí, en Render |
 
-Son dos repositorios independientes. La carpeta `proyectosActivosCookyourweb` que los
+Son dos repositorios independientes. La carpeta `sistema-buscartrabajo` que los
 contiene **no está versionada por ninguno de los dos**. No existe un sitio común.
 
 Consecuencia: quien clona `cv-server` no ve nada de `buscartrabajo`, y al revés. La

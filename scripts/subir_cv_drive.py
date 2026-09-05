@@ -8,8 +8,12 @@ import sys
 import urllib.parse
 import urllib.request
 import uuid
+from pathlib import Path
 
-ENV = "/Users/vero/Desktop/proyectosActivosCookyourweb/cv-server/.env"
+# cv-server es un repositorio hermano. Se puede reapuntar con CV_SERVER_ENV.
+ENV = os.environ.get(
+    "CV_SERVER_ENV", str(Path(__file__).resolve().parents[2] / "cv-server" / ".env")
+)
 FOLDER_DEFECTO = "1tHuVOIz3ratjRp8AmHsF0kGVpmy9DocY"
 
 

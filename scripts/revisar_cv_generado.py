@@ -22,9 +22,10 @@ import re
 import sys
 import urllib.request
 import zipfile
+from pathlib import Path
 
 _spec = importlib.util.spec_from_file_location(
-    "subir", "/Users/vero/Desktop/proyectosActivosCookyourweb/buscartrabajo/scripts/subir_cv_drive.py"
+    "subir", str(Path(__file__).resolve().parent / "subir_cv_drive.py")
 )
 subir = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(subir)

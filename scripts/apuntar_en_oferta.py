@@ -23,7 +23,8 @@ from datetime import date
 from pathlib import Path
 
 DB = "33d11515f4b281efa776d0ea698b748f"
-ENV = Path("/Users/vero/Desktop/proyectosActivosCookyourweb/buscartrabajo/.env")
+RAIZ = Path(__file__).resolve().parent.parent
+ENV = RAIZ / ".env"
 LIMITE_BLOQUE = 1900
 RESUMEN_PROPIEDAD = 400
 
