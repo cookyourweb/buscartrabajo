@@ -4,6 +4,53 @@ Fecha: 2026-09-06
 Estado: preparado, sin arrancar
 Continúa a: `2026-09-05-panel-empleo-angular-design.md`
 
+## El mapa: qué hay y cómo convive
+
+Son cuatro piezas que ya existen y una que se añade. Ninguna se reescribe.
+
+| Pieza | Repositorio | Qué es | Papel |
+|---|---|---|---|
+| Captación | `buscartrabajo` (`workflows/`) | Workflows de n8n | Capta ofertas y las escribe en Notion |
+| Sistema | `buscartrabajo` | Python y scripts | Filtros, reglas y documentación de decisiones |
+| Motor | `cv-server` | FastAPI en Render | Genera el CV y la carta adaptados |
+| Marca | `cookyourwebai` | React, sitio de la agencia | Cantera del design system |
+| **Cara** | **`panel-empleo`** | **Angular 22** | **Lo que se añade** |
+
+Los tres papeles que no hay que confundir:
+
+- **`cv-server` es el motor.** El panel le habla a él. No se reescribe ni se duplica.
+- **`cookyourwebai` es la cantera del diseño.** De ahí salen las rampas y los tokens
+  medidos. El panel los hereda; la web de la agencia no depende del panel.
+- **Angular es lo que se viene a practicar.** Es el hueco declarado del currículum, y
+  por eso el panel va en repositorio propio: para que se vea.
+
+En una frase: el panel es la cara en Angular de un motor que ya funciona, vestido con
+la marca de CookYourWeb.
+
+### Cómo conviven
+
+```
+n8n  ->  Notion
+                \
+                 '->  cv-server (FastAPI)  <-  panel-empleo (Angular)
+                          |
+                          '->  Postgres, Drive, modelos
+
+cookyourwebai: no participa en tiempo de ejecución.
+               Aporta los tokens, que se copian.
+```
+
+Reglas de convivencia:
+
+- **El panel solo habla con `cv-server`.** Nunca con Notion, ni con Drive, ni con un
+  modelo de lenguaje. El navegador no ve jamás un token de terceros.
+- **`buscartrabajo` no depende del panel.** Sigue funcionando por línea de comandos
+  aunque el panel no exista. El panel sustituye la interfaz, no el sistema.
+- **`cookyourwebai` y el panel comparten tokens, no código.** Se copian, con sus tests.
+  Si un día duele mantenerlos en dos sitios, se extraen a un paquete.
+- **En cada momento se escribe en un solo sitio.** La regla del diseño del 5 de
+  septiembre sigue vigente: en la rebanada 1 Notion es la verdad y el panel solo lee.
+
 ## Qué cambió desde el diseño del 5 de septiembre
 
 El diseño mandaba llevar los colores a Figma, medir contrastes y después bajarlos al
