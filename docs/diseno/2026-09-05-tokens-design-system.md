@@ -77,10 +77,38 @@ que deja de ser un color sin origen.
 |---|---|---|
 | Texto de marca | 200 a 300 | 700 a 800 |
 | Fondo de acento | 800 a 900 | 50 a 100 |
-| Bordes | 700 | 200 |
+| Bordes | 600 | 600 |
 | Foco y estados | 300 | 600 |
 
 Ningún componente elige un color. Elige un token semántico, y el tema decide el valor.
+
+### Corrección del 6 de septiembre: los bordes
+
+La fila de bordes decía «700 en oscuro, 200 en claro». **Estaba mal**, y no se vio
+hasta escribir un test que calculara el contraste de los tokens ya implantados.
+
+WCAG 1.4.11 pide 3:1 para los elementos que no son texto pero hacen falta para
+identificar un control: el borde de un campo, el anillo de foco. Un borde que no se
+distingue del fondo deja la navegación por teclado a ciegas.
+
+Contraste real de la rampa cian contra los dos fondos:
+
+| paso | sobre `#0a0a0a` | sobre blanco |
+|---|---|---|
+| 200 `#45eef8` | 13,99:1 | **1,42:1** |
+| 300 `#0ad3dd` | 10,72:1 | **1,85:1** |
+| 400 `#06b7c0` | 8,05:1 | **2,46:1** |
+| 500 `#039ca4` | 5,94:1 | 3,34:1 |
+| **600 `#018188`** | **4,24:1** | **4,67:1** |
+| 700 `#01656a` | **2,90:1** | 6,84:1 |
+
+Los dos valores que proponía la regla original fallan: el 700 da 2,90:1 sobre oscuro
+y el 200 da 1,42:1 sobre blanco. **El paso 600 es el único que sirve para los dos
+temas**, y además es el que ya usa `primary` en claro, así que el borde y el color
+principal comparten valor en vez de contradecirse.
+
+Que un documento de tokens con datos medidos tuviera una fila equivocada es
+justamente el argumento para tener el test: el ojo no lo iba a cazar nunca.
 
 ## Tipografía
 
