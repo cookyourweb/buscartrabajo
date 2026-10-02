@@ -140,6 +140,11 @@ diga más de lo que cubre.
 - Cómo se protegen los webhooks ([ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md))
 - Qué framework usa el frontend cuando exista
 - Que `secrets.local.json` no entre en git
+- Dónde vive Postgres ([ADR-002](docs/adr/ADR-002-donde-vive-postgres.md))
+- Contra quién se autentica y qué valida el backend ([ADR-003](docs/adr/ADR-003-autenticacion.md))
+- Que cada usuaria traiga su propia clave de IA ([ADR-004](docs/adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md))
+- Que Notion se congele al migrar ([ADR-005](docs/adr/ADR-005-notion-se-congela.md))
+- Dónde se publica el producto ([ADR-006](docs/adr/ADR-006-subdominios.md))
 
 ADR-001 **caduca cuando exista el frontend**: una aplicación en el navegador
 enseña la ruta en la pestaña de red, y la ruta impredecible deja de proteger

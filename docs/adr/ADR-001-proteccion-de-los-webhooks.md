@@ -1,6 +1,6 @@
 # ADR-001. Cómo se protegen los webhooks
 
-**Fecha:** 31 ago 2026 · **Estado:** aceptado, con caducidad conocida · **Issue:** #1
+**Fecha:** 31 ago 2026 · **Estado:** aceptado, con caducidad conocida · **Issue:** #1 · **Será sustituido por:** [ADR-003](ADR-003-autenticacion.md)
 
 ---
 

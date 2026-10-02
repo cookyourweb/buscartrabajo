@@ -1,7 +1,8 @@
 # Decisiones de arquitectura: tablero inicial
 
 Fecha: 2026-09-05
-Estado: listado para decidir, no decidido
+Estado: listado para decidir. C2 y C4 cerradas el 2026-10-02 en
+[ADR-002](../adr/ADR-002-donde-vive-postgres.md) y [ADR-003](../adr/ADR-003-autenticacion.md).
 
 Criterios que mandan, en este orden:
 
@@ -11,6 +12,9 @@ Criterios que mandan, en este orden:
 2. **Coste cercano a cero mientras haya una sola usuaria.**
 3. **Carga rápida.** Quien abra el enlace lo juzga en tres segundos.
 4. **Que lo aprendido sea transferible** a una empresa con equipo grande.
+
+Orden revisado el 2026-10-02: el coste cero pasa a ser el primer criterio. Ver
+[ADR-002](../adr/ADR-002-donde-vive-postgres.md).
 
 Alcance: **el sistema se diseña multiusuario desde el primer día**, aunque hoy lo use
 una sola persona. No hay un «cuando abramos el multiusuario»: hay un sistema
@@ -112,7 +116,7 @@ valide el token en cada petición y deje de fiarse del email que llegue en el cu
 | Front | Estático en CDN |
 | Backend | Un solo servicio, el que ya existe. No se añaden más |
 | Base de datos | Plan gratuito, pendiente de C2 |
-| Llamadas al modelo | Es el único coste variable real. Hay que limitar cuántas puede lanzar un usuario y no repetir una generación ya hecha |
+| Llamadas al modelo | Es el único coste variable real. Hay que limitar cuántas puede lanzar un usuario y no repetir una generación ya hecha. Desde el 2026-10-02 cada usuaria paga con su propia clave: [ADR-004](../adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md) |
 | Demo pública | Sin backend y sin base, si se resuelve C1 así |
 
 La regla: **cada servicio nuevo que se añade hay que justificarlo.** Un servicio de
