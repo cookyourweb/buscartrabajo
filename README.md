@@ -221,8 +221,9 @@ Para recuperarlas en local: exportar el workflow desde n8n y pasarlo por
 # 1. ¿CV Server vivo? (Render Free duerme ~15min → cold start ~50s)
 curl https://cv-server-ggd8.onrender.com/health
 
-# 2. ¿LLM responde?
-curl https://cv-server-ggd8.onrender.com/debug
+# 2. ¿Qué modelo hay configurado? (/debug se eliminó el 2-oct-2026: gastaba
+#    la clave del LLM y estaba abierta a cualquiera)
+curl https://cv-server-ggd8.onrender.com/health
 
 # 3. ¿El webhook de búsqueda responde?
 #    La URL sale de workflows/PROD/secrets.local.json (fuera de git)
