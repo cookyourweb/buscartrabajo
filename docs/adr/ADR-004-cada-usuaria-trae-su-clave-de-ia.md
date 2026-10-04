@@ -1,6 +1,6 @@
 # ADR-004. Cada usuaria trae su propia clave de IA
 
-**Fecha:** 2 oct 2026 · **Estado:** propuesto. La decisión está tomada; falta resolver cómo encaja con el bot de n8n
+**Fecha:** 2 oct 2026 · **Estado:** aceptado el 3 oct 2026, al decidir cómo encaja la búsqueda de ofertas
 
 ---
 
@@ -60,7 +60,7 @@ dependen del modelo: sirven igual para cualquiera. Hoy la lista es Claude.
    soportado, **antes** de guardarla. El saldo no se puede saber de antemano: se
    descubre en la primera generación.
 3. Después solo ve los últimos caracteres de la clave. Puede cambiarla o borrarla.
-4. Las ofertas se ven sin clave. Sin clave, el orden de las ofertas es heurístico.
+4. Las ofertas se ven y se ordenan sin clave: el orden se calcula con reglas, sin modelo de IA.
 5. Cada documento muestra qué modelo lo escribió y cuántos tokens gastó.
 
 **Cómo se trata la clave:**
@@ -91,9 +91,20 @@ dependen del modelo: sirven igual para cualquiera. Hoy la lista es Claude.
   reintenta. La clave se marca como "necesita atención" y el panel lo explica en
   lenguaje claro.
 
-**Procesos programados.** Si la búsqueda diaria usa el modelo en nombre de una
-usuaria, necesita su consentimiento explícito y separado, un tope diario propio del
-sistema y una pausa automática tras varios fallos seguidos.
+**La búsqueda de ofertas (decidido el 3 de octubre de 2026).** El bot busca una
+sola vez al día y guarda una **bolsa común** de ofertas para todas las usuarias. El
+orden de esa bolsa para cada usuaria se calcula **con reglas, sin modelo de IA**, a
+partir de los campos de su perfil (rol, tecnologías, modalidad, ubicación y salario).
+Así nadie paga por ordenar ofertas, ningún perfil de una usuaria pasa por la cuenta
+de IA de otra persona, y el bot escala igual con una usuaria que con cincuenta. Por
+eso el alta tiene que recoger el perfil en campos estructurados, no en texto libre.
+
+El modelo de IA solo se usa en lo que lo necesita de verdad: el CV, la carta y el
+asesor, siempre con la clave de la usuaria.
+
+**Procesos programados.** Si en el futuro algún proceso programado usa el modelo en
+nombre de una usuaria, necesita su consentimiento explícito y separado, un tope
+diario propio del sistema y una pausa automática tras varios fallos seguidos.
 
 **Límites.** No hace falta una cuota **económica**: el dinero es de cada usuaria.
 Sí se mantiene no repetir una generación ya hecha y un límite de uso por usuaria,
@@ -105,14 +116,23 @@ Hoy `cv-server` habla con tres proveedores, pero con las claves de la dueña, le
 del entorno y con un cliente compartido, y con una cascada que cae de uno a otro.
 BYOK obliga a cambiarlo antes de abrir el sistema a nadie.
 
-Y el bot de n8n llama hoy al modelo por su cuenta, con la clave de la dueña. Falta
-decidir si la búsqueda es una bolsa común o una por usuaria: de eso depende si n8n
-deja de llamar al modelo y se lo pide a `cv-server`. Hasta entonces este ADR queda
-como propuesto.
+Y el bot de n8n llama hoy al modelo por su cuenta, con la clave de la dueña, para
+filtrar y elegir ofertas (nodo `Groq - Generar Ofertas`); el CV y la carta ya los
+redacta `cv-server`. Con la bolsa común deja de hacerlo: n8n busca y guarda la oferta
+a través de `cv-server`, con la clave de máquina, y el orden lo calcula `cv-server`
+con reglas. La base está en `real_jobs._ranking_fallback`, que hoy solo puntúa por
+tecnologías: hay que añadirle rol, modalidad, ubicación y salario.
 
 ## Consecuencias
 
 **Se acepta:**
+
+- Con reglas, la selección de ofertas pierde los filtros que hoy aplica el modelo
+  leyendo la descripción: que el frontend o la IA sean el trabajo principal y la
+  seniority real del puesto. Se compensa con un perfil más rico en el alta.
+- Con una bolsa común, el estado de una oferta (aprobada, descartada) deja de vivir
+  en la oferta y pasa a ser de cada usuaria: ofertas compartidas y candidaturas por
+  usuaria, como prevé el modelo de datos.
 
 - Conectar una clave le cuesta a quien no es técnica. La guía del alta tiene que
   resolverlo.
