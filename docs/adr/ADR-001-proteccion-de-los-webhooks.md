@@ -42,6 +42,10 @@ lo compartido se pisa en silencio.
 Para los tres webhooks del botón de Notion el problema es anterior y más simple:
 **aunque Header Auth funcionase, un botón no puede mandar la cabecera.**
 
+Esto vale para lo que n8n **recibe**. Para lo que n8n **envía** a `cv-server` sí
+funciona (medido el 4 de octubre de 2026, [ADR-003](ADR-003-autenticacion.md)), con
+una credencial propia y nunca la de Groq.
+
 ## Por qué redactar el repositorio no es el arreglo
 
 Una ruta publicada está quemada. Sacarla de los ficheros no la despublica: sigue

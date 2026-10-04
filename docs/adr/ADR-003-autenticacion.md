@@ -107,6 +107,12 @@ abren enlaces por su cuenta.
   autenticación por cabecera fallaba en los webhooks que **recibe** n8n. Aquí n8n
   **envía** la cabecera, que es otro caso, pero hay que medirlo y comprobar después
   que la credencial de Groq del workflow sigue viva.
+- **Medido el 4 de octubre de 2026.** n8n envía `X-Clave-Maquina` con una credencial
+  Header Auth propia ("cv-server clave de maquina") en los nodos de `/generar-cv` y
+  `/generar-carta`; la credencial de Groq sigue en su nodo, sin tocar. `cv-server`
+  exige la clave en `/usuarios`, `/generar-cv`, `/generar-carta`, `/crear-oferta` y
+  `/buscar-ofertas-reales`: sin ella responde 401 y no llama al modelo. Importar un
+  workflow encima de uno existente no conservó la credencial: se puso a mano.
 
 ## Cuándo se revisa
 
