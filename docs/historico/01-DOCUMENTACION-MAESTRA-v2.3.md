@@ -3,7 +3,7 @@
 > ⚠️ **DOC PARCIALMENTE SUPERADA (jun 2026).** El sistema ya está en **v3 (ofertas reales, multi-usuario)**.
 > La **fuente de verdad operativa** (arquitectura, instancia n8n, schema Notion, webhooks, flujos) es **[`../README.md`](../../README.md)**.
 > Lo que cambió respecto a este documento:
-> - Instancia n8n viva: **`n8n-asistente-correo.onrender.com`** (NO `n8n-st1v` / `n8n-qwmu`).
+> - Instancia n8n viva: **`<N8N_HOST>`** (NO `n8n-st1v` / `n8n-qwmu`).
 > - Workflow vigente: **`WF2-integrado-v3`** (NO `WF2-BuscarTrabajo-v2-Groq`).
 > - Ofertas **reales** (Remotive + Adzuna + Tecnoempleo) con anti-spam, NO inventadas.
 > - LLM: ofertas con **Groq** (`openai/gpt-oss-120b`); CV y carta con **Claude Sonnet 4.6**,
@@ -116,7 +116,7 @@ Sistema multi-usuario de búsqueda de empleo que:
 | `NOTION_TOKEN` | Token integración Notion |
 | `NOTION_DB_USUARIOS` | `34811515f4b280f19a42f8da5e91a8fe` |
 | ~~`WEBHOOK_NUEVO_USUARIO`~~ | **ELIMINADA el 28-ago-2026.** Apuntaba a un webhook que no existe. |
-| ~~`WEBHOOK_BUSCAR_AHORA`~~ | **No definirla.** El código apunta por defecto a `https://n8n-asistente-correo.onrender.com/webhook/<RUTA>`. Si la defines, PISA al default. |
+| ~~`WEBHOOK_BUSCAR_AHORA`~~ | **No definirla.** El código apunta por defecto a `$N8N_HOST/webhook/<RUTA>`. Si la defines, PISA al default. |
 
 ### Notion DBs
 
@@ -253,7 +253,7 @@ curl https://cv-server-ggd8.onrender.com/debug
 
 # 5. ¿Webhook interno buscar-para-user funciona?
 #    OJO: dispara una busqueda REAL y manda correos.
-curl -X POST https://n8n-asistente-correo.onrender.com/webhook/<RUTA> \
+curl -X POST $N8N_HOST/webhook/<RUTA> \
   -H "Content-Type: application/json" \
   -d '{"nombre":"vero","email":"...","perfil":"...","rol":"...","stack":["React"],"salario":50000,"modalidad":["Remoto"],"ciudad":"Madrid","source":"test"}'
 ```

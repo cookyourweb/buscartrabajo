@@ -8,7 +8,7 @@
 > **Resultado: 11 contradicciones reales.** La hipótesis era correcta. La herramienta no hizo falta.
 
 **Verificado contra:** código de `cv-server`, DB Notion de Ofertas, API de n8n, PROD (`/health`),
-y la bandeja de `hello.cookyourweb@gmail.com`.
+y la bandeja de `correo@example.com`.
 
 ---
 
@@ -125,7 +125,7 @@ Cuatro afirmaciones sobre el mismo fichero, incompatibles entre sí.
 Son dominios distintos. Uno de los dos está mal, y ninguno de los dos documentos lo sabe.
 
 **Y hay algo peor.** Correo de Arsys recibido el 1 de julio de 2026 en
-`hello.cookyourweb@gmail.com`, asunto *"Tu producto Registro .es usecookyourwebai.es se
+`correo@example.com`, asunto *"Tu producto Registro .es usecookyourwebai.es se
 eliminará en unos días"*: "el día 08/07/2026 se eliminarán los siguientes productos para los
 que tienes su renovación desactivada".
 

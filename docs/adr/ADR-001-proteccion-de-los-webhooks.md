@@ -1,6 +1,6 @@
 # ADR-001. Cómo se protegen los webhooks
 
-**Fecha:** 31 ago 2026 · **Estado:** aceptado, con caducidad conocida · **Issue:** #1
+**Fecha:** 31 ago 2026 · **Estado:** aceptado, con caducidad conocida · **Issue:** #1 · **Será sustituido por:** [ADR-003](ADR-003-autenticacion.md)
 
 ---
 
@@ -41,6 +41,10 @@ lo compartido se pisa en silencio.
 
 Para los tres webhooks del botón de Notion el problema es anterior y más simple:
 **aunque Header Auth funcionase, un botón no puede mandar la cabecera.**
+
+Esto vale para lo que n8n **recibe**. Para lo que n8n **envía** a `cv-server` sí
+funciona (medido el 4 de octubre de 2026, [ADR-003](ADR-003-autenticacion.md)), con
+una credencial propia y nunca la de Groq.
 
 ## Por qué redactar el repositorio no es el arreglo
 

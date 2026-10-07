@@ -73,7 +73,11 @@ rutas a `secrets.local.json`.
 El ciclo, siempre en este orden:
 
 ```
-n8n  →  exportar  →  npm run wf:split  →  editar el .js  →  npm run wf:join  →  importar
+1. Exportar el workflow desde n8n
+2. npm run wf:split
+3. Editar el .js del nodo
+4. npm run wf:join
+5. Importar en n8n
 ```
 
 Se edita el fichero del nodo en el editor, **nunca en la interfaz de n8n**. Así
@@ -93,7 +97,7 @@ guarda en el nombre justo lo que va en un mensaje de commit. Para recuperar uno,
 ## 4. Antes de decir que está
 
 ```
-npm test              22 tests, node --test, sin framework
+npm test              25 tests, node --test, sin framework
 npm run check:secretos ninguna ruta en el repositorio
 npm run wf:check      avisos del workflow
 npm run hooks         instala el pre-commit (una vez por clon)
@@ -125,9 +129,9 @@ queda con lo que solo un modelo puede hacer.
 
 ---
 
-**Los tests cubren una pieza de diecinueve.** Las 22 pruebas y el badge verde son
-todas de `scripts/lib/secretos.mjs`. Los cuatro `wf-*.mjs` no tienen pruebas
-propias, y los 14 ficheros de Python (2.116 líneas, Notion y Drive) no tienen
+**Los tests cubren solo dos piezas.** De las 25 pruebas, 22 son de
+`scripts/lib/secretos.mjs` y 3 del formateo de ofertas. Los cuatro `wf-*.mjs` no
+tienen pruebas propias, y los ficheros de Python (Notion y Drive) no tienen
 ninguna ni las ejecuta CI, que corre solo sobre Node 20.
 
 Se eligió cubrir secretos primero porque es la única pieza cuyo fallo es
@@ -140,6 +144,11 @@ diga más de lo que cubre.
 - Cómo se protegen los webhooks ([ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md))
 - Qué framework usa el frontend cuando exista
 - Que `secrets.local.json` no entre en git
+- Dónde vive Postgres ([ADR-002](docs/adr/ADR-002-donde-vive-postgres.md))
+- Contra quién se autentica y qué valida el backend ([ADR-003](docs/adr/ADR-003-autenticacion.md))
+- Que cada usuaria traiga su propia clave de IA ([ADR-004](docs/adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md))
+- Que Notion se congele al migrar ([ADR-005](docs/adr/ADR-005-notion-se-congela.md))
+- Dónde se publica el producto ([ADR-006](docs/adr/ADR-006-subdominios.md))
 
 ADR-001 **caduca cuando exista el frontend**: una aplicación en el navegador
 enseña la ruta en la pestaña de red, y la ruta impredecible deja de proteger

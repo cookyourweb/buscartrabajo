@@ -128,5 +128,5 @@ Google Drive (CV) + email al usuario
 
 - [ ] **Perfil Notion de Vero** actualizado a los 3 frentes (Rol objetivo + Stack). ← bloqueante
 - [ ] Ofertas de prueba viejas eliminadas de Notion (eran de desarrollo, no candidaturas reales).
-- [ ] Confirmado que el barrido dispara `WF2-integrado-v3` (instancia `n8n-asistente-correo.onrender.com`).
+- [ ] Confirmado que el barrido dispara `WF2-integrado-v3` (instancia `<N8N_HOST>`).
 - [ ] cv-server en Render con último deploy (`d70a5c6`). ✅ hecho.

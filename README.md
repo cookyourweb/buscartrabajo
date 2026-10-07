@@ -8,6 +8,16 @@ la carta adaptados al puesto y permite enviarlos a la empresa.
 
 En producción desde julio de 2026.
 
+## Los tres repositorios
+
+| Repositorio | Qué es | Dónde corre |
+|---|---|---|
+| `buscartrabajo` (este) | Workflows de n8n, scripts, ADR y runbooks | n8n en Render |
+| [`cv-server`](https://github.com/cookyourweb/cv-server) | Servicio Python (Flask) que genera CV y carta con guardrails de veracidad | Render, plan gratuito |
+| `panel-empleo` | Panel en Angular para ver y gestionar las ofertas. El acceso es por invitación, con cuenta de Google; la demo pública no muestra datos reales | En desarrollo |
+
+n8n busca y orquesta, `cv-server` escribe y valida, el panel es la cara visible.
+
 ## Qué tiene de interesante
 
 **Las ofertas son reales.** La versión anterior se las pedía a un modelo de lenguaje,
@@ -27,7 +37,7 @@ encuentra una. Se escribió después de descubrir que llevaban meses publicadas:
 regla escrita no es un control, un control es código que falla.
 Ver [ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md).
 
-**El workflow de n8n se puede diffear.** Un export de n8n es un JSON de 91k con cada
+**El workflow de n8n se puede diffear.** Un export de n8n es un JSON enorme con cada
 nodo de código dentro de un string escapado: un cambio de tres líneas es invisible en
 `git diff`. `wf-split` lo parte en piezas legibles, `wf-join` lo rehace, y `wf-check`
 tiene ocho reglas que salieron de averías reales. Ver [workflows/PROD](workflows/PROD/README.md).
@@ -36,7 +46,7 @@ tiene ocho reglas que salieron de averías reales. Ver [workflows/PROD](workflow
 
 ```bash
 npm install          # sin dependencias: solo fija la version de node
-npm test             # 22 tests con el runner de node, sin framework
+npm test             # 25 tests con el runner de node, sin framework
 npm run check:secretos
 npm run hooks        # activa el hook de pre-commit
 ```
@@ -45,33 +55,62 @@ Requiere Node 20 o superior. Los scripts de Python necesitan `pip install -r req
 
 ## Qué cubre ese verde
 
-El badge y `npm test` cubren **una sola pieza**: `scripts/lib/secretos.mjs`, con 22
-casos. Se eligió esa y no otra porque es la única cuyo fallo no tiene vuelta atrás:
-si una ruta de webhook se escapa al repositorio, ya está publicada.
+El badge y `npm test` ejecutan 25 tests: 22 sobre `scripts/lib/secretos.mjs` y 3 sobre
+el formateo de ofertas. Se priorizó `secretos.mjs` porque es la única pieza cuyo fallo
+no tiene vuelta atrás: si una ruta de webhook se escapa al repositorio, ya está publicada.
 
 Lo que no cubre, dicho aquí para que nadie lo deduzca de un badge en verde:
 
 | Pieza | Cobertura |
 |---|---|
 | `scripts/lib/secretos.mjs` | 22 tests |
+| Formateo de ofertas (nodo del workflow) | 3 tests |
 | `scripts/wf-*.mjs` | sin tests propios |
-| `scripts/*.py` y `tools/*.py` (14 ficheros, 2.116 líneas) | sin tests, y CI no los ejecuta |
+| `scripts/*.py` y `tools/*.py` | sin tests, y CI no los ejecuta |
 
 CI corre sobre Node 20 y no instala Python. Es deuda declarada, no un descuido:
 está anotada en [CONTRIBUTING](CONTRIBUTING.md).
+
+## Hacia dónde va
+
+**La visión:** un acompañante para la búsqueda de empleo que trabaja con la
+persona de principio a fin. Le ayuda a construir un CV maestro sólido, le
+encuentra las ofertas que encajan, adapta cada candidatura sin inventar nada y la
+prepara para la entrevista. La persona decide siempre; la IA propone, verifica y
+avisa.
+
+**Los principios, que ya se cumplen hoy:**
+
+- **No inventar:** lo que escribe la IA se contrasta contra el CV maestro con detectores deterministas.
+- **La persona decide:** ninguna candidatura sale sin aprobación humana.
+- **Por invitación y con privacidad:** cada persona entra con su cuenta de Google y solo si está invitada.
+
+### Plan de acción
+
+| Fase | Objetivo | Estado |
+|---|---|---|
+| 1. Acceso seguro | Entrada con Google por invitación en el panel; cerrar las rutas públicas que se fiaban de un email del cuerpo de la petición | Hecho en `develop`, pendiente de desplegar |
+| 2. Identidad y datos por usuaria | Postgres en Neon con la identidad `(iss, sub)`, invitaciones de un solo uso y cada dato con su dueña | Siguiente |
+| 3. Design system y landing | Componentes Angular sobre los tokens de marca ya probados, compartidos entre una landing pública prerenderizada y el panel | Siguiente |
+| 4. CV maestro | Un comprobador que dice qué le falta al CV maestro antes de generar nada | Planificado |
+| 5. Asistente del CV maestro | Ayuda a completar el CV entrevistando a la persona, sin inventar experiencia | Más adelante |
+| 6. Claves de IA por usuaria | Cada persona trae su clave; ninguna petición cae a las claves de la dueña ([ADR-004](docs/adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md)) | Más adelante |
+| 7. Preparación de entrevista | Por oferta: qué piden y qué evidencia tiene la persona; un simulador que no da respuestas para leer y no obedece instrucciones escondidas en una oferta | Más adelante |
+
+Sin fechas a propósito: el plan dice el orden y el porqué, y el detalle de cada
+fase se abre como issue.
 
 ## Qué falta
 
 Lo que está por hacer se abre como
 [issue](https://github.com/cookyourweb/buscartrabajo/issues), no se escribe aquí.
-Una lista de próximos pasos a mano envejece, y en este README ya pasó una vez: el
-pie decía julio con cincuenta y un commits por detrás. Las issues etiquetadas
-`seguridad` van primero.
+Una lista de próximos pasos escrita a mano envejece y acaba contradiciendo al código.
+Las issues etiquetadas `seguridad` van primero.
 
 Lo que sí queda escrito es lo que no es una tarea sino un estado del sistema, y
 está en [CONTRIBUTING](CONTRIBUTING.md): las reglas de negocio del filtro viven
-dentro de un prompt sin ningún test que las cubra, y las pruebas cubren una pieza
-de diecinueve. Eso no caduca porque describe cómo está hecho, no qué se piensa
+dentro de un prompt sin ningún test que las cubra, y las pruebas cubren solo
+dos piezas. Eso no caduca porque describe cómo está hecho, no qué se piensa
 hacer.
 
 ## Piezas
@@ -82,81 +121,85 @@ hacer.
 | `scripts/wf-*.mjs` | Partir, rehacer, verificar y redactar el workflow |
 | `scripts/*.py` | Utilidades sobre Notion y Drive |
 | `docs/` | Decisiones, runbooks y reglas del sistema |
-| `tests/` | Tests del núcleo de secretos |
+| `tests/` | Tests del núcleo de secretos y del formateo de ofertas |
 
 ---
 
-## Arquitectura v3
+## Arquitectura
+
+Tres piezas. n8n orquesta, `cv-server` genera y valida, el panel muestra.
 
 ```
-USUARIO
-  → cv-server-ggd8.onrender.com/   (formulario alta: nuevo / existente)
-        │
-        ▼
-FLASK CV SERVER (Render Free)
-  GET  /                → formulario alta + acciones
-  POST /check-email     → ¿el email ya existe en Notion?
-  POST /accion-existente→ "Buscar ahora" / "Programar 9am"
-  POST /registro        → crea usuario en Notion Usuarios + dispara WF1
-  POST /generar-cv      → genera CV adaptado al puesto y lo sube a Drive
-                          (devuelve: link adaptado + cv_master_url)
-  Capa LLM: CV y carta con Claude Sonnet 4.6 (Groq de fallback)
-            Resto: Groq openai/gpt-oss-120b → Gemini 3.6 flash → Claude Haiku 4.5
-        │
-        ▼
-n8n  ──  instancia: n8n-asistente-correo.onrender.com
-  ┌───────────────────────────────────────────────────────────┐
-  │ WF1 — BuscarTrabajo-Usuarios                              │
-  │   Webhook alta de usuario  → crea/normaliza → HTTP → WF2  │
-  │   Webhook buscar ahora     → query Notion → HTTP → WF2    │
-  ├───────────────────────────────────────────────────────────┤
-  │ WF2 — WF2-integrado-v3 (multi-usuario)                    │
-  │   Triggers:                                               │
-  │     · Schedule 9am  → query usuarios activos → Loop       │
-  │     · Webhook interno, llamado desde WF1                  │
-  │     · Webhooks de aprobar / descartar / mandar a empresa   │
-  │                                                           │
-  │   Búsqueda (por usuario):                                 │
-  │     Remotive + Adzuna + Tecnoempleo → Formatear           │
-  │     (filtra por stack/rol del usuario + ANTI-SPAM contra  │
-  │      ofertas ya en Notion) → cap 12 ofertas (Groq free)   │
-  │     → Groq formatea → Notion crea Oferta → Brevo email    │
-  │                                                           │
-  │   Aprobar:                                                │
-  │     Respond inmediato → Marcar Aprobado/En Proceso        │
-  │     → Obtener Datos Oferta → Groq Carta                   │
-  │     → CV Server /generar-cv (usa Email Enviado del user)  │
-  │     → Brevo "revisar y enviar" + Notion guarda            │
-  │       (Carta Enviada, CV usado=master, Link CV Drive=adaptado, Fecha envio)│
-  │                                                           │
-  │   Enviar a empresa (híbrido):                             │
-  │     lee Carta Enviada YA EDITADA → si hay Email empresa:  │
-  │       manda carta+CV a la empresa (replyTo = email user)  │
-  │     si no: mail al user "aplicar a mano" con link oferta  │
-  └───────────────────────────────────────────────────────────┘
+  PANEL (Angular)                 acceso por invitación, cuenta de Google
+      |
+      | GET /yo, con ID token de Google
+      v
+  CV-SERVER (Flask, Render free)  <------------------------+
+      |                                                     |
+      | llama a n8n                              X-Clave-Maquina
+      v                                                     |
+  N8N (Render)  -------------------------------------------+
+      |
+      +-- Schedule 9:00, busca por usuario:
+      |     Remotive + Adzuna + Tecnoempleo
+      |     filtro por stack y rol + anti-spam contra ofertas ya en Notion
+      |     tope de 12 ofertas, Groq formatea, Notion crea la oferta, Brevo avisa
+      |
+      +-- Aprobar:
+      |     marca Aprobado, lee la oferta, genera la carta y el CV
+      |     (cv-server), Brevo manda "revisar y enviar", Notion guarda el resultado
+      |
+      +-- Mandar a empresa:
+            lee la carta ya editada; con email de empresa, envía carta y CV
+            (replyTo = email del usuario); sin él, avisa al usuario de que aplique a mano
 ```
+
+### Rutas de cv-server
+
+| Ruta | Acceso | Para qué |
+|---|---|---|
+| `GET /` | Pública | Página de invitación |
+| `GET /health` | Pública | Comprobar que el servicio está vivo |
+| `GET /yo` | ID token de Google | Identifica a la persona que entra al panel |
+| `POST /registro` | `X-Clave-Maquina` | Alta de usuario |
+| `POST /generar-cv` | `X-Clave-Maquina` | CV adaptado al puesto, subido a Drive |
+| `POST /generar-carta` | `X-Clave-Maquina` | Carta adaptada al puesto |
+| `GET /usuarios` | `X-Clave-Maquina` | Lista de usuarios activos |
+| `POST /crear-oferta` | `X-Clave-Maquina` | Crea una oferta en Notion |
+| `POST /buscar-ofertas-reales` | `X-Clave-Maquina` | Búsqueda de ofertas desde cv-server |
+
+El workflow de producción de n8n solo llama a `/health`, `/generar-cv` y
+`/generar-carta`. El 7 de octubre de 2026 se eliminaron `/check-email`,
+`/accion-existente` y el formulario de alta antiguo. La autenticación del panel se
+explica en [ADR-003](docs/adr/ADR-003-autenticacion.md).
+
+Modelos de lenguaje en `cv-server`: CV y carta con `claude-sonnet-4-6` en producción
+(lo fija el entorno; `/health` lo muestra). Si Claude falla: Groq `openai/gpt-oss-120b`,
+después Gemini y después Claude Haiku 4.5.
 
 ---
 
 ## Servicios
 
-| Servicio | URL | Propósito |
-|----------|-----|-----------|
-| CV Server | cv-server-ggd8.onrender.com | Formulario alta + generar CV adaptado |
-| n8n | **n8n-asistente-correo.onrender.com** | Orquestador (WF1 + WF2) |
-| Notion | api.notion.com | CRM Usuarios + Ofertas |
-| Google Drive | drive.google.com | CVs adaptados |
-| Brevo | api.brevo.com | Envío de emails |
-| Groq | api.groq.com | LLM de ofertas y fallback de CV/carta (openai/gpt-oss-120b) |
+| Servicio | Propósito |
+|----------|-----------|
+| cv-server (Render free) | Página de invitación, API de usuarios y generación de CV y carta |
+| n8n (Render) | Orquestador del workflow de búsqueda y aprobación |
+| Notion | CRM de usuarios y ofertas |
+| Google Drive | CVs adaptados |
+| Brevo | Envío de correos |
+| Groq | LLM de ofertas y fallback de CV y carta (`openai/gpt-oss-120b`) |
 
-> ⚠️ **Instancia n8n activa = `n8n-asistente-correo`.** Las viejas (`n8n-st1v`, `n8n-qwmu`) están deprecadas. n8n NO permite dos workflows con el mismo webhook path activos a la vez → tener UNA sola instancia activa con estos paths.
+**Una sola instancia de n8n activa.** n8n no permite dos workflows con el mismo path
+de webhook activos a la vez, así que las instancias antiguas están deprecadas y no
+deben reactivarse.
 
 ---
 
 ## Webhooks n8n
 
-Los workflows exponen webhooks para dar de alta un usuario, lanzar una búsqueda y
-resolver una oferta (aprobar, descartar o mandarla a la empresa).
+El workflow de producción expone webhooks para lanzar una búsqueda de un usuario y
+para resolver una oferta (aprobar, descartar o mandarla a la empresa).
 
 **Las rutas no se publican aquí.** Ejecutan acciones con efectos externos y hoy no
 exigen credencial, así que la ruta es lo único que las protege (issue #1). Viven en
@@ -170,7 +213,7 @@ Para recuperarlas en local: exportar el workflow desde n8n y pasarlo por
 
 ## Base de Datos Notion
 
-### DB Usuarios — `34811515f4b280f19a42f8da5e91a8fe`
+### DB Usuarios
 
 | Columna | Tipo |
 |---------|------|
@@ -187,7 +230,7 @@ Para recuperarlas en local: exportar el workflow desde n8n y pasarlo por
 | cv_master_file_id | Rich text |
 | Activo | Checkbox |
 
-### DB Ofertas — `33d11515f4b281efa776d0ea698b748f`
+### DB Ofertas
 
 | Columna | Tipo | Qué guarda |
 |---------|------|------------|
@@ -211,43 +254,38 @@ Para recuperarlas en local: exportar el workflow desde n8n y pasarlo por
 | **Carta Enviada** | Rich text | carta de presentación generada/editada |
 | Seguimiento | Date | seguimiento manual |
 
-> 🔑 **CV usado = master (referencia)** · **Link CV Drive = CV adaptado (resultado)**. Son dos CVs distintos.
+**CV usado** es el CV master (la referencia de la que se partió). **Link CV Drive** es el CV adaptado (el resultado). Son dos CVs distintos.
 
 ---
 
 ## Debugging rápido
 
 ```bash
-# 1. ¿CV Server vivo? (Render Free duerme ~15min → cold start ~50s)
+# 1. ¿CV Server vivo? Render Free duerme a los ~15 min y el arranque en frío tarda ~50 s
 curl https://cv-server-ggd8.onrender.com/health
 
-# 2. ¿LLM responde?
-curl https://cv-server-ggd8.onrender.com/debug
-
-# 3. ¿El webhook de búsqueda responde?
+# 2. ¿El webhook de búsqueda responde?
 #    La URL sale de workflows/PROD/secrets.local.json (fuera de git)
 curl -X POST "$N8N_HOST/webhook/$RUTA_BUSCAR_AHORA" \
   -H "Content-Type: application/json" \
   -d '{"email":"tu@correo.com","nombre":"tu-nombre"}'
 ```
 
-Si responden 200 → el problema está en el flujo interno (revisar Executions en n8n).
+Si responden 200, el problema está en el flujo interno: revisa Executions en n8n.
 
 ---
 
 ## Gotchas y deuda conocida
 
-- **Groq Free TPD = 100.000 tokens/día** es el cuello de botella real (no el RPM). Por eso el cap de **12 ofertas** en modo prueba. Agotarlo da 429 hasta el reset diario.
-- **Env vars Render del CV Server** (`WEBHOOK_NUEVO_USUARIO`, `WEBHOOK_BUSCAR_AHORA`) DEBEN apuntar a `n8n-asistente-correo`. Si quedaron en `n8n-st1v`, el alta de usuario nuevo dispara a la instancia muerta.
-- **API keys**: tras rotarlas hay que actualizarlas en DOS sitios — credenciales n8n (Notion, Brevo) **y** env vars Render (Groq, Gemini, Notion, Google OAuth).
-- **n8n**: al importar un workflow desde otra instancia, los IDs de credencial NO se mapean → reasignar credencial nodo por nodo. Importar con *Import from File* SOBRE el workflow abierto (si no, se duplica).
+- **Groq Free TPD = 200.000 tokens/día** (verificado el 2-oct-2026) es el cuello de botella real (no el RPM). Por eso el cap de **12 ofertas** en modo prueba. Agotarlo da 429 hasta el reset diario.
+- **Variable de Render de cv-server** `WEBHOOK_BUSCAR_AHORA`: debe apuntar a la instancia de n8n activa. Si apunta a una instancia deprecada, la búsqueda se dispara en el vacío.
+- **API keys**: tras rotarlas hay que actualizarlas en DOS sitios: credenciales n8n (Notion, Brevo) **y** env vars Render (Groq, Gemini, Notion, Google OAuth).
+- **n8n**: al importar un workflow desde otra instancia, los IDs de credencial NO se mapean: reasigna la credencial nodo por nodo. Importar con *Import from File* SOBRE el workflow abierto (si no, se duplica).
 - **Notion**: nombres de propiedad case-sensitive y con tildes (`Teléfono Contacto`, `Email empresa`). Mandar una propiedad con tipo equivocado da 400; mandar una que no existe en el payload no falla, pero escribir en un nombre inexistente sí rompe el PATCH.
 - **Tipografía del CV/carta (cv-server)**: el `cv-server` sanea el texto antes de renderizar (`sanear_tipografia`): fuera guiones largos y flechas, que son rastro de IA y NO pueden salir a una empresa. Cuidado: el DOCX detecta la línea de empresa usando el guion largo como marcador, así que la detección sigue leyendo la línea cruda y solo se limpia el texto que se escribe. No metas un saneado global antes de parsear o pierdes las negritas.
-- **Credencial Groq del workflow Telegram**: caso real del gotcha de importar workflows. "Búsqueda Empleo Diaria" fallaba a diario porque su nodo Groq apuntaba a una credencial borrada (`2b1f3WOTcvKNLpgy`). Reapuntado a la credencial viva `Groq account 2` (`Ewz07GBHAM5voex1`, la misma que usan Digest y Outlook FIX) el 20-jul-2026.
 
 ---
 
 El estado de este repositorio lo cuenta `git log`, no una línea escrita a mano al
-final del README: la anterior decía julio y llevaba 51 commits de retraso. El
-workflow que corre en producción está en [`workflows/PROD/`](workflows/PROD/README.md),
+final del README. El workflow que corre en producción está en [`workflows/PROD/`](workflows/PROD/README.md),
 partido en piezas que git puede diffear.

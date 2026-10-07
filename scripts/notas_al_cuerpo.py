@@ -23,8 +23,9 @@ from datetime import date
 from pathlib import Path
 
 DB = "33d11515f4b281efa776d0ea698b748f"
-ENV = Path("/Users/vero/Desktop/proyectosActivosCookyourweb/buscartrabajo/.env")
-BACKUPS = Path("/Users/vero/Desktop/proyectosActivosCookyourweb/buscartrabajo/backups-master")
+RAIZ = Path(__file__).resolve().parent.parent
+ENV = RAIZ / ".env"
+BACKUPS = RAIZ / "backups-master"
 
 LIMITE_PROPIEDAD = 2000      # el que impone Notion
 LIMITE_BLOQUE = 1900         # por bloque de texto, con margen

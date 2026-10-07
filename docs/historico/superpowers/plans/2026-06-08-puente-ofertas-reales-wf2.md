@@ -164,8 +164,8 @@ Notificacion` desde WF2; agrupar las N ofertas en UN email
     </div>`;
   }).join('');
   const brevoBody = JSON.stringify({
-    sender: { name: 'Búsqueda Empleo', email: 'hello.cookyourweb@gmail.com' },
-    to: [{ email: 'hello.cookyourweb@gmail.com' }],
+    sender: { name: 'Búsqueda Empleo', email: 'correo@example.com' },
+    to: [{ email: 'correo@example.com' }],
     subject: `☀️ ${$input.all().length} ofertas nuevas hoy`,
     htmlContent: `<h2>Ofertas de hoy</h2>${bloques}`
   });
@@ -215,6 +215,6 @@ Notificacion` desde WF2; agrupar las N ofertas en UN email
 
 ## Pendiente de confirmar al ejecutar (datos que solo Vero tiene)
 - URL base real de la instancia n8n (para los links de botones).
-- Email destino de revisión (¿hello.cookyourweb@gmail.com u otro?).
+- Email destino de revisión (¿correo@example.com u otro?).
 - Que los nombres de campos en la DB de Notion coinciden exactamente
   (Empresa/Puesto/Salario/Modalidad/Link oferta/Notas/Estado).

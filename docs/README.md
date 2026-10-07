@@ -10,6 +10,7 @@ puedas fiar de ninguno.
 | [`adr/`](adr/) | Decisiones de arquitectura: qué se decidió, qué se descartó y por qué | Sí. Una ADR solo se sustituye por otra ADR |
 | [`runbooks/`](runbooks/) | Qué hacer cuando pasa algo. Se leen con el sistema roto | Sí |
 | [`referencia/`](referencia/) | Cómo funciona el sistema hoy y qué reglas se aplican | Sí |
+| [`diseno/`](diseno/) | Lo que se va a construir y todavía no existe: diseños, tokens y decisiones abiertas | Sí, hasta que se construye. Entonces pasa a `referencia/` |
 | [`historico/`](historico/) | Registro fechado: propuestas, auditorías y arreglos ya aplicados | **No.** Se conserva por el porqué, no por el qué |
 
 ## Cómo leerla

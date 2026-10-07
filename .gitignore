@@ -100,3 +100,6 @@ backups-master/
 # `git rm -r --cached` el 1-sep-2026, y los ficheros siguen en el disco local.
 workflows/*
 !workflows/PROD/
+
+# Registro de skills, se regenera con /sdd-init. Local, no se comparte.
+.atl/

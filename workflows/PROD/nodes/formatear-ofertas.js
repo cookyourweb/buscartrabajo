@@ -85,14 +85,41 @@ const matchea = (titulo, desc) => {
   return true;
 };
 
+// Tecnoempleo no trae la empresa en el RSS, pero SI la lleva en el slug de la URL:
+//   /ai-engineer-knowmad-mood/inteligencia-artificial-python/rf-38211f11f247a392d344
+// El slug es "<puesto-troceado>-<empresa>". No se puede partir con fiabilidad,
+// asi que se usa el codigo de referencia rf-XXXX, que es estable por oferta:
+// dos URLs distintas de la MISMA oferta comparten ese rf. Asi el dedup por link
+// deja de fallar cuando Tecnoempleo cambia el slug.
+//
+// 1-oct-2026. TIENE que ir antes del bloque que lee Notion. Estaba declarada mas
+// abajo con const: al usarla antes de su declaracion lanzaba un ReferenceError,
+// el catch vacio se lo tragaba y la lectura de Notion se cortaba en la primera
+// oferta. El dedup quedaba casi vacio y Adzuna reinsertaba las mismas cada dia.
+const refTecno = (link) => {
+  const m = String(link || '').match(/\/rf-([a-z0-9]+)/i);
+  return m ? 'tecnoempleo:' + m[1].toLowerCase() : '';
+};
+
 // ANTI-SPAM: links de ofertas que YA existen en Notion (no repetir)
 const yaEnviadas = new Set();
 const yaKeys = new Set();
 try {
-  const resp = $('Notion - Ofertas existentes').first().json;
-  for (const page of (resp.results || [])) {
+  // .all() y NO .first(): con paginacion activada el nodo devuelve un item por
+  // pagina de 100. Con .first() solo se veian las 100 mas recientes y todo lo
+  // anterior se reinsertaba como nuevo. Era la causa real de los duplicados.
+  const paginas = $('Notion - Ofertas existentes').all();
+  const existentes = [];
+  for (const p of paginas) {
+    for (const r of ((p.json || {}).results || [])) existentes.push(r);
+  }
+  for (const page of existentes) {
     const u = page?.properties?.['Link oferta']?.url;
-    if (u) yaEnviadas.add(u.trim());
+    if (u) {
+      yaEnviadas.add(u.trim());
+      const rf = refTecno(u);
+      if (rf) yaEnviadas.add(rf);
+    }
     const emp = (page?.properties?.['Empresa']?.title?.[0]?.plain_text || '').toLowerCase().trim();
     const pue = (page?.properties?.['Puesto']?.rich_text?.[0]?.plain_text || '').toLowerCase().trim();
     if (emp && pue) yaKeys.add(emp + '|' + pue);
@@ -100,6 +127,7 @@ try {
 } catch (e) {}
 const esNueva = (link) => link && !yaEnviadas.has(String(link).trim());
 const keysBatch = new Set();
+
 const esNuevaKey = (empresa, puesto) => {
   const e = (empresa || '').toLowerCase().trim();
   const p = (puesto || '').toLowerCase().trim();
@@ -169,6 +197,9 @@ try {
     const descFull = limpiar(cdata(slice(it, '<description>', '</description>')));
     if (!matchea(title, descFull)) continue;
     if (!esNueva(link)) continue;
+    const rfT = refTecno(link);
+    if (rfT && !esNueva(rfT)) continue;
+    if (rfT) yaEnviadas.add(rfT);
     idiomaPorLink[String(link).trim()] = detIdioma(title + ' ' + descFull);
     descripcionPorLink[String(link).trim()] = String(descFull || '').slice(0, 1800);
     ubicacionPorLink[String(link).trim()] = /madrid/i.test(title + ' ' + descFull) ? 'Madrid' : 'España';
