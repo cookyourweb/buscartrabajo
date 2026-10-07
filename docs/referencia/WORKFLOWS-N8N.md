@@ -13,7 +13,7 @@ tener que abrir n8n.
 > Antes de tocar nada, lista los workflows y quédate con el que esté `active`.
 > Ver `19-RUNBOOK-SISTEMA-PARADO-2026-08-05.md`, "Engaño 4".
 
-> **¿Buscas los endpoints de webhook?** Están en [`../README.md`](../../README.md), sección
+> **¿Buscas los endpoints de webhook?** Están en [`../README.es.md`](../../README.es.md), sección
 > **"Webhooks n8n"** (`/webhook/<RUTA_OCULTA>?id=`, `/-descartar`, `/-mandar-empresa`,
 > `/<RUTA_OCULTA>`, `/<RUTA_OCULTA>`, `/buscar-para-user`), sobre el host
 > de la variable `N8N_HOST`.
@@ -119,4 +119,4 @@ No fiarse del número del nombre.
 ---
 
 **Última actualización:** 28 agosto 2026 (inventario releído por API, webhooks barridos nodo a nodo)
-**Ver también:** `../README.md` (flujo completo del sistema).
+**Ver también:** `../README.es.md` (flujo completo del sistema).
