@@ -73,16 +73,32 @@ está anotada en [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Hacia dónde va
 
-La idea de producto es un acompañante para la persona que busca empleo, en tres
-momentos:
+**La visión:** un acompañante para la búsqueda de empleo que trabaja con la
+persona de principio a fin. Le ayuda a construir un CV maestro sólido, le
+encuentra las ofertas que encajan, adapta cada candidatura sin inventar nada y la
+prepara para la entrevista. La persona decide siempre; la IA propone, verifica y
+avisa.
 
-| Momento | Qué hace hoy | Hacia dónde va |
+**Los principios, que ya se cumplen hoy:**
+
+- **No inventar:** lo que escribe la IA se contrasta contra el CV maestro con detectores deterministas.
+- **La persona decide:** ninguna candidatura sale sin aprobación humana.
+- **Por invitación y con privacidad:** cada persona entra con su cuenta de Google y solo si está invitada.
+
+### Plan de acción
+
+| Fase | Objetivo | Estado |
 |---|---|---|
-| Preparar el CV maestro | Lo prepara la persona a mano; si le falta estructura, los guardrails no tienen contra qué comparar | Un comprobador del CV maestro que dice qué falta, y un asistente que ayuda a completarlo sin inventar experiencia |
-| Buscar empleo | Ofertas diarias filtradas por perfil, CV y carta adaptados con guardrails, aprobación humana | Datos por usuaria en Postgres (Neon) y acceso por invitación desde el panel |
-| Preparar la entrevista | Nada automatizado | Un asistente de preparación que no da respuestas para leer en una entrevista vigilada y no obedece instrucciones escondidas en una oferta |
+| 1. Acceso seguro | Entrada con Google por invitación en el panel; cerrar las rutas públicas que se fiaban de un email del cuerpo de la petición | Hecho en `develop`, pendiente de desplegar |
+| 2. Identidad y datos por usuaria | Postgres en Neon con la identidad `(iss, sub)`, invitaciones de un solo uso y cada dato con su dueña | Siguiente |
+| 3. Design system y landing | Componentes Angular sobre los tokens de marca ya probados, compartidos entre una landing pública prerenderizada y el panel | Siguiente |
+| 4. CV maestro | Un comprobador que dice qué le falta al CV maestro antes de generar nada | Planificado |
+| 5. Asistente del CV maestro | Ayuda a completar el CV entrevistando a la persona, sin inventar experiencia | Más adelante |
+| 6. Claves de IA por usuaria | Cada persona trae su clave; ninguna petición cae a las claves de la dueña ([ADR-004](docs/adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md)) | Más adelante |
+| 7. Preparación de entrevista | Por oferta: qué piden y qué evidencia tiene la persona; un simulador que no da respuestas para leer y no obedece instrucciones escondidas en una oferta | Más adelante |
 
-Es dirección, no compromiso: cada paso concreto se abre como issue.
+Sin fechas a propósito: el plan dice el orden y el porqué, y el detalle de cada
+fase se abre como issue.
 
 ## Qué falta
 
