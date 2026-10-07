@@ -61,16 +61,9 @@ Otros workflows menores comparten la credencial Groq viva `Groq account 2`
 
 ## Notas importantes (no perder)
 
-- **El "workflow bueno" ya NO es WF2 v3, ni el `5pTwriXcc6aYHO1Y` que decía este documento.**
-  El que corre en PROD es `CsvmtPcLVmGIZg6C`. Histórico de IDs del mismo workflow, por
-  reimportaciones sucesivas: `3zFJWSkPPHDi4yMp`, `5pTwriXcc6aYHO1Y`, `OVoFiXTQwXmiyMfW`,
-  `CsvmtPcLVmGIZg6C`. Los cuatro siguen existiendo, tres apagados.
-- **Búsqueda Empleo Diaria (Telegram)** fallaba TODOS los días (17-20 jul) porque su nodo
-  "Groq Chat Model" apuntaba a una credencial BORRADA (`2b1f3WOTcvKNLpgy`). El 20-jul se
-  repuntó a la credencial viva `Groq account 2` (`Ewz07GBHAM5voex1`) vía n8n public API.
-  Pendiente verificar un run limpio.
-- **Credencial Groq viva**: `Groq account 2` = `Ewz07GBHAM5voex1`. La muerta era
-  `2b1f3WOTcvKNLpgy` (no existe en la instancia).
+- **El "workflow bueno" ya NO es WF2 v3.** El que corre en PROD es el de
+  `workflows/PROD/`. Por reimportaciones sucesivas el mismo workflow ha tenido varios
+  IDs en n8n; los anteriores siguen existiendo, apagados.
 
 ---
 

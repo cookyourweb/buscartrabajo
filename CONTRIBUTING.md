@@ -93,7 +93,7 @@ guarda en el nombre justo lo que va en un mensaje de commit. Para recuperar uno,
 ## 4. Antes de decir que está
 
 ```
-npm test              22 tests, node --test, sin framework
+npm test              25 tests, node --test, sin framework
 npm run check:secretos ninguna ruta en el repositorio
 npm run wf:check      avisos del workflow
 npm run hooks         instala el pre-commit (una vez por clon)
@@ -125,9 +125,9 @@ queda con lo que solo un modelo puede hacer.
 
 ---
 
-**Los tests cubren una pieza de diecinueve.** Las 22 pruebas y el badge verde son
-todas de `scripts/lib/secretos.mjs`. Los cuatro `wf-*.mjs` no tienen pruebas
-propias, y los 14 ficheros de Python (2.116 líneas, Notion y Drive) no tienen
+**Los tests cubren solo dos piezas.** De las 25 pruebas, 22 son de
+`scripts/lib/secretos.mjs` y 3 del formateo de ofertas. Los cuatro `wf-*.mjs` no
+tienen pruebas propias, y los ficheros de Python (Notion y Drive) no tienen
 ninguna ni las ejecuta CI, que corre solo sobre Node 20.
 
 Se eligió cubrir secretos primero porque es la única pieza cuyo fallo es

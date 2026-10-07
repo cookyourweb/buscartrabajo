@@ -4,6 +4,27 @@
 
 ---
 
+## Estado a 7 de octubre de 2026
+
+| Punto | Estado |
+|---|---|
+| 1. Token en memoria (Angular) | Implementado en `develop`, pendiente de despliegue |
+| 2. Interceptor solo hacia `cv-server` | Implementado en `develop`, pendiente de despliegue |
+| 3. Validación del token en `cv-server` | Implementado en `develop`, pendiente de despliegue |
+| 4. `(iss, sub)` a identificador interno | Pendiente |
+| 5. Capa de datos con dueño y 404 en recurso ajeno | Pendiente |
+| 6. Invitación | Implementada con una lista `INVITADAS` por email. El vínculo con `(iss, sub)` queda pendiente hasta que exista Neon |
+| 7. CORS sin comodín | Implementado en `develop`, pendiente de despliegue |
+
+El guard de Angular protege solo las pantallas con datos reales. La demo pública
+sigue abierta.
+
+Las rutas del formulario público se eliminaron o se cerraron en `cv-server`
+(`develop`) el 7 de octubre de 2026. La verificación en producción está pendiente
+hasta que se despliegue.
+
+---
+
 ## Contexto
 
 `cv-server` todavía no identifica a las personas que lo llaman: hasta ahora solo
@@ -38,8 +59,9 @@ El 2 de octubre de 2026 se comprobó en las páginas oficiales:
    no entra nunca en un prompt ni viaja a un proveedor de modelos.
 3. `cv-server` comprueba la firma por JWKS, que `iss` esté en la lista configurada
    (Google emite `accounts.google.com` y `https://accounts.google.com`), `aud`,
-   `exp` y `email_verified`. El algoritmo se fija por configuración y nunca se lee
-   del token.
+   `exp` y `email_verified`. El algoritmo es una constante en el código (RS256) y nunca
+   se lee del token. Las claves del JWKS se guardan en caché 3600 s; un `kid`
+   desconocido provoca una nueva descarga, como máximo cada 300 s.
 4. `(iss, sub)` se traduce a un identificador interno. **El usuario sale del
    token y de ningún otro sitio**: lo que diga el cuerpo de la petición se ignora.
 5. Toda consulta a datos con dueño pasa por una capa que exige ese identificador.
@@ -53,7 +75,11 @@ El 2 de octubre de 2026 se comprobó en las páginas oficiales:
 
 El emisor, la dirección del JWKS y la audiencia son configuración. **El código no
 nombra a Google**: cambiar de proveedor es cambiar la configuración y el adaptador
-de entrada en Angular.
+de entrada en Angular. El algoritmo (RS256) es la excepción: es una constante.
+
+`GET /yo` devuelve la identidad de quien entra. Responde 401 si el token falta o no
+es válido, 403 si es válido pero la persona no está invitada, y 503 si falla el
+proveedor o falta configuración.
 
 ## Por qué no Auth0
 
@@ -110,8 +136,8 @@ abren enlaces por su cuenta.
 - **Medido el 4 de octubre de 2026.** n8n envía `X-Clave-Maquina` con una credencial
   Header Auth propia ("cv-server clave de maquina") en los nodos de `/generar-cv` y
   `/generar-carta`; la credencial de Groq sigue en su nodo, sin tocar. `cv-server`
-  exige la clave en `/usuarios`, `/generar-cv`, `/generar-carta`, `/crear-oferta` y
-  `/buscar-ofertas-reales`: sin ella responde 401 y no llama al modelo. Importar un
+  exige la clave en `/registro`, `/usuarios`, `/generar-cv`, `/generar-carta`,
+  `/crear-oferta` y `/buscar-ofertas-reales`: sin ella responde 401 y no llama al modelo. Importar un
   workflow encima de uno existente no conservó la credencial: se puso a mano.
 
 ## Cuándo se revisa

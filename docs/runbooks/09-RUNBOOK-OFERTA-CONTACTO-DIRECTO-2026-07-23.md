@@ -17,7 +17,7 @@ ni de la tarea programada, así que no está en Notion y el sistema no sabe que 
 **Cómo:** contándosela a Claude en la conversación y pegando el mensaje del recruiter.
 Claude crea la página. No hay formulario ni endpoint que usar.
 
-La página va en la data source `collection://33d11515-f4b2-8176-947b-000bbafd1ca7`
+La página va en la data source `collection://<id>`
 con estos campos como mínimo: `Empresa`, `Puesto`, `Descripción`, `Salario`, `Modalidad`,
 `Ubicación`, `Estado`, `Idioma`, `Usuario`.
 
@@ -30,7 +30,7 @@ con estos campos como mínimo: `Empresa`, `Puesto`, `Descripción`, `Salario`, `
   `10-COMO-ENTRA-UNA-OFERTA-2026-07-23.md`.
 - **Siempre en `Ofertas de Trabajo`, nunca en `Candidaturas`**: esta última no tiene
   `Descripción` ni `Idioma`, y sin ellos no se puede generar un CV adaptado.
-- `Usuario`: `["https://app.notion.com/p/34b11515f4b2817980ecc0b6d2093abb"]`
+- `Usuario`: `["https://app.notion.com/p/<id>"]`
 - `Notas`: aquí van el estado de la conversación, lo que ha pedido el recruiter y **los
   gaps conocidos**. Es lo que evita repetir el análisis dentro de dos semanas.
 - El cuerpo de la página: pegar el mensaje original completo y el histórico de respuestas.
@@ -127,7 +127,7 @@ Las cuatro se arreglan en el origen, no repitiendo el trabajo manual cada vez.
       en `cv-server`. `/generar-cv` devuelve `tecnologias_no_respaldadas`. Falta desplegar
       a PROD.
 - [ ] Que la regla de NIVEL DEL PUESTO se cumpla de verdad (existe en
-      `cv_server_railway.py:1381-1385` y no se aplicó)
+      el prompt de `cv-server`, módulo `server.py`, y no se aplicó)
 - [ ] Regla anti-eco en el prompt (ya documentada en
       `cv-server/docs/PROMPT-ADAPTACION-CV.md`, falta llevarla al prompt)
 - [ ] Export a PDF dentro del propio cv-server, para no hacerlo a mano

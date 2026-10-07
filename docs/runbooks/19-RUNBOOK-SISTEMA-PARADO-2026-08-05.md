@@ -157,11 +157,11 @@ Cuando Vero diga "no me llega nada", hacer esto **en este orden**. Los tres prim
 
 ### Paso 1: ¿cuándo entró la última oferta de verdad?
 
-Consultar Notion, data source `collection://33d11515-f4b2-8176-947b-000bbafd1ca7`:
+Consultar Notion, data source `collection://<id>`:
 
 ```sql
 SELECT createdTime, "Empresa", "Puesto", "Estado"
-FROM "collection://33d11515-f4b2-8176-947b-000bbafd1ca7"
+FROM "collection://<id>"
 ORDER BY datetime(createdTime) DESC LIMIT 20
 ```
 

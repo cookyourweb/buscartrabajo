@@ -63,7 +63,7 @@ la ficha **ya en `Aprobado`**, que es lo que dispara la generación de CV y cart
 
 | | **Ofertas de Trabajo** | **Candidaturas · Control de CVs** |
 |---|---|---|
-| Data source | `collection://33d11515-f4b2-8176-947b-000bbafd1ca7` | `collection://39f11515-f4b2-8129-9dce-000b5fc8f5eb` |
+| Data source | `collection://<id>` | `collection://<id>` |
 | Quién escribe | n8n y la tarea de Claude | Solo Verónica |
 | Estados | 9 | 5 |
 | Tiene `Descripción` | Sí | **No** |
@@ -120,7 +120,7 @@ git y desconectada de Notion.
 | | `buscartrabajo` | `cv-server` |
 |---|---|---|
 | Remoto | `github.com/cookyourweb/buscartrabajo` | `github.com/cookyourweb/cv-server` |
-| Qué contiene | Documentación, exports de n8n, scripts | La aplicación, 1.695 líneas Flask |
+| Qué contiene | Documentación, exports de n8n, scripts | La aplicación Flask, partida en módulos (`server.py`, `llm.py`, `guardrails.py`, `notion.py`, `drive.py`, `docx_render.py`) |
 | Código que corre | Ninguno | Sí, en Render |
 
 Son dos repositorios independientes. La carpeta `sistema-buscartrabajo` que los
@@ -145,13 +145,17 @@ puede contradecir a Verónica sobre lo que hay en n8n.
 
 ## Trampas verificadas el 23 de julio de 2026
 
+Foto de esa fecha. Desde entonces `cv_server_railway.py` se partió en módulos
+(`server.py`, `llm.py`, `notion.py` y otros), así que las referencias a código son por
+módulo y no por línea. Verifica cada entrada contra el código actual antes de fiarte.
+
 - **`cv-server/real_jobs.py` está apagado.** Son 465 líneas para buscar ofertas, pero solo
   implementa Remotive y no lo llama nadie: el workflow PROD busca por su cuenta. Quien lo
   abra creyendo que es el buscador del sistema, está leyendo código muerto. Lo mismo con el
-  endpoint `/buscar-ofertas-reales` (`cv_server_railway.py:1627`).
+  endpoint `/buscar-ofertas-reales` (en `server.py`).
 - **`/health` miente sobre el LLM.** Devuelve `llm_provider: groq` y `version: v2.3-groq`.
-  Los CVs los escribe `claude-haiku-4-5` (`CV_MODEL`, línea 56) y las cartas
-  `claude-sonnet-4-6` (`CARTA_MODEL`, línea 58). Es el mismo patrón del bug de
+  Los CVs los escribe `claude-haiku-4-5` (`CV_MODEL`, en `llm.py`) y las cartas
+  `claude-sonnet-4-6` (`CARTA_MODEL`, en `llm.py`). Es el mismo patrón del bug de
   `modelo_usado` arreglado el 22 de julio: reportar una constante en vez de lo que pasa.
   Es la contradicción 12, y no está en la auditoría del documento 08.
 - **`api.py` no está desplegado.** Es la migración a FastAPI, con tests en verde, pero el
@@ -160,8 +164,8 @@ puede contradecir a Verónica sobre lo que hay en n8n.
   `CLAUDE.md` que no existe, llamar a la instancia n8n `n8n-qwmu` que está deprecada, y
   hacer `cd` a una ruta que ya no existe. De sus pasos marcados como obligatorios antes de
   tocar nada, la mitad fallan al ejecutarlos.
-- **`POST /crear-oferta` devuelve 404.** `cv_server_railway.py:74` usa el id del data source
-  donde la línea 627 necesita el id de la database. Para el camino 3 no hace falta
+- **`POST /crear-oferta` devuelve 404.** El módulo de Notion (`notion.py`, antes `cv_server_railway.py`) usaba el id del data source
+  donde la creación de la página necesita el id de la database. Para el camino 3 no hace falta
   arreglarlo: la ficha la crea Claude directamente contra Notion.
 
 ## Lo que queda sin decidir
