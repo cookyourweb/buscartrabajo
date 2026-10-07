@@ -3,7 +3,7 @@
 ## El problema que resuelve
 
 El workflow vive en el servidor de n8n, no aquí. Se toca por la UI, y el export es un
-JSON de 91k donde cada nodo de código está dentro de un string con `\n` escapados.
+JSON enorme donde cada nodo de código está dentro de un string con `\n` escapados.
 
 Consecuencia: **un cambio de tres líneas es invisible en `git diff`**. Por eso los
 `BACKUP-*.json` de al lado son "antes de X" en vez de un histórico — solo servían para

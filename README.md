@@ -37,7 +37,7 @@ encuentra una. Se escribió después de descubrir que llevaban meses publicadas:
 regla escrita no es un control, un control es código que falla.
 Ver [ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md).
 
-**El workflow de n8n se puede diffear.** Un export de n8n es un JSON de 91k con cada
+**El workflow de n8n se puede diffear.** Un export de n8n es un JSON enorme con cada
 nodo de código dentro de un string escapado: un cambio de tres líneas es invisible en
 `git diff`. `wf-split` lo parte en piezas legibles, `wf-join` lo rehace, y `wf-check`
 tiene ocho reglas que salieron de averías reales. Ver [workflows/PROD](workflows/PROD/README.md).
@@ -121,7 +121,7 @@ hacer.
 | `scripts/wf-*.mjs` | Partir, rehacer, verificar y redactar el workflow |
 | `scripts/*.py` | Utilidades sobre Notion y Drive |
 | `docs/` | Decisiones, runbooks y reglas del sistema |
-| `tests/` | Tests del núcleo de secretos |
+| `tests/` | Tests del núcleo de secretos y del formateo de ofertas |
 
 ---
 
