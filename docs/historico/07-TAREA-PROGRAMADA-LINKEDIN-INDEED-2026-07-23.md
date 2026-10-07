@@ -68,14 +68,14 @@ chat** de la tarea. Si no se abre, no se ve. Por eso se añade el email de resum
 ### 2.3 Las alertas de empleo de LinkedIn no llegan al buzón conectado
 
 Verificado en Gmail: **0 correos de LinkedIn en 30 días** en
-`hello.cookyourweb@gmail.com`.
+`correo@example.com`.
 
 **Motivo:** la cuenta de LinkedIn está registrada con `<correo personal>`. LinkedIn
 manda las alertas a la dirección **principal** de la cuenta; añadir una segunda
 dirección no las duplica.
 
 **Solución propuesta (sin tocar LinkedIn):** filtro de reenvío automático en
-`<correo personal>` hacia `hello.cookyourweb@gmail.com` para todo lo que venga de
+`<correo personal>` hacia `correo@example.com` para todo lo que venga de
 LinkedIn. Así entra en el buzón que n8n y los agentes sí leen.
 
 **Expectativa realista:** las alertas de LinkedIn son un resumen algorítmico, no un
@@ -276,7 +276,7 @@ Pasos:
 
    La numeración es lo que le permite aprobarlas o descartarlas en el paso 6. No la omitas nunca, aunque solo haya una oferta.
 
-   Además, envía un email a hello.cookyourweb@gmail.com con asunto "Ofertas [FECHA]: N nuevas" y este contenido:
+   Además, envía un email a correo@example.com con asunto "Ofertas [FECHA]: N nuevas" y este contenido:
    - Ofertas encontradas / creadas / descartadas por duplicadas
    - Desglose por fuente: cuántas de Indeed y cuántas de LinkedIn
    - Si la rama de LinkedIn no devolvió nada, di POR QUÉ: sin acceso a Chrome, sin sesión iniciada, sin resultados de búsqueda, o todas descartadas por cerradas
@@ -341,7 +341,7 @@ sola, a favor de la más concreta. Dos consecuencias prácticas:
 - [ ] Leer el email de resumen para saber **por qué** LinkedIn devuelve cero
 - [ ] Activar **"Mantener activo"** en la pantalla de tareas programadas (si no, el día
       que el portátil esté cerrado a las 9:00 no hay ofertas y no hay aviso)
-- [ ] Filtro de reenvío `<correo personal>` hacia `hello.cookyourweb@gmail.com` para
+- [ ] Filtro de reenvío `<correo personal>` hacia `correo@example.com` para
       correos de LinkedIn
 - [ ] Decidir, con el dato del email en la mano, si se parte la tarea (Indeed a rutina
       en la nube, LinkedIn en local con Chrome) o si se abandona la rama de LinkedIn

@@ -56,7 +56,7 @@ CLAVE_MAQUINA="$(security find-generic-password -s 'CLAVE_MAQUINA cv-server' -w)
 curl -s -X POST https://cv-server-ggd8.onrender.com/generar-cv \
   -H 'Content-Type: application/json' \
   -H "X-Clave-Maquina: $CLAVE_MAQUINA" \
-  -d '{"email":"hello.cookyourweb@gmail.com","empresa":"...","puesto":"...","idioma":"es","descripcion":"..."}'
+  -d '{"email":"persona@example.com","empresa":"...","puesto":"...","idioma":"es","descripcion":"..."}'
 ```
 
 Notion NO hace falta para esto: el endpoint acepta empresa, puesto y descripción sueltos.

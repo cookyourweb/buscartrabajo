@@ -32,7 +32,7 @@ los textos (Groq/llama gratis) se queda corto para algo que va a un empleador.
 
 **Dos servicios separados en Render** (cajas distintas, env vars propias):
 
-1. **`n8n-asistente-correo.onrender.com`** — instancia n8n (plan starter, no se duerme).
+1. **`<N8N_HOST>`** — instancia n8n (plan starter, no se duerme).
    Aloja el workflow **WF2 Integrado v3** (47 nodos).
 2. **`cv-server-ggd8.onrender.com`** — servidor Python/Flask (plan free, se duerme;
    keep-warm cada 10 min). Genera el CV en DOCX y lo sube a Drive.

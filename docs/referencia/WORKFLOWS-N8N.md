@@ -16,7 +16,7 @@ tener que abrir n8n.
 > **¿Buscas los endpoints de webhook?** Están en [`../README.md`](../../README.md), sección
 > **"Webhooks n8n"** (`/webhook/<RUTA_OCULTA>?id=`, `/-descartar`, `/-mandar-empresa`,
 > `/<RUTA_OCULTA>`, `/<RUTA_OCULTA>`, `/buscar-para-user`), sobre el host
-> `https://n8n-asistente-correo.onrender.com`.
+> de la variable `N8N_HOST`.
 >
 > No se duplican aquí a propósito: dos copias de la misma tabla se desincronizan y acabas
 > sin saber cuál es la buena. Este fichero cubre QUÉ workflows corren; el README, CÓMO se
@@ -30,13 +30,13 @@ Los 10 workflows de la instancia, leídos por API el 28-ago-2026. Seis activos.
 
 | Workflow | ID n8n | Estado | Qué hace |
 |----------|--------|--------|----------|
-| **BuscarTrabajo - Ofertas Diarias (PROD, dedup ON)** | `CsvmtPcLVmGIZg6C` | ACTIVO | **EL DE PRODUCCIÓN.** 50 nodos. Cron `0 9 * * *` (09:00 Madrid = 07:00Z) busca ofertas, las escribe en Notion y manda el mail diario. Sender `veronica@cookyourwebai.es`. Además, `Cron - Revisar Aprobadas` cada 15 min. |
+| **`BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)`** | `CsvmtPcLVmGIZg6C` | ACTIVO | **EL DE PRODUCCIÓN.** 50 nodos. Cron `0 9 * * *` (09:00 Madrid = 07:00Z) busca ofertas, las escribe en Notion y manda el mail diario. Sender `veronica@cookyourwebai.es`. Además, `Cron - Revisar Aprobadas` cada 15 min. |
 | **Asistente Correo Outlook - FIX 14-07** | `tVLM6O2a5doN2XZr` | ACTIVO | Fuera del flujo de ofertas. |
 | **Búsqueda Empleo Diaria** (Telegram) | `LODaOAsNrmU7NnJ4` | ACTIVO | Manda ofertas por Telegram. NO escribe Notion. Que funcione NO dice nada del de producción. |
 | **Captura Gmail - v4.1** | `yfmYPJc4FN2425Dt` | ACTIVO | Facturas de Gmail a Notion + PDF a Drive. Export canónico: `workflows/captura-gmail-facturas-BUENA-v4.1.json`. |
 | **Digest Diario Correo** | `Nejqg3ETO8aIljp4` | ACTIVO | Fuera del flujo de ofertas. |
 | **Keep-Warm CV Server** | `JAAqWbDvwAWqDvcN` | ACTIVO | Mantiene despierto el cv-server de Render. **Es el mayor consumidor de ejecuciones de la instancia.** |
-| BuscarTrabajo - Ofertas Diarias (PROD, dedup ON) | `5pTwriXcc6aYHO1Y` | APAGADO | **Atención: MISMO NOMBRE EXACTO que el activo.** Buscar por nombre en n8n no los distingue: hay que mirar el ID. |
+| `BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)` | `5pTwriXcc6aYHO1Y` | APAGADO | **Atención: MISMO NOMBRE EXACTO que el activo.** Buscar por nombre en n8n no los distingue: hay que mirar el ID. |
 | Busqueda Empleo Diaria | `PCBULbYMrFCvzRPg` | APAGADO | Duplicado apagado. |
 | WF2 Integrado v3 - Ofertas Reales | `3zFJWSkPPHDi4yMp` | APAGADO | Del plan original, nunca se usó. |
 | WF2 Integrado v3 - Ofertas Reales | `OVoFiXTQwXmiyMfW` | APAGADO | Reimportación del anterior, con otro ID. |

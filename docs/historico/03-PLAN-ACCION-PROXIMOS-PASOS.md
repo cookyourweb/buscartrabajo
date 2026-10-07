@@ -113,8 +113,8 @@ antes de tocar código.
 
 ### URLs producción
 - CV Server: `https://cv-server-ggd8.onrender.com`
-- n8n activo: `https://n8n-st1v.onrender.com`
-- n8n viejo (no usar): `https://n8n-qwmu.onrender.com`
+- n8n activo: `$N8N_HOST`
+- n8n viejo (no usar): `$N8N_HOST`
 
 ### Notion DBs
 - Usuarios: `34811515f4b280f19a42f8da5e91a8fe`
@@ -133,7 +133,7 @@ curl https://cv-server-ggd8.onrender.com/health
 curl https://cv-server-ggd8.onrender.com/debug
 
 # Disparar <RUTA_OCULTA> desde fuera
-curl -X POST https://n8n-st1v.onrender.com/webhook/<RUTA_OCULTA> \
+curl -X POST $N8N_HOST/webhook/<RUTA_OCULTA> \
   -H "Content-Type: application/json" \
-  -d '{"email":"hello.cookyourweb@gmail.com","nombre":"vero"}'
+  -d '{"email":"correo@example.com","nombre":"vero"}'
 ```

@@ -2,7 +2,7 @@
 
 **Fecha:** 5 de agosto de 2026
 **Estado:** causa raíz encontrada y arreglada
-**Aplica a:** workflow `BuscarTrabajo - Ofertas Diarias (PROD, dedup ON)`, id `CsvmtPcLVmGIZg6C`
+**Aplica a:** workflow `BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)`, id `CsvmtPcLVmGIZg6C`
 
 Este documento existe porque el mismo síntoma se ha diagnosticado **cinco veces** (24-jun, 8-jul, 13-jul, 30-jul, 5-ago) y cuatro de ellas se empezó desde cero. La quinta encontró la causa real. Aquí queda escrita para no volver a pagar ese peaje.
 
@@ -114,7 +114,7 @@ OFERTAS NUEVAS EN NOTION: 2
 
 Las dos son exactamente las que Groq había seleccionado el 4 de agosto y el filtro descartaba.
 
-**Cómo relanzar el flujo sin esperar a las 9:00:** `POST https://n8n-asistente-correo.onrender.com/webhook/<RUTA>` con el body que espera `Code - Normalizar (interno)`: `nombre`, `email`, `perfil`, `rol`, `stack[]`, `salario`, `modalidad[]`, `ciudad`, `user_id`. El `user_id` es el id de la página de Vero en la base Users. Script listo en el scratchpad de la sesión (`probar_flujo_real.py`).
+**Cómo relanzar el flujo sin esperar a las 9:00:** `POST $N8N_HOST/webhook/<RUTA>` con el body que espera `Code — Normalizar (interno)`: `nombre`, `email`, `perfil`, `rol`, `stack[]`, `salario`, `modalidad[]`, `ciudad`, `user_id`. El `user_id` es el id de la página de Vero en la base Users. Script listo en el scratchpad de la sesión (`probar_flujo_real.py`).
 
 ---
 
@@ -124,7 +124,7 @@ Cada uno de estos hizo perder tiempo en algún diagnóstico anterior. Leerlos an
 
 ### Engaño 1: "no me llegan los mails"
 
-Los mails **sí llegan**. Están sin abrir en `hello.cookyourweb@gmail.com`, remitente `veronica@cookyourwebai.es` (Brevo). El 5 de agosto había sin leer la oferta de Arelance del 2-ago y los tres avisos de error del 29, 30 y 31 de julio.
+Los mails **sí llegan**. Están sin abrir en el buzón de destino, remitente `veronica@cookyourwebai.es` (Brevo). El 5 de agosto había sin leer la oferta de Arelance del 2-ago y los tres avisos de error del 29, 30 y 31 de julio.
 
 El mail se manda **una vez por cada oferta nueva creada en Notion**. Sin oferta nueva no hay mail. Así que "no llegan mails" casi siempre significa "no se están creando ofertas", que es un problema distinto y aguas arriba.
 
@@ -133,7 +133,7 @@ El mail se manda **una vez por cada oferta nueva creada en Notion**. Sin oferta 
 Falso. Son **workflows distintos**:
 
 - Telegram: `Búsqueda Empleo Diaria`, id `LODaOAsNrmU7NnJ4`, 9 nodos.
-- Notion y mail: `BuscarTrabajo - Ofertas Diarias (PROD, dedup ON)`, id `CsvmtPcLVmGIZg6C`, 50 nodos.
+- Notion y mail: `BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)`, id `CsvmtPcLVmGIZg6C`, 50 nodos.
 
 Que uno funcione no dice nada del otro.
 
@@ -169,7 +169,7 @@ La columna es `createdTime`, **no** `"Created time"`. Fijarse en la **hora**: la
 
 ### Paso 2: ¿qué dicen los mails de error?
 
-Buscar en Gmail `hello.cookyourweb@gmail.com`:
+Buscar en el Gmail de destino:
 
 ```
 newer_than:14d subject:"❌ ERROR"
@@ -187,7 +187,7 @@ Por API, restar dos ids de ejecución separados por 24 horas exactas: el 30 de j
 
 ### Paso 4: ¿la instancia aguanta viva?
 
-Sondear `https://n8n-asistente-correo.onrender.com/healthz` **diez veces con 20 segundos entre medias**. Si aparecen 502, la instancia se está reiniciando y ese es el problema real.
+Sondear `$N8N_HOST/healthz` **diez veces con 20 segundos entre medias**. Si aparecen 502, la instancia se está reiniciando y ese es el problema real.
 
 ### Paso 5: revisar los triggers de todos los workflows activos
 
@@ -208,11 +208,11 @@ Los 7 triggers de Gmail del workflow de captura son el siguiente candidato si el
 
 ## 4. La API de n8n
 
-**Host real:** `https://n8n-asistente-correo.onrender.com` (no `n8n-qwmu`, que sale en documentación vieja).
+**Host real:** el de la variable `N8N_HOST` (no el host antiguo que sale en documentación vieja).
 
 **Key:** en `buscartrabajo/.env`, variable `N8N_API_KEY`. Cabecera `X-N8N-API-KEY`.
 
-**Se genera en:** `https://n8n-asistente-correo.onrender.com/settings/api`
+**Se genera en:** `$N8N_HOST/settings/api`
 
 ### Gotcha que costó media sesión
 
