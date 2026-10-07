@@ -71,6 +71,19 @@ Lo que no cubre, dicho aquí para que nadie lo deduzca de un badge en verde:
 CI corre sobre Node 20 y no instala Python. Es deuda declarada, no un descuido:
 está anotada en [CONTRIBUTING](CONTRIBUTING.md).
 
+## Hacia dónde va
+
+La idea de producto es un acompañante para la persona que busca empleo, en tres
+momentos:
+
+| Momento | Qué hace hoy | Hacia dónde va |
+|---|---|---|
+| Preparar el CV maestro | Lo prepara la persona a mano; si le falta estructura, los guardrails no tienen contra qué comparar | Un comprobador del CV maestro que dice qué falta, y un asistente que ayuda a completarlo sin inventar experiencia |
+| Buscar empleo | Ofertas diarias filtradas por perfil, CV y carta adaptados con guardrails, aprobación humana | Datos por usuaria en Postgres (Neon) y acceso por invitación desde el panel |
+| Preparar la entrevista | Nada automatizado | Un asistente de preparación que no da respuestas para leer en una entrevista vigilada y no obedece instrucciones escondidas en una oferta |
+
+Es dirección, no compromiso: cada paso concreto se abre como issue.
+
 ## Qué falta
 
 Lo que está por hacer se abre como
