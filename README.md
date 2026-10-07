@@ -1,224 +1,225 @@
+[Español](README.es.md) · **English**
+
 # BuscarTrabajo
 
 [![tests](https://github.com/cookyourweb/buscartrabajo/actions/workflows/tests.yml/badge.svg)](https://github.com/cookyourweb/buscartrabajo/actions/workflows/tests.yml)
 
-Sistema multiusuario que busca ofertas de empleo reales cada mañana, las filtra por
-el perfil de cada persona y se las manda por correo. Al aprobar una, genera el CV y
-la carta adaptados al puesto y permite enviarlos a la empresa.
+A multi-user system that finds real job postings every morning, filters them against
+each person's profile and sends them by email. When one is approved, it generates a CV
+and cover letter tailored to the role and lets the person send them to the company.
 
-En producción desde julio de 2026.
+In production since July 2026.
 
-## Los tres repositorios
+## The three repositories
 
-| Repositorio | Qué es | Dónde corre |
+| Repository | What it is | Where it runs |
 |---|---|---|
-| `buscartrabajo` (este) | Workflows de n8n, scripts, ADR y runbooks | n8n en Render |
-| [`cv-server`](https://github.com/cookyourweb/cv-server) | Servicio Python (Flask) que genera CV y carta con guardrails de veracidad | Render, plan gratuito |
-| `panel-empleo` | Panel en Angular para ver y gestionar las ofertas. El acceso es por invitación, con cuenta de Google; la demo pública no muestra datos reales | En desarrollo |
+| `buscartrabajo` (this one) | n8n workflows, scripts, ADRs and runbooks | n8n on Render |
+| [`cv-server`](https://github.com/cookyourweb/cv-server) | Python (Flask) service that generates the CV and cover letter with truthfulness guardrails | Render, free plan |
+| `panel-empleo` | Angular panel to view and manage postings. Access is by invitation, with a Google account; the public demo shows no real data | In development |
 
-n8n busca y orquesta, `cv-server` escribe y valida, el panel es la cara visible.
+n8n searches and orchestrates, `cv-server` writes and validates, the panel is the visible
+face.
 
-## Qué tiene de interesante
+## What makes it interesting
 
-**Las ofertas son reales.** La versión anterior se las pedía a un modelo de lenguaje,
-que devolvía ofertas plausibles e inexistentes. Ahora vienen de tres fuentes
-(Remotive, Adzuna, Tecnoempleo), se filtran por el stack del usuario y se descartan
-las que ya están guardadas.
+**The postings are real.** The previous version asked a language model for them, and it
+returned plausible postings that did not exist. Now they come from three sources
+(Remotive, Adzuna, Tecnoempleo), are filtered by the user's stack, and the ones already
+saved are dropped.
 
-**El texto lo escribe un modelo, la verdad no.** La generación de CV y carta vive en
-[`cv-server`](https://github.com/cookyourweb/cv-server), un servicio aparte con
-guardrails de veracidad y casos de evaluación construidos sobre fallos reales de
-producción. Un modelo no falla con una excepción: devuelve algo verosímil y peor.
+**A model writes the text, not the facts.** CV and cover letter generation lives in
+[`cv-server`](https://github.com/cookyourweb/cv-server), a separate service with
+truthfulness guardrails and evaluation cases built from real production failures. A model
+does not fail with an exception: it returns something plausible and worse.
 
-**Los secretos no dependen de que nadie se acuerde.** Los webhooks de n8n ejecutan
-acciones con efectos externos, así que sus rutas no pueden entrar en un repositorio
-público. `check-secretos` lo comprueba en el hook de pre-commit y en CI, y falla si
-encuentra una. Se escribió después de descubrir que llevaban meses publicadas: una
-regla escrita no es un control, un control es código que falla.
-Ver [ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md).
+**Secrets do not depend on anyone remembering.** n8n webhooks trigger actions with
+external side effects, so their paths cannot go into a public repository.
+`check-secretos` checks this in the pre-commit hook and in CI, and fails if it finds one.
+It was written after discovering they had been public for months: a written rule is not
+a control, a control is code that fails.
+See [ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md) (in Spanish, like the rest
+of `docs/`).
 
-**El workflow de n8n se puede diffear.** Un export de n8n es un JSON enorme con cada
-nodo de código dentro de un string escapado: un cambio de tres líneas es invisible en
-`git diff`. `wf-split` lo parte en piezas legibles, `wf-join` lo rehace, y `wf-check`
-tiene ocho reglas que salieron de averías reales. Ver [workflows/PROD](workflows/PROD/README.md).
+**The n8n workflow is diffable.** An n8n export is a huge JSON file with every code node
+inside an escaped string: a three-line change is invisible in `git diff`. `wf-split`
+breaks it into readable pieces, `wf-join` puts it back together, and `wf-check` has eight
+rules that came out of real breakages. See [workflows/PROD](workflows/PROD/README.md).
 
-## Arranque rápido
+## Quick start
 
 ```bash
-npm install          # sin dependencias: solo fija la version de node
-npm test             # 25 tests con el runner de node, sin framework
+npm install          # no dependencies: it only pins the node version
+npm test             # 25 tests with node's built-in runner, no framework
 npm run check:secretos
-npm run hooks        # activa el hook de pre-commit
+npm run hooks        # enables the pre-commit hook
 ```
 
-Requiere Node 20 o superior. Los scripts de Python necesitan `pip install -r requirements.txt`.
+Requires Node 20 or later. The Python scripts need `pip install -r requirements.txt`.
 
-## Qué cubre ese verde
+## What that green badge covers
 
-El badge y `npm test` ejecutan 25 tests: 22 sobre `scripts/lib/secretos.mjs` y 3 sobre
-el formateo de ofertas. Se priorizó `secretos.mjs` porque es la única pieza cuyo fallo
-no tiene vuelta atrás: si una ruta de webhook se escapa al repositorio, ya está publicada.
+The badge and `npm test` run 25 tests: 22 on `scripts/lib/secretos.mjs` and 3 on posting
+formatting. `secretos.mjs` came first because it is the only piece whose failure cannot
+be undone: if a webhook path leaks into the repository, it is already public.
 
-Lo que no cubre, dicho aquí para que nadie lo deduzca de un badge en verde:
+What it does not cover, stated here so nobody infers it from a green badge:
 
-| Pieza | Cobertura |
+| Piece | Coverage |
 |---|---|
 | `scripts/lib/secretos.mjs` | 22 tests |
-| Formateo de ofertas (nodo del workflow) | 3 tests |
-| `scripts/wf-*.mjs` | sin tests propios |
-| `scripts/*.py` y `tools/*.py` | sin tests, y CI no los ejecuta |
+| Posting formatting (workflow node) | 3 tests |
+| `scripts/wf-*.mjs` | no tests of its own |
+| `scripts/*.py` and `tools/*.py` | no tests, and CI does not run them |
 
-CI corre sobre Node 20 y no instala Python. Es deuda declarada, no un descuido:
-está anotada en [CONTRIBUTING](CONTRIBUTING.md).
+CI runs on Node 20 and does not install Python. This is declared debt, not an oversight:
+it is recorded in [CONTRIBUTING](CONTRIBUTING.md).
 
-## Hacia dónde va
+## Where it is heading
 
-**La visión:** un acompañante para la búsqueda de empleo que trabaja con la
-persona de principio a fin. Le ayuda a construir un CV maestro sólido, le
-encuentra las ofertas que encajan, adapta cada candidatura sin inventar nada y la
-prepara para la entrevista. La persona decide siempre; la IA propone, verifica y
-avisa.
+**The vision:** a job search companion that works with the person from start to finish.
+It helps them build a solid master CV, finds the postings that fit, tailors each
+application without inventing anything and prepares them for the interview. The person
+always decides; the AI proposes, verifies and warns.
 
-**Los principios, que ya se cumplen hoy:**
+**The principles, already in place today:**
 
-- **No inventar:** lo que escribe la IA se contrasta contra el CV maestro con detectores deterministas.
-- **La persona decide:** ninguna candidatura sale sin aprobación humana.
-- **Por invitación y con privacidad:** cada persona entra con su cuenta de Google y solo si está invitada.
+- **Invent nothing:** what the AI writes is checked against the master CV with deterministic detectors.
+- **The person decides:** no application goes out without human approval.
+- **Invitation-only and private:** each person signs in with their Google account, and only if invited.
 
-### Plan de acción
+### Action plan
 
-| Fase | Objetivo | Estado |
+| Phase | Goal | Status |
 |---|---|---|
-| 1. Acceso seguro | Entrada con Google por invitación en el panel; cerrar las rutas públicas que se fiaban de un email del cuerpo de la petición | Hecho en `develop`, pendiente de desplegar |
-| 2. Identidad y datos por usuaria | Postgres en Neon con la identidad `(iss, sub)`, invitaciones de un solo uso y cada dato con su dueña | Siguiente |
-| 3. Design system y landing | Componentes Angular sobre los tokens de marca ya probados, compartidos entre una landing pública prerenderizada y el panel | Siguiente |
-| 4. CV maestro | Un comprobador que dice qué le falta al CV maestro antes de generar nada | Planificado |
-| 5. Asistente del CV maestro | Ayuda a completar el CV entrevistando a la persona, sin inventar experiencia | Más adelante |
-| 6. Claves de IA por usuaria | Cada persona trae su clave; ninguna petición cae a las claves de la dueña ([ADR-004](docs/adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md)) | Más adelante |
-| 7. Preparación de entrevista | Por oferta: qué piden y qué evidencia tiene la persona; un simulador que no da respuestas para leer y no obedece instrucciones escondidas en una oferta | Más adelante |
+| 1. Secure access | Google sign-in by invitation in the panel; close the public routes that trusted an email from the request body | Done in `develop`, pending deployment |
+| 2. Per-user identity and data | Postgres on Neon with the `(iss, sub)` identity, single-use invitations and every record owned by its user | Next |
+| 3. Design system and landing page | Angular components built on the already-tested brand tokens, shared between a prerendered public landing page and the panel | Next |
+| 4. Master CV | A checker that says what the master CV is missing before generating anything | Planned |
+| 5. Master CV assistant | Helps complete the CV by interviewing the person, without inventing experience | Later |
+| 6. Per-user AI keys | Each person brings their own key; no request falls back to the owner's keys ([ADR-004](docs/adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md)) | Later |
+| 7. Interview preparation | Per posting: what they ask for and what evidence the person has; a simulator that does not hand out answers to read aloud and does not obey instructions hidden in a posting | Later |
 
-Sin fechas a propósito: el plan dice el orden y el porqué, y el detalle de cada
-fase se abre como issue.
+No dates on purpose: the plan states the order and the reasoning, and the details of
+each phase are opened as an issue.
 
-## Qué falta
+## What is missing
 
-Lo que está por hacer se abre como
-[issue](https://github.com/cookyourweb/buscartrabajo/issues), no se escribe aquí.
-Una lista de próximos pasos escrita a mano envejece y acaba contradiciendo al código.
-Las issues etiquetadas `seguridad` van primero.
+Pending work is opened as an
+[issue](https://github.com/cookyourweb/buscartrabajo/issues), not written here.
+A hand-written list of next steps ages and ends up contradicting the code.
+Issues labelled `seguridad` (security) go first.
 
-Lo que sí queda escrito es lo que no es una tarea sino un estado del sistema, y
-está en [CONTRIBUTING](CONTRIBUTING.md): las reglas de negocio del filtro viven
-dentro de un prompt sin ningún test que las cubra, y las pruebas cubren solo
-dos piezas. Eso no caduca porque describe cómo está hecho, no qué se piensa
-hacer.
+What does get written down is what is not a task but a state of the system, and it is in
+[CONTRIBUTING](CONTRIBUTING.md): the filter's business rules live inside a prompt with
+no test covering them, and the tests cover only two pieces. That does not go stale,
+because it describes how the system is built, not what is planned.
 
-## Piezas
+## Pieces
 
-| Pieza | Qué hace |
+| Piece | What it does |
 |---|---|
-| `workflows/` | El workflow de n8n, partido en ficheros que git puede diffear |
-| `scripts/wf-*.mjs` | Partir, rehacer, verificar y redactar el workflow |
-| `scripts/*.py` | Utilidades sobre Notion y Drive |
-| `docs/` | Decisiones, runbooks y reglas del sistema |
-| `tests/` | Tests del núcleo de secretos y del formateo de ofertas |
+| `workflows/` | The n8n workflow, split into files git can diff |
+| `scripts/wf-*.mjs` | Split, rebuild, verify and redact the workflow |
+| `scripts/*.py` | Utilities for Notion and Drive |
+| `docs/` | Decisions, runbooks and system rules |
+| `tests/` | Tests for the secrets core and for posting formatting |
 
 ---
 
-## Arquitectura
+## Architecture
 
-Tres piezas. n8n orquesta, `cv-server` genera y valida, el panel muestra.
+Three pieces. n8n orchestrates, `cv-server` generates and validates, the panel displays.
 
 ```
-  PANEL (Angular)                 acceso por invitación, cuenta de Google
+  PANEL (Angular)                 invitation-only access, Google account
       |
-      | GET /yo, con ID token de Google
+      | GET /yo, with Google ID token
       v
   CV-SERVER (Flask, Render free)  <------------------------+
       |                                                     |
-      | llama a n8n                              X-Clave-Maquina
+      | calls n8n                                X-Clave-Maquina
       v                                                     |
   N8N (Render)  -------------------------------------------+
       |
-      +-- Schedule 9:00, busca por usuario:
+      +-- Schedule 9:00, searches per user:
       |     Remotive + Adzuna + Tecnoempleo
-      |     filtro por stack y rol + anti-spam contra ofertas ya en Notion
-      |     tope de 12 ofertas, Groq formatea, Notion crea la oferta, Brevo avisa
+      |     filter by stack and role + anti-spam against postings already in Notion
+      |     cap of 12 postings, Groq formats, Notion creates the posting, Brevo notifies
       |
-      +-- Aprobar:
-      |     marca Aprobado, lee la oferta, genera la carta y el CV
-      |     (cv-server), Brevo manda "revisar y enviar", Notion guarda el resultado
+      +-- Approve:
+      |     marks Aprobado, reads the posting, generates the cover letter and the CV
+      |     (cv-server), Brevo sends "review and send", Notion stores the result
       |
-      +-- Mandar a empresa:
-            lee la carta ya editada; con email de empresa, envía carta y CV
-            (replyTo = email del usuario); sin él, avisa al usuario de que aplique a mano
+      +-- Send to company:
+            reads the already-edited letter; with a company email, sends letter and CV
+            (replyTo = user's email); without one, tells the user to apply by hand
 ```
 
-### Rutas de cv-server
+### cv-server routes
 
-| Ruta | Acceso | Para qué |
+| Route | Access | Purpose |
 |---|---|---|
-| `GET /` | Pública | Página de invitación |
-| `GET /health` | Pública | Comprobar que el servicio está vivo |
-| `GET /yo` | ID token de Google | Identifica a la persona que entra al panel |
-| `POST /registro` | `X-Clave-Maquina` | Alta de usuario |
-| `POST /generar-cv` | `X-Clave-Maquina` | CV adaptado al puesto, subido a Drive |
-| `POST /generar-carta` | `X-Clave-Maquina` | Carta adaptada al puesto |
-| `GET /usuarios` | `X-Clave-Maquina` | Lista de usuarios activos |
-| `POST /crear-oferta` | `X-Clave-Maquina` | Crea una oferta en Notion |
-| `POST /buscar-ofertas-reales` | `X-Clave-Maquina` | Búsqueda de ofertas desde cv-server |
+| `GET /` | Public | Invitation page |
+| `GET /health` | Public | Check that the service is up |
+| `GET /yo` | Google ID token | Identifies the person signing in to the panel |
+| `POST /registro` | `X-Clave-Maquina` | User sign-up |
+| `POST /generar-cv` | `X-Clave-Maquina` | CV tailored to the role, uploaded to Drive |
+| `POST /generar-carta` | `X-Clave-Maquina` | Cover letter tailored to the role |
+| `GET /usuarios` | `X-Clave-Maquina` | List of active users |
+| `POST /crear-oferta` | `X-Clave-Maquina` | Creates a posting in Notion |
+| `POST /buscar-ofertas-reales` | `X-Clave-Maquina` | Posting search from cv-server |
 
-El workflow de producción de n8n solo llama a `/health`, `/generar-cv` y
-`/generar-carta`. El 7 de octubre de 2026 se eliminaron `/check-email`,
-`/accion-existente` y el formulario de alta antiguo. La autenticación del panel se
-explica en [ADR-003](docs/adr/ADR-003-autenticacion.md).
+The production n8n workflow only calls `/health`, `/generar-cv` and `/generar-carta`.
+On 7 Oct 2026 `/check-email`, `/accion-existente` and the old sign-up form were removed.
+Panel authentication is explained in [ADR-003](docs/adr/ADR-003-autenticacion.md).
 
-Modelos de lenguaje en `cv-server`: CV y carta con `claude-sonnet-4-6` en producción
-(lo fija el entorno; `/health` lo muestra). Si Claude falla: Groq `openai/gpt-oss-120b`,
-después Gemini y después Claude Haiku 4.5.
+Language models in `cv-server`: CV and cover letter with `claude-sonnet-4-6` in
+production (set by the environment; `/health` shows it). If Claude fails: Groq
+`openai/gpt-oss-120b`, then Gemini, then Claude Haiku 4.5.
 
 ---
 
-## Servicios
+## Services
 
-| Servicio | Propósito |
+| Service | Purpose |
 |----------|-----------|
-| cv-server (Render free) | Página de invitación, API de usuarios y generación de CV y carta |
-| n8n (Render) | Orquestador del workflow de búsqueda y aprobación |
-| Notion | CRM de usuarios y ofertas |
-| Google Drive | CVs adaptados |
-| Brevo | Envío de correos |
-| Groq | LLM de ofertas y fallback de CV y carta (`openai/gpt-oss-120b`) |
+| cv-server (Render free) | Invitation page, user API and CV and cover letter generation |
+| n8n (Render) | Orchestrator for the search and approval workflow |
+| Notion | CRM for users and postings |
+| Google Drive | Tailored CVs |
+| Brevo | Email delivery |
+| Groq | LLM for postings and fallback for CV and cover letter (`openai/gpt-oss-120b`) |
 
-**Una sola instancia de n8n activa.** n8n no permite dos workflows con el mismo path
-de webhook activos a la vez, así que las instancias antiguas están deprecadas y no
-deben reactivarse.
-
----
-
-## Webhooks n8n
-
-El workflow de producción expone webhooks para lanzar una búsqueda de un usuario y
-para resolver una oferta (aprobar, descartar o mandarla a la empresa).
-
-**Las rutas no se publican aquí.** Ejecutan acciones con efectos externos y hoy no
-exigen credencial, así que la ruta es lo único que las protege (issue #1). Viven en
-`workflows/PROD/secrets.local.json`, que está fuera de git, y en el workflow versionado
-aparecen como `@@SECRET:<nodo>`.
-
-Para recuperarlas en local: exportar el workflow desde n8n y pasarlo por
-`node scripts/wf-split.mjs <export.json>`, que las separa a ese fichero.
+**Only one active n8n instance.** n8n does not allow two active workflows with the same
+webhook path at the same time, so the old instances are deprecated and must not be
+reactivated.
 
 ---
 
-## Base de Datos Notion
+## n8n webhooks
 
-### DB Usuarios
+The production workflow exposes webhooks to launch a search for a user and to resolve a
+posting (approve, discard or send it to the company).
 
-| Columna | Tipo |
+**The paths are not published here.** They trigger actions with external side effects
+and currently require no credential, so the path is the only thing protecting them
+(issue #1). They live in `workflows/PROD/secrets.local.json`, which is outside git, and
+in the versioned workflow they appear as `@@SECRET:<nodo>`.
+
+To recover them locally: export the workflow from n8n and run it through
+`node scripts/wf-split.mjs <export.json>`, which extracts them into that file.
+
+---
+
+## Notion database
+
+### Usuarios DB (users)
+
+| Column | Type |
 |---------|------|
 | Name | Title |
-| Email | Email (único) |
+| Email | Email (unique) |
 | Perfil | Rich text |
 | Rol objetivo | Rich text |
 | Stack | Multi-select |
@@ -230,62 +231,62 @@ Para recuperarlas en local: exportar el workflow desde n8n y pasarlo por
 | cv_master_file_id | Rich text |
 | Activo | Checkbox |
 
-### DB Ofertas
+### Ofertas DB (postings)
 
-| Columna | Tipo | Qué guarda |
+| Column | Type | What it stores |
 |---------|------|------------|
-| Empresa | Title | nombre empresa |
+| Empresa | Title | company name |
 | Puesto | Rich text | |
 | Salario | Rich text | |
 | Modalidad | Select | Remoto / Hibrido / Presencial |
-| Link oferta | URL | url original (clave anti-spam) |
-| Notas | Rich text | descripción corta |
+| Link oferta | URL | original URL (anti-spam key) |
+| Notas | Rich text | short description |
 | Estado | Select | Pendiente / Aprobado / Descartado / En proceso / Enviado a empresa |
-| **Email Enviado** | Email | **email del usuario destinatario** |
-| Usuario | Relation | relación a DB Usuarios |
-| Nombre Contacto | Rich text | RRHH de la oferta |
-| Email empresa | Email | contacto de la empresa (para envío auto) |
+| **Email Enviado** | Email | **email of the recipient user** |
+| Usuario | Relation | relation to the Usuarios DB |
+| Nombre Contacto | Rich text | HR contact for the posting |
+| Email empresa | Email | company contact (for automatic sending) |
 | Teléfono Contacto | Phone | |
 | Fecha Publicacion | Date | |
-| Fecha envio | Date | cuándo se generó carta+CV |
-| Fecha Envio Empresa | Date | cuándo se mandó a la empresa |
-| **Link CV Drive** | URL | **CV adaptado** a la oferta |
-| **CV usado** | Rich text | **CV master** (referencia del que se partió) |
-| **Carta Enviada** | Rich text | carta de presentación generada/editada |
-| Seguimiento | Date | seguimiento manual |
+| Fecha envio | Date | when the letter+CV were generated |
+| Fecha Envio Empresa | Date | when it was sent to the company |
+| **Link CV Drive** | URL | **tailored CV** for the posting |
+| **CV usado** | Rich text | **master CV** (the reference it started from) |
+| **Carta Enviada** | Rich text | generated/edited cover letter |
+| Seguimiento | Date | manual follow-up |
 
-**CV usado** es el CV master (la referencia de la que se partió). **Link CV Drive** es el CV adaptado (el resultado). Son dos CVs distintos.
+**CV usado** is the master CV (the reference it started from). **Link CV Drive** is the tailored CV (the result). They are two different CVs.
 
 ---
 
-## Debugging rápido
+## Quick debugging
 
 ```bash
-# 1. ¿CV Server vivo? Render Free duerme a los ~15 min y el arranque en frío tarda ~50 s
+# 1. Is CV Server up? Render Free sleeps after ~15 min and a cold start takes ~50 s
 curl https://cv-server-ggd8.onrender.com/health
 
-# 2. ¿El webhook de búsqueda responde?
-#    La URL sale de workflows/PROD/secrets.local.json (fuera de git)
+# 2. Does the search webhook respond?
+#    The URL comes from workflows/PROD/secrets.local.json (outside git)
 curl -X POST "$N8N_HOST/webhook/$RUTA_BUSCAR_AHORA" \
   -H "Content-Type: application/json" \
   -d '{"email":"tu@correo.com","nombre":"tu-nombre"}'
 ```
 
-Si responden 200, el problema está en el flujo interno: revisa Executions en n8n.
+If both return 200, the problem is in the internal flow: check Executions in n8n.
 
 ---
 
-## Gotchas y deuda conocida
+## Gotchas and known debt
 
-- **Groq Free TPD = 200.000 tokens/día** (verificado el 2-oct-2026) es el cuello de botella real (no el RPM). Por eso el cap de **12 ofertas** en modo prueba. Agotarlo da 429 hasta el reset diario.
-- **Variable de Render de cv-server** `WEBHOOK_BUSCAR_AHORA`: debe apuntar a la instancia de n8n activa. Si apunta a una instancia deprecada, la búsqueda se dispara en el vacío.
-- **API keys**: tras rotarlas hay que actualizarlas en DOS sitios: credenciales n8n (Notion, Brevo) **y** env vars Render (Groq, Gemini, Notion, Google OAuth).
-- **n8n**: al importar un workflow desde otra instancia, los IDs de credencial NO se mapean: reasigna la credencial nodo por nodo. Importar con *Import from File* SOBRE el workflow abierto (si no, se duplica).
-- **Notion**: nombres de propiedad case-sensitive y con tildes (`Teléfono Contacto`, `Email empresa`). Mandar una propiedad con tipo equivocado da 400; mandar una que no existe en el payload no falla, pero escribir en un nombre inexistente sí rompe el PATCH.
-- **Tipografía del CV/carta (cv-server)**: el `cv-server` sanea el texto antes de renderizar (`sanear_tipografia`): fuera guiones largos y flechas, que son rastro de IA y NO pueden salir a una empresa. Cuidado: el DOCX detecta la línea de empresa usando el guion largo como marcador, así que la detección sigue leyendo la línea cruda y solo se limpia el texto que se escribe. No metas un saneado global antes de parsear o pierdes las negritas.
+- **Groq Free TPD = 200,000 tokens/day** (verified 2 Oct 2026) is the real bottleneck (not RPM). That is why there is a cap of **12 postings** in test mode. Exhausting it returns 429 until the daily reset.
+- **cv-server Render variable** `WEBHOOK_BUSCAR_AHORA`: must point to the active n8n instance. If it points to a deprecated instance, the search fires into the void.
+- **API keys**: after rotating them, you must update them in TWO places: n8n credentials (Notion, Brevo) **and** Render env vars (Groq, Gemini, Notion, Google OAuth).
+- **n8n**: when importing a workflow from another instance, credential IDs are NOT mapped: reassign the credential node by node. Import with *Import from File* OVER the open workflow (otherwise it gets duplicated).
+- **Notion**: property names are case-sensitive and include accents (`Teléfono Contacto`, `Email empresa`). Sending a property with the wrong type returns 400; leaving a property out of the payload does not fail, but writing to a name that does not exist breaks the PATCH.
+- **CV/cover letter typography (cv-server)**: `cv-server` sanitizes the text before rendering (`sanear_tipografia`): long dashes and arrows are removed, because they are an AI tell and must NOT reach a company. Careful: the DOCX detects the company line using the long dash as a marker, so detection still reads the raw line and only the text being written is cleaned. Do not add a global sanitizing pass before parsing or you lose the bold text.
 
 ---
 
-El estado de este repositorio lo cuenta `git log`, no una línea escrita a mano al
-final del README. El workflow que corre en producción está en [`workflows/PROD/`](workflows/PROD/README.md),
-partido en piezas que git puede diffear.
+The state of this repository is told by `git log`, not by a hand-written line at the
+end of the README. The workflow running in production is in [`workflows/PROD/`](workflows/PROD/README.md),
+split into pieces git can diff.
