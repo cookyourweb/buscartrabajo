@@ -36,8 +36,8 @@ Esto incluye las que suenan bien y son verdad. Cualquiera de estas sobra:
 
 ### 2. Lenguaje no afirmativo
 
-> ✅ *"creo que **puede encajar** con lo que hago en mi trabajo"*
-> ❌ *"este puesto **está hecho para mí**"*
+> Sí: *"creo que **puede encajar** con lo que hago en mi trabajo"*
+> No: *"este puesto **está hecho para mí**"*
 
 Es una hipótesis, no una sentencia. Que lo confirmen ellos.
 
@@ -55,8 +55,8 @@ es lo que hace que una carta parezca generada.
 **El guiño apunta a lo que ELLOS piden, nunca a tus méritos.** Esa es la diferencia
 entre demostrar que leíste el anuncio y volver a justificarte:
 
-> ✅ *"en particular la parte de Google Cloud y Gemini"*
-> ❌ *"vengo de años diseñando arquitecturas y hoy diseño arquitecturas con LLMs"*
+> Sí: *"en particular la parte de Google Cloud y Gemini"*
+> No: *"vengo de años diseñando arquitecturas y hoy diseño arquitecturas con LLMs"*
 
 Si el título de la oferta es genérico (*"Senior AI Engineer"* a secas) y no tienes su
 texto delante, **la carta va sin guiño**. No se inventa qué piden.
@@ -68,7 +68,7 @@ El de la vacante, entero y tal cual lo escriben ellos. Si se llama
 
 ### 6. Corta, y en español con tildes
 
-~50-70 palabras. Máximo 100. Cero guiones largos (—) y cero flechas (→).
+~50-70 palabras. Máximo 100. Cero guiones largos y cero flechas.
 
 Las tildes no son un detalle: el 29-ago salieron dos cartas al mercado español
 **sin una sola tilde en el cuerpo**, con el membrete de encima bien acentuado. El
@@ -122,11 +122,11 @@ como lista de hechos"* y *"dónde está tu profundidad, con 2 hechos concretos"*
 
 Sobrevive una sola de sus reglas, la 4: *una sola frase de su oferta*.
 
-Su regla maestra —**hechos, no afirmaciones**— sigue siendo cierta y ahora vive en el CV,
+Su regla maestra, **hechos, no afirmaciones**, sigue siendo cierta y ahora vive en el CV,
 que es donde toca. En la carta no hace falta: sin méritos no hay nada que defender.
 
 ---
 
 **Relacionado:** `~/Desktop/cv/LEEME.md` (líneas rojas y datos canónicos),
-`cv-server/server.py` → `PROMPT_CARTA` (**pendiente de alinear**: aún pide
+`PROMPT_CARTA` en `cv-server/server.py` (**pendiente de alinear**: aún pide
 "UNA SOLA ancla concreta", que esta versión elimina).

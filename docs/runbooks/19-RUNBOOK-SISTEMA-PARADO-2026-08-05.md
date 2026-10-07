@@ -104,7 +104,7 @@ Con **un solo usuario** se hace una única llamada a Groq, así que no hay rate 
 Disparando el flujo real por `POST /webhook/<RUTA>` con el perfil de Notion:
 
 ```
-webhook -> 200 (38,1s)
+webhook: 200 (38,1s)
 respuesta: {"messageId": "<...@smtp-relay.mailin.fr>"}
 
 OFERTAS NUEVAS EN NOTION: 2
@@ -114,7 +114,7 @@ OFERTAS NUEVAS EN NOTION: 2
 
 Las dos son exactamente las que Groq había seleccionado el 4 de agosto y el filtro descartaba.
 
-**Cómo relanzar el flujo sin esperar a las 9:00:** `POST https://n8n-asistente-correo.onrender.com/webhook/<RUTA>` con el body que espera `Code — Normalizar (interno)`: `nombre`, `email`, `perfil`, `rol`, `stack[]`, `salario`, `modalidad[]`, `ciudad`, `user_id`. El `user_id` es el id de la página de Vero en la base Users. Script listo en el scratchpad de la sesión (`probar_flujo_real.py`).
+**Cómo relanzar el flujo sin esperar a las 9:00:** `POST https://n8n-asistente-correo.onrender.com/webhook/<RUTA>` con el body que espera `Code - Normalizar (interno)`: `nombre`, `email`, `perfil`, `rol`, `stack[]`, `salario`, `modalidad[]`, `ciudad`, `user_id`. El `user_id` es el id de la página de Vero en la base Users. Script listo en el scratchpad de la sesión (`probar_flujo_real.py`).
 
 ---
 

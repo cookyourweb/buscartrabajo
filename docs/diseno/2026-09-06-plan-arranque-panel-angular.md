@@ -30,11 +30,11 @@ la marca de CookYourWeb.
 ### Cómo conviven
 
 ```
-n8n  ->  Notion
-                \
-                 '->  cv-server (FastAPI)  <-  panel-empleo (Angular)
+n8n ---- Notion
+              \
+               +---- cv-server (FastAPI) ---- panel-empleo (Angular)
                           |
-                          '->  Postgres, Drive, modelos
+                          +---- Postgres, Drive, modelos
 
 cookyourwebai: no participa en tiempo de ejecución.
                Aporta los tokens, que se copian.

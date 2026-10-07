@@ -73,7 +73,11 @@ rutas a `secrets.local.json`.
 El ciclo, siempre en este orden:
 
 ```
-n8n  →  exportar  →  npm run wf:split  →  editar el .js  →  npm run wf:join  →  importar
+1. Exportar el workflow desde n8n
+2. npm run wf:split
+3. Editar el .js del nodo
+4. npm run wf:join
+5. Importar en n8n
 ```
 
 Se edita el fichero del nodo en el editor, **nunca en la interfaz de n8n**. Así

@@ -232,7 +232,7 @@ Para recuperarlas en local: exportar el workflow desde n8n y pasarlo por
 ## Debugging rápido
 
 ```bash
-# 1. ¿CV Server vivo? (Render Free duerme ~15min → cold start ~50s)
+# 1. ¿CV Server vivo? Render Free duerme a los ~15 min y el arranque en frío tarda ~50 s
 curl https://cv-server-ggd8.onrender.com/health
 
 # 2. ¿El webhook de búsqueda responde?
@@ -242,7 +242,7 @@ curl -X POST "$N8N_HOST/webhook/$RUTA_BUSCAR_AHORA" \
   -d '{"email":"tu@correo.com","nombre":"tu-nombre"}'
 ```
 
-Si responden 200 → el problema está en el flujo interno (revisar Executions en n8n).
+Si responden 200, el problema está en el flujo interno: revisa Executions en n8n.
 
 ---
 
@@ -250,8 +250,8 @@ Si responden 200 → el problema está en el flujo interno (revisar Executions e
 
 - **Groq Free TPD = 100.000 tokens/día** es el cuello de botella real (no el RPM). Por eso el cap de **12 ofertas** en modo prueba. Agotarlo da 429 hasta el reset diario.
 - **Variable de Render de cv-server** `WEBHOOK_BUSCAR_AHORA`: debe apuntar a la instancia de n8n activa. Si apunta a una instancia deprecada, la búsqueda se dispara en el vacío.
-- **API keys**: tras rotarlas hay que actualizarlas en DOS sitios — credenciales n8n (Notion, Brevo) **y** env vars Render (Groq, Gemini, Notion, Google OAuth).
-- **n8n**: al importar un workflow desde otra instancia, los IDs de credencial NO se mapean → reasignar credencial nodo por nodo. Importar con *Import from File* SOBRE el workflow abierto (si no, se duplica).
+- **API keys**: tras rotarlas hay que actualizarlas en DOS sitios: credenciales n8n (Notion, Brevo) **y** env vars Render (Groq, Gemini, Notion, Google OAuth).
+- **n8n**: al importar un workflow desde otra instancia, los IDs de credencial NO se mapean: reasigna la credencial nodo por nodo. Importar con *Import from File* SOBRE el workflow abierto (si no, se duplica).
 - **Notion**: nombres de propiedad case-sensitive y con tildes (`Teléfono Contacto`, `Email empresa`). Mandar una propiedad con tipo equivocado da 400; mandar una que no existe en el payload no falla, pero escribir en un nombre inexistente sí rompe el PATCH.
 - **Tipografía del CV/carta (cv-server)**: el `cv-server` sanea el texto antes de renderizar (`sanear_tipografia`): fuera guiones largos y flechas, que son rastro de IA y NO pueden salir a una empresa. Cuidado: el DOCX detecta la línea de empresa usando el guion largo como marcador, así que la detección sigue leyendo la línea cruda y solo se limpia el texto que se escribe. No metas un saneado global antes de parsear o pierdes las negritas.
 

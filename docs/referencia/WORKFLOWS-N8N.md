@@ -1,4 +1,4 @@
-# Workflows en n8n — qué está subido y su estado
+# Workflows en n8n: qué está subido y su estado
 
 Inventario de lo que está SUBIDO Y CORRIENDO en la instancia de n8n. Los ficheros `.json`
 de `workflows/` NO son la fuente de verdad (son exports/backups); la fuente de verdad es la
@@ -7,7 +7,7 @@ tener que abrir n8n.
 
 **Estado verificado vía n8n API el 28-ago-2026.** Si cambias algo en n8n, actualiza esta tabla.
 
-> ⚠️ **NO te fíes de los IDs escritos aquí.** El ID cambia cada vez que se importa un export.
+> **Atención: NO te fíes de los IDs escritos aquí.** El ID cambia cada vez que se importa un export.
 > Esta tabla apuntó al workflow equivocado del 5 al 28 de agosto: señalaba `5pTwriXcc6aYHO1Y`,
 > que lleva APAGADO desde entonces, mientras producción corría en `CsvmtPcLVmGIZg6C`.
 > Antes de tocar nada, lista los workflows y quédate con el que esté `active`.
@@ -30,16 +30,16 @@ Los 10 workflows de la instancia, leídos por API el 28-ago-2026. Seis activos.
 
 | Workflow | ID n8n | Estado | Qué hace |
 |----------|--------|--------|----------|
-| **BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)** | `CsvmtPcLVmGIZg6C` | 🟢 ACTIVE | **EL DE PRODUCCIÓN.** 50 nodos. Cron `0 9 * * *` (09:00 Madrid = 07:00Z) busca ofertas, las escribe en Notion y manda el mail diario. Sender `veronica@cookyourwebai.es`. Además, `Cron - Revisar Aprobadas` cada 15 min. |
-| **Asistente Correo Outlook — FIX 14-07** | `tVLM6O2a5doN2XZr` | 🟢 ACTIVE | Fuera del flujo de ofertas. |
-| **Búsqueda Empleo Diaria** (Telegram) | `LODaOAsNrmU7NnJ4` | 🟢 ACTIVE | Manda ofertas por Telegram. NO escribe Notion. Que funcione NO dice nada del de producción. |
-| **Captura Gmail — v4.1** | `yfmYPJc4FN2425Dt` | 🟢 ACTIVE | Facturas de Gmail a Notion + PDF a Drive. Export canónico: `workflows/captura-gmail-facturas-BUENA-v4.1.json`. |
-| **Digest Diario Correo** | `Nejqg3ETO8aIljp4` | 🟢 ACTIVE | Fuera del flujo de ofertas. |
-| **Keep-Warm CV Server** | `JAAqWbDvwAWqDvcN` | 🟢 ACTIVE | Mantiene despierto el cv-server de Render. **Es el mayor consumidor de ejecuciones de la instancia.** |
-| BuscarTrabajo — Ofertas Diarias (PROD, dedup ON) | `5pTwriXcc6aYHO1Y` | 🔴 OFF | ⚠️ **MISMO NOMBRE EXACTO que el activo.** Buscar por nombre en n8n no los distingue: hay que mirar el ID. |
-| Busqueda Empleo Diaria | `PCBULbYMrFCvzRPg` | 🔴 OFF | Duplicado apagado. |
-| WF2 Integrado v3 - Ofertas Reales | `3zFJWSkPPHDi4yMp` | 🔴 OFF | Del plan original, nunca se usó. |
-| WF2 Integrado v3 - Ofertas Reales | `OVoFiXTQwXmiyMfW` | 🔴 OFF | Reimportación del anterior, con otro ID. |
+| **BuscarTrabajo - Ofertas Diarias (PROD, dedup ON)** | `CsvmtPcLVmGIZg6C` | ACTIVO | **EL DE PRODUCCIÓN.** 50 nodos. Cron `0 9 * * *` (09:00 Madrid = 07:00Z) busca ofertas, las escribe en Notion y manda el mail diario. Sender `veronica@cookyourwebai.es`. Además, `Cron - Revisar Aprobadas` cada 15 min. |
+| **Asistente Correo Outlook - FIX 14-07** | `tVLM6O2a5doN2XZr` | ACTIVO | Fuera del flujo de ofertas. |
+| **Búsqueda Empleo Diaria** (Telegram) | `LODaOAsNrmU7NnJ4` | ACTIVO | Manda ofertas por Telegram. NO escribe Notion. Que funcione NO dice nada del de producción. |
+| **Captura Gmail - v4.1** | `yfmYPJc4FN2425Dt` | ACTIVO | Facturas de Gmail a Notion + PDF a Drive. Export canónico: `workflows/captura-gmail-facturas-BUENA-v4.1.json`. |
+| **Digest Diario Correo** | `Nejqg3ETO8aIljp4` | ACTIVO | Fuera del flujo de ofertas. |
+| **Keep-Warm CV Server** | `JAAqWbDvwAWqDvcN` | ACTIVO | Mantiene despierto el cv-server de Render. **Es el mayor consumidor de ejecuciones de la instancia.** |
+| BuscarTrabajo - Ofertas Diarias (PROD, dedup ON) | `5pTwriXcc6aYHO1Y` | APAGADO | **Atención: MISMO NOMBRE EXACTO que el activo.** Buscar por nombre en n8n no los distingue: hay que mirar el ID. |
+| Busqueda Empleo Diaria | `PCBULbYMrFCvzRPg` | APAGADO | Duplicado apagado. |
+| WF2 Integrado v3 - Ofertas Reales | `3zFJWSkPPHDi4yMp` | APAGADO | Del plan original, nunca se usó. |
+| WF2 Integrado v3 - Ofertas Reales | `OVoFiXTQwXmiyMfW` | APAGADO | Reimportación del anterior, con otro ID. |
 
 ### Webhooks: cuáles existen de verdad
 
@@ -47,12 +47,12 @@ Barridos los 10 workflows nodo a nodo el 28-ago-2026.
 
 | Path | ¿Existe? | Dónde |
 |------|----------|-------|
-| `buscar-para-user` | ✅ | `CsvmtPcLVmGIZg6C`. Es por donde el cv-server pide una búsqueda para un usuario. |
-| `<RUTA_OCULTA>` | ✅ | `CsvmtPcLVmGIZg6C` |
-| `<RUTA_OCULTA>` | ✅ | `CsvmtPcLVmGIZg6C` |
-| `<RUTA_OCULTA>` | ✅ | `CsvmtPcLVmGIZg6C` |
-| `<RUTA_OCULTA>` | ❌ **NO EXISTE** | En ninguno. Lo que la documentación llamaba "WF1" nunca llegó a estar dado de alta. |
-| `<RUTA_OCULTA>` | ❌ **NO EXISTE** | En ninguno. El cv-server le llamaba y se comía un 404 en silencio hasta el 28-ago-2026. |
+| `buscar-para-user` | Sí | `CsvmtPcLVmGIZg6C`. Es por donde el cv-server pide una búsqueda para un usuario. |
+| `<RUTA_OCULTA>` | Sí | `CsvmtPcLVmGIZg6C` |
+| `<RUTA_OCULTA>` | Sí | `CsvmtPcLVmGIZg6C` |
+| `<RUTA_OCULTA>` | Sí | `CsvmtPcLVmGIZg6C` |
+| `<RUTA_OCULTA>` | **NO EXISTE** | En ninguno. Lo que la documentación llamaba "WF1" nunca llegó a estar dado de alta. |
+| `<RUTA_OCULTA>` | **NO EXISTE** | En ninguno. El cv-server le llamaba y se comía un 404 en silencio hasta el 28-ago-2026. |
 
 Otros workflows menores comparten la credencial Groq viva `Groq account 2`
 (`Ewz07GBHAM5voex1`): **Digest** y **Outlook FIX**. Estado no verificado en detalle aquí.
@@ -73,11 +73,11 @@ Otros workflows menores comparten la credencial Groq viva `Groq account 2`
 otras ciudades fuera. Ver [[preferencia-modalidad-vero]].
 
 **Fuentes de ofertas** (3 declaradas, **2 funcionando**), en el workflow PROD `CsvmtPcLVmGIZg6C`:
-- **Remotive** (`Buscar en Remotive`): ✅ funciona. 100% remoto por diseño. Devuelve un aviso
+- **Remotive** (`Buscar en Remotive`): funciona. 100% remoto por diseño. Devuelve un aviso
   de que el dominio se movió a `remotive.com`.
-- **Tecnoempleo** (`Buscar en Tecnoempleo`, RSS): ✅ funciona. Portal español, de aquí salen
+- **Tecnoempleo** (`Buscar en Tecnoempleo`, RSS): funciona. Portal español, de aquí salen
   las presenciales y las que no cuadraban.
-- **Adzuna** (`Buscar en Adzuna`): 🔴 **MUERTA desde el 6-ago-2026.** Devuelve
+- **Adzuna** (`Buscar en Adzuna`): **MUERTA desde el 6-ago-2026.** Devuelve
   `{"error": "access to env vars denied"}`. La URL usa `{{ $env.ADZUNA_APP_KEY }}` y esta
   instancia de n8n tiene bloqueado el acceso a variables de entorno. **Falla en silencio
   dentro de una ejecución que acaba en `success`**, por eso nadie lo vio en tres semanas.
