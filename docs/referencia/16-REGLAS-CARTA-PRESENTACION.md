@@ -127,6 +127,6 @@ que es donde toca. En la carta no hace falta: sin méritos no hay nada que defen
 
 ---
 
-**Relacionado:** `~/Desktop/cv/LEEME.md` (líneas rojas y datos canónicos),
+**Relacionado:** el LEEME del CV Master (líneas rojas y datos canónicos),
 `PROMPT_CARTA` en `cv-server/server.py` (**pendiente de alinear**: aún pide
 "UNA SOLA ancla concreta", que esta versión elimina).

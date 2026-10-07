@@ -144,9 +144,9 @@ El workflow de producción de n8n solo llama a `/health`, `/generar-cv` y
 `/accion-existente` y el formulario de alta antiguo. La autenticación del panel se
 explica en [ADR-003](docs/adr/ADR-003-autenticacion.md).
 
-Modelos de lenguaje en `cv-server`: CV con Claude Haiku 4.5 y carta con Claude Sonnet
-4.6 (Groq de fallback). Resto de usos: Groq `openai/gpt-oss-120b`, Gemini 3.6 Flash y
-Claude Haiku 4.5, en ese orden.
+Modelos de lenguaje en `cv-server`: CV y carta con `claude-sonnet-4-6` en producción
+(lo fija el entorno; `/health` lo muestra). Si Claude falla: Groq `openai/gpt-oss-120b`,
+después Gemini y después Claude Haiku 4.5.
 
 ---
 
@@ -248,7 +248,7 @@ Si responden 200, el problema está en el flujo interno: revisa Executions en n8
 
 ## Gotchas y deuda conocida
 
-- **Groq Free TPD = 100.000 tokens/día** es el cuello de botella real (no el RPM). Por eso el cap de **12 ofertas** en modo prueba. Agotarlo da 429 hasta el reset diario.
+- **Groq Free TPD = 200.000 tokens/día** (verificado el 2-oct-2026) es el cuello de botella real (no el RPM). Por eso el cap de **12 ofertas** en modo prueba. Agotarlo da 429 hasta el reset diario.
 - **Variable de Render de cv-server** `WEBHOOK_BUSCAR_AHORA`: debe apuntar a la instancia de n8n activa. Si apunta a una instancia deprecada, la búsqueda se dispara en el vacío.
 - **API keys**: tras rotarlas hay que actualizarlas en DOS sitios: credenciales n8n (Notion, Brevo) **y** env vars Render (Groq, Gemini, Notion, Google OAuth).
 - **n8n**: al importar un workflow desde otra instancia, los IDs de credencial NO se mapean: reasigna la credencial nodo por nodo. Importar con *Import from File* SOBRE el workflow abierto (si no, se duplica).

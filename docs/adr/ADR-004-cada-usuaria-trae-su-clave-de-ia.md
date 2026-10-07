@@ -1,6 +1,6 @@
 # ADR-004. Cada usuaria trae su propia clave de IA
 
-**Fecha:** 2 oct 2026 · **Estado:** aceptado el 3 oct 2026, al decidir cómo encaja la búsqueda de ofertas
+**Fecha:** 2 oct 2026 · **Estado:** aceptado el 3 oct 2026, sin implementar (ver «Lo que falta para que esto sea verdad»), al decidir cómo encaja la búsqueda de ofertas
 
 ---
 
@@ -48,9 +48,9 @@ que genera para ella se cobra en su cuenta del proveedor.
 
 **Solo se admiten modelos de una lista de modelos soportados.** Un modelo entra en
 la lista si genera de verdad los casos de `cv-server/evaluacion.py` y los pasa,
-con los guardrails de veracidad (cifras, tecnologías, habilidades, experiencia y
+con los guardrails de veracidad (cifras, tecnologías, habilidades, experiencia (en la carta) y
 titular) en verde. Esos guardrails contrastan la salida contra el CV Master y no
-dependen del modelo: sirven igual para cualquiera. Hoy la lista es Claude.
+dependen del modelo: sirven igual para cualquiera. Hoy la lista es `claude-sonnet-4-6`.
 
 **Lo que ve la usuaria:**
 
