@@ -2,6 +2,8 @@
 
 # BuscarTrabajo
 
+A CookYourWebAI project.
+
 [![tests](https://github.com/cookyourweb/buscartrabajo/actions/workflows/tests.yml/badge.svg)](https://github.com/cookyourweb/buscartrabajo/actions/workflows/tests.yml)
 
 A multi-user system that finds real job postings every morning, filters them against
@@ -10,126 +12,41 @@ and cover letter tailored to the role and lets the person send them to the compa
 
 In production since July 2026.
 
-## The three repositories
+## For job seekers: what you can do
+
+Looking for a job means checking the same job boards every day and rewriting your CV for
+every application. This system does that repetitive part for you, and you keep every
+decision.
+
+Today the full pipeline runs for the author's own job search, and new users join by
+invitation. The status column says what works today and what is planned, following the
+[action plan](#action-plan).
+
+| What it does for you | How | Status |
+|---|---|---|
+| 1. You sign in with the Google account you already have | Invitation only, no new password | Deployed 7 Oct 2026, pending activation |
+| 2. You set up your profile once | Target role, stack, work mode, city and a link to your master CV in Google Docs | Available today |
+| 3. You stop checking job boards every day | Every morning at 9:00 it searches three job boards (Remotive, Adzuna, Tecnoempleo), filters the postings by your stack and role, skips the ones you already have and emails you up to 12 | Available today |
+| 4. You decide which postings are worth your time | You approve or discard each one | Available today |
+| 5. You stop rewriting your CV for every application | For each posting you approve, it writes a CV tailored to it (saved to Google Drive) and a cover letter, and emails you to review them. When you confirm, it sends both to the company if the posting has an email, with replies going to you; if not, it tells you to apply by hand | Available today |
+| 6. It does not put words in your mouth | The CV and letter are checked against your master CV: technologies and numbers it does not back get flagged for you to review. They are warnings, not blocks, and nothing goes out without your approval | Available today |
+| 7. Your data stays yours | Every record owned by its user, in a proper database | Planned |
+| 8. A stronger master CV | A checker that says what your master CV is missing, and an assistant that helps you complete it by interviewing you, without inventing experience | Planned |
+| 9. Your AI costs stay under your control | You bring your own AI key; no request falls back to the owner's keys | Planned |
+| 10. You go into the interview prepared | Per posting: what they ask for and what evidence you have, plus a practice simulator | Planned |
+
+## For developers: how it is built and why
+
+### Architecture
+
+Three repositories, three pieces. n8n searches and orchestrates, `cv-server` writes and
+validates, the panel is the visible face.
 
 | Repository | What it is | Where it runs |
 |---|---|---|
 | `buscartrabajo` (this one) | n8n workflows, scripts, ADRs and runbooks | n8n on Render |
 | [`cv-server`](https://github.com/cookyourweb/cv-server) | Python (Flask) service that generates the CV and cover letter with truthfulness guardrails | Render, free plan |
 | `panel-empleo` | Angular panel to view and manage postings. Access is by invitation, with a Google account; the public demo shows no real data | In development |
-
-n8n searches and orchestrates, `cv-server` writes and validates, the panel is the visible
-face.
-
-## What makes it interesting
-
-**The postings are real.** The previous version asked a language model for them, and it
-returned plausible postings that did not exist. Now they come from three sources
-(Remotive, Adzuna, Tecnoempleo), are filtered by the user's stack, and the ones already
-saved are dropped.
-
-**A model writes the text, not the facts.** CV and cover letter generation lives in
-[`cv-server`](https://github.com/cookyourweb/cv-server), a separate service with
-truthfulness guardrails and evaluation cases built from real production failures. A model
-does not fail with an exception: it returns something plausible and worse.
-
-**Secrets do not depend on anyone remembering.** n8n webhooks trigger actions with
-external side effects, so their paths cannot go into a public repository.
-`check-secretos` checks this in the pre-commit hook and in CI, and fails if it finds one.
-It was written after discovering they had been public for months: a written rule is not
-a control, a control is code that fails.
-See [ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md) (in Spanish, like the rest
-of `docs/`).
-
-**The n8n workflow is diffable.** An n8n export is a huge JSON file with every code node
-inside an escaped string: a three-line change is invisible in `git diff`. `wf-split`
-breaks it into readable pieces, `wf-join` puts it back together, and `wf-check` has eight
-rules that came out of real breakages. See [workflows/PROD](workflows/PROD/README.md).
-
-## Quick start
-
-```bash
-npm install          # no dependencies: it only pins the node version
-npm test             # 25 tests with node's built-in runner, no framework
-npm run check:secretos
-npm run hooks        # enables the pre-commit hook
-```
-
-Requires Node 20 or later. The Python scripts need `pip install -r requirements.txt`.
-
-## What that green badge covers
-
-The badge and `npm test` run 25 tests: 22 on `scripts/lib/secretos.mjs` and 3 on posting
-formatting. `secretos.mjs` came first because it is the only piece whose failure cannot
-be undone: if a webhook path leaks into the repository, it is already public.
-
-What it does not cover, stated here so nobody infers it from a green badge:
-
-| Piece | Coverage |
-|---|---|
-| `scripts/lib/secretos.mjs` | 22 tests |
-| Posting formatting (workflow node) | 3 tests |
-| `scripts/wf-*.mjs` | no tests of its own |
-| `scripts/*.py` and `tools/*.py` | no tests, and CI does not run them |
-
-CI runs on Node 20 and does not install Python. This is declared debt, not an oversight:
-it is recorded in [CONTRIBUTING](CONTRIBUTING.md).
-
-## Where it is heading
-
-**The vision:** a job search companion that works with the person from start to finish.
-It helps them build a solid master CV, finds the postings that fit, tailors each
-application without inventing anything and prepares them for the interview. The person
-always decides; the AI proposes, verifies and warns.
-
-**The principles, already in place today:**
-
-- **Invent nothing:** what the AI writes is checked against the master CV with deterministic detectors.
-- **The person decides:** no application goes out without human approval.
-- **Invitation-only and private:** each person signs in with their Google account, and only if invited.
-
-### Action plan
-
-| Phase | Goal | Status |
-|---|---|---|
-| 1. Secure access | Google sign-in by invitation in the panel; close the public routes that trusted an email from the request body | Done in `develop`, pending deployment |
-| 2. Per-user identity and data | Postgres on Neon with the `(iss, sub)` identity, single-use invitations and every record owned by its user | Next |
-| 3. Design system and landing page | Angular components built on the already-tested brand tokens, shared between a prerendered public landing page and the panel | Next |
-| 4. Master CV | A checker that says what the master CV is missing before generating anything | Planned |
-| 5. Master CV assistant | Helps complete the CV by interviewing the person, without inventing experience | Later |
-| 6. Per-user AI keys | Each person brings their own key; no request falls back to the owner's keys ([ADR-004](docs/adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md)) | Later |
-| 7. Interview preparation | Per posting: what they ask for and what evidence the person has; a simulator that does not hand out answers to read aloud and does not obey instructions hidden in a posting | Later |
-
-No dates on purpose: the plan states the order and the reasoning, and the details of
-each phase are opened as an issue.
-
-## What is missing
-
-Pending work is opened as an
-[issue](https://github.com/cookyourweb/buscartrabajo/issues), not written here.
-A hand-written list of next steps ages and ends up contradicting the code.
-Issues labelled `seguridad` (security) go first.
-
-What does get written down is what is not a task but a state of the system, and it is in
-[CONTRIBUTING](CONTRIBUTING.md): the filter's business rules live inside a prompt with
-no test covering them, and the tests cover only two pieces. That does not go stale,
-because it describes how the system is built, not what is planned.
-
-## Pieces
-
-| Piece | What it does |
-|---|---|
-| `workflows/` | The n8n workflow, split into files git can diff |
-| `scripts/wf-*.mjs` | Split, rebuild, verify and redact the workflow |
-| `scripts/*.py` | Utilities for Notion and Drive |
-| `docs/` | Decisions, runbooks and system rules |
-| `tests/` | Tests for the secrets core and for posting formatting |
-
----
-
-## Architecture
-
-Three pieces. n8n orchestrates, `cv-server` generates and validates, the panel displays.
 
 ```
   PANEL (Angular)                 invitation-only access, Google account
@@ -156,6 +73,121 @@ Three pieces. n8n orchestrates, `cv-server` generates and validates, the panel d
             (replyTo = user's email); without one, tells the user to apply by hand
 ```
 
+### Stack
+
+| Piece | Technology | Notes |
+|---|---|---|
+| Orchestration | n8n on Render | Search, approval and sending workflow |
+| Generation and validation | `cv-server`: Python, Flask (migrating to FastAPI) | Render free plan: it sleeps after ~15 min and a cold start takes ~50 s. Invitation page, user API and CV and cover letter generation |
+| Panel | Angular, Google sign-in | In development |
+| Data | Notion: CRM for users and postings | Postgres on Neon is planned |
+| Files and email | Google Drive (tailored CVs), Brevo (email delivery) | |
+| Language models | CV and cover letter with `claude-sonnet-4-6` in production (set by the environment; `/health` shows it). If Claude fails: Groq `openai/gpt-oss-120b`, then Gemini, then Claude Haiku 4.5 | Groq also formats the postings in n8n |
+
+### Why it is built this way
+
+The ADRs and docs linked below are in Spanish.
+
+1. **Postings come from real job boards, not from a model.**
+   The previous version asked a language model for them, and it returned plausible postings that did not exist.
+2. **The n8n workflow lives in git, split into diffable pieces.**
+   An n8n export is a huge JSON file with every code node inside an escaped string, so a three-line change is invisible in `git diff`. `wf-split` breaks it into readable pieces, `wf-join` puts it back together, and `wf-check` has eight rules that came out of real breakages. See [workflows/PROD](workflows/PROD/README.md).
+3. **Webhook paths stay out of the repository, and code checks it.**
+   The webhooks trigger actions with external side effects, header auth was measured not to work on them, and the paths had been public for months; `check-secretos` fails in the pre-commit hook and in CI, because a written rule is not a control, a control is code that fails. See [ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md).
+4. **Deterministic guardrails check the output against the master CV, instead of more prompt rules.**
+   A model does not fail with an exception: it returns something plausible and worse, and adding rules to a saturated prompt makes it worse. See [`cv-server`](https://github.com/cookyourweb/cv-server).
+5. **The CV is written by `claude-sonnet-4-6`, not Haiku.**
+   With about 68 rules in the prompt, Haiku skipped some of them non-deterministically, and the measured extra cost is $0.94 a month for 40 CVs. See [cv-server ADR-002](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-002-modelo-del-cv.md).
+6. **The model fallback chain is hand-written, not LiteLLM.**
+   LiteLLM was measured at +146 MB of disk, +5.96 s of startup and 207 MB of RAM versus 9 MB, too much for a small web server. See [cv-server ADR-004](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-004-backend-llm.md).
+7. **Two doors: Google sign-in with an invitation list for people, a machine key (`X-Clave-Maquina`) for n8n.**
+   Google adds no new service, no plan that expires and no passwords to store, while Auth0's free plan deletes the tenant after 150 days without activity; the machine key keeps machine calls separate from people's identity. See [ADR-003](docs/adr/ADR-003-autenticacion.md).
+8. **Notion today, Postgres on Neon's free plan next, and Notion frozen read-only on migration day.**
+   Since 2 Oct 2026 zero cost is the first criterion, and Neon wakes up on its own when a query arrives, while Render's free database is deleted and Supabase pauses until someone resumes it by hand; writing in two places is the surest way to scramble the data. See [ADR-002](docs/adr/ADR-002-donde-vive-postgres.md) and [ADR-005](docs/adr/ADR-005-notion-se-congela.md).
+
+### Repository layout
+
+| Piece | What it does |
+|---|---|
+| `workflows/` | The n8n workflow, split into files git can diff |
+| `scripts/wf-*.mjs` | Split, rebuild, verify and redact the workflow |
+| `scripts/*.py` | Utilities for Notion and Drive |
+| `docs/` | Decisions, runbooks and system rules |
+| `tests/` | Tests for the secrets core and for posting formatting |
+
+### Quick start
+
+```bash
+npm install          # no dependencies: it only pins the node version
+npm test             # 25 tests with node's built-in runner, no framework
+npm run check:secretos
+npm run hooks        # enables the pre-commit hook
+```
+
+Requires Node 20 or later. The Python scripts need `pip install -r requirements.txt`.
+
+### What that green badge covers
+
+The badge and `npm test` run 25 tests: 22 on `scripts/lib/secretos.mjs` and 3 on posting
+formatting. `secretos.mjs` came first because it is the only piece whose failure cannot
+be undone: if a webhook path leaks into the repository, it is already public.
+
+What it does not cover, stated here so nobody infers it from a green badge:
+
+| Piece | Coverage |
+|---|---|
+| `scripts/lib/secretos.mjs` | 22 tests |
+| Posting formatting (workflow node) | 3 tests |
+| `scripts/wf-*.mjs` | no tests of its own |
+| `scripts/*.py` and `tools/*.py` | no tests, and CI does not run them |
+
+CI runs on Node 20 and does not install Python. This is declared debt, not an oversight:
+it is recorded in [CONTRIBUTING](CONTRIBUTING.md).
+
+---
+
+## Operating the system
+
+### Where it is heading
+
+**The vision:** a job search companion that works with the person from start to finish.
+It helps them build a solid master CV, finds the postings that fit, tailors each
+application without inventing anything and prepares them for the interview. The person
+always decides; the AI proposes, verifies and warns.
+
+**The principles, already in place today:**
+
+- **Invent nothing:** what the AI writes is checked against the master CV with deterministic detectors.
+- **The person decides:** no application goes out without human approval.
+- **Invitation-only and private:** each person signs in with their Google account, and only if invited.
+
+#### Action plan
+
+| Phase | Goal | Status |
+|---|---|---|
+| 1. Secure access | Google sign-in by invitation in the panel; close the public routes that trusted an email from the request body | Public routes closed in production on 7 Oct 2026; Google sign-in deployed, pending activation |
+| 2. Per-user identity and data | Postgres on Neon with the `(iss, sub)` identity, single-use invitations and every record owned by its user | Next |
+| 3. Design system and landing page | Angular components built on the already-tested brand tokens, shared between a prerendered public landing page and the panel | Next |
+| 4. Master CV | A checker that says what the master CV is missing before generating anything | Planned |
+| 5. Master CV assistant | Helps complete the CV by interviewing the person, without inventing experience | Later |
+| 6. Per-user AI keys | Each person brings their own key; no request falls back to the owner's keys ([ADR-004](docs/adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md)) | Later |
+| 7. Interview preparation | Per posting: what they ask for and what evidence the person has; a simulator that does not hand out answers to read aloud and does not obey instructions hidden in a posting | Later |
+
+No dates on purpose: the plan states the order and the reasoning, and the details of
+each phase are opened as an issue.
+
+### What is missing
+
+Pending work is opened as an
+[issue](https://github.com/cookyourweb/buscartrabajo/issues), not written here.
+A hand-written list of next steps ages and ends up contradicting the code.
+Issues labelled `seguridad` (security) go first.
+
+What does get written down is what is not a task but a state of the system, and it is in
+[CONTRIBUTING](CONTRIBUTING.md): the filter's business rules live inside a prompt with
+no test covering them, and the tests cover only two pieces. That does not go stale,
+because it describes how the system is built, not what is planned.
+
 ### cv-server routes
 
 | Route | Access | Purpose |
@@ -174,30 +206,7 @@ The production n8n workflow only calls `/health`, `/generar-cv` and `/generar-ca
 On 7 Oct 2026 `/check-email`, `/accion-existente` and the old sign-up form were removed.
 Panel authentication is explained in [ADR-003](docs/adr/ADR-003-autenticacion.md).
 
-Language models in `cv-server`: CV and cover letter with `claude-sonnet-4-6` in
-production (set by the environment; `/health` shows it). If Claude fails: Groq
-`openai/gpt-oss-120b`, then Gemini, then Claude Haiku 4.5.
-
----
-
-## Services
-
-| Service | Purpose |
-|----------|-----------|
-| cv-server (Render free) | Invitation page, user API and CV and cover letter generation |
-| n8n (Render) | Orchestrator for the search and approval workflow |
-| Notion | CRM for users and postings |
-| Google Drive | Tailored CVs |
-| Brevo | Email delivery |
-| Groq | LLM for postings and fallback for CV and cover letter (`openai/gpt-oss-120b`) |
-
-**Only one active n8n instance.** n8n does not allow two active workflows with the same
-webhook path at the same time, so the old instances are deprecated and must not be
-reactivated.
-
----
-
-## n8n webhooks
+### n8n webhooks
 
 The production workflow exposes webhooks to launch a search for a user and to resolve a
 posting (approve, discard or send it to the company).
@@ -210,11 +219,13 @@ in the versioned workflow they appear as `@@SECRET:<nodo>`.
 To recover them locally: export the workflow from n8n and run it through
 `node scripts/wf-split.mjs <export.json>`, which extracts them into that file.
 
----
+**Only one active n8n instance.** n8n does not allow two active workflows with the same
+webhook path at the same time, so the old instances are deprecated and must not be
+reactivated.
 
-## Notion database
+### Notion database
 
-### Usuarios DB (users)
+#### Usuarios DB (users)
 
 | Column | Type |
 |---------|------|
@@ -231,7 +242,7 @@ To recover them locally: export the workflow from n8n and run it through
 | cv_master_file_id | Rich text |
 | Activo | Checkbox |
 
-### Ofertas DB (postings)
+#### Ofertas DB (postings)
 
 | Column | Type | What it stores |
 |---------|------|------------|
@@ -257,9 +268,7 @@ To recover them locally: export the workflow from n8n and run it through
 
 **CV usado** is the master CV (the reference it started from). **Link CV Drive** is the tailored CV (the result). They are two different CVs.
 
----
-
-## Quick debugging
+### Quick debugging
 
 ```bash
 # 1. Is CV Server up? Render Free sleeps after ~15 min and a cold start takes ~50 s
@@ -274,9 +283,7 @@ curl -X POST "$N8N_HOST/webhook/$RUTA_BUSCAR_AHORA" \
 
 If both return 200, the problem is in the internal flow: check Executions in n8n.
 
----
-
-## Gotchas and known debt
+### Gotchas and known debt
 
 - **Groq Free TPD = 200,000 tokens/day** (verified 2 Oct 2026) is the real bottleneck (not RPM). That is why there is a cap of **12 postings** in test mode. Exhausting it returns 429 until the daily reset.
 - **cv-server Render variable** `WEBHOOK_BUSCAR_AHORA`: must point to the active n8n instance. If it points to a deprecated instance, the search fires into the void.
