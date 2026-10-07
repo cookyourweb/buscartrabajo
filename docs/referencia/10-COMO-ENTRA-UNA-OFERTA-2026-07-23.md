@@ -155,7 +155,8 @@ módulo y no por línea. Verifica cada entrada contra el código actual antes de
   endpoint `/buscar-ofertas-reales` (en `server.py`).
 - **`/health` miente sobre el LLM.** Devuelve `llm_provider: groq` y `version: v2.3-groq`.
   Los CVs los escribe `claude-haiku-4-5` (`CV_MODEL`, en `llm.py`) y las cartas
-  `claude-sonnet-4-6` (`CARTA_MODEL`, en `llm.py`). Es el mismo patrón del bug de
+  `claude-sonnet-4-6` (`CARTA_MODEL`, en `llm.py`). Desde entonces `/health` informa de los
+  modelos reales y en producción el CV también lo escribe `claude-sonnet-4-6`. Es el mismo patrón del bug de
   `modelo_usado` arreglado el 22 de julio: reportar una constante en vez de lo que pasa.
   Es la contradicción 12, y no está en la auditoría del documento 08.
 - **`api.py` no está desplegado.** Es la migración a FastAPI, con tests en verde, pero el
