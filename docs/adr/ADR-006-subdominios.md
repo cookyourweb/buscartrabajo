@@ -1,6 +1,6 @@
 # ADR-006. El producto vive en subdominios de cookyourwebai.es
 
-**Fecha:** 2 oct 2026 · **Estado:** aceptado, con el nombre del subdominio del panel pendiente
+**Fecha:** 2 oct 2026 · **Estado:** aceptado. Nombre del panel decidido el 7 oct 2026
 
 ---
 
@@ -19,8 +19,9 @@ La web de la marca existe y está hecha en React. El panel está en Angular.
 
 **Un dominio, cookyourwebai.es, con un subdominio por línea y otro para la API.**
 
-- Panel de empleo: un subdominio propio. El nombre está pendiente entre `empleo` y
-  `carrera`.
+- Panel de empleo: `empleo.cookyourwebai.es` (decidido el 7 oct 2026 frente a
+  `carrera`, que es ambiguo: también es una carrera universitaria o deportiva).
+  Se publica en Vercel, donde ya vive la web; el DNS del dominio está en IONOS.
 - API: `api.cookyourwebai.es`.
 - Formación: su propio subdominio, por ejemplo `formacion.cookyourwebai.es`.
 
