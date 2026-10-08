@@ -298,3 +298,7 @@ Si responden 200, el problema está en el flujo interno: revisa Executions en n8
 El estado de este repositorio lo cuenta `git log`, no una línea escrita a mano al
 final del README. El workflow que corre en producción está en [`workflows/PROD/`](workflows/PROD/README.md),
 partido en piezas que git puede diffear.
+
+## Licencia
+
+[PolyForm Noncommercial 1.0.0](LICENSE). Puedes leer, estudiar y usar este código para fines personales, de aprendizaje u otros no comerciales. El uso comercial, como venderlo, ofrecerlo como servicio o usarlo en una empresa con ánimo de lucro, necesita permiso: escribe a través de [cookyourwebai.es](https://cookyourwebai.es).

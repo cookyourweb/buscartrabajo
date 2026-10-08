@@ -16,5 +16,5 @@
     "wf:redact": "node scripts/wf-redact.mjs",
     "hooks": "git config core.hooksPath .githooks"
   },
-  "license": "MIT"
+  "license": "PolyForm-Noncommercial-1.0.0"
 }
