@@ -297,3 +297,7 @@ If both return 200, the problem is in the internal flow: check Executions in n8n
 The state of this repository is told by `git log`, not by a hand-written line at the
 end of the README. The workflow running in production is in [`workflows/PROD/`](workflows/PROD/README.md),
 split into pieces git can diff.
+
+## License
+
+[PolyForm Noncommercial 1.0.0](LICENSE). You can read, study and use this code for personal, learning or other noncommercial purposes. Commercial use, such as selling it, offering it as a service or using it in a for-profit company, needs permission: get in touch through [cookyourwebai.es](https://cookyourwebai.es).
