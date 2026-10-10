@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Convierte un CV en texto plano al HTML con la plantilla de Vero, y saca el PDF.
 
-Nace el 28jul2026: los CVs de Revolut y Malwarebytes se iban a enviar como export
+Nace el 28jul2026: los CVs de una fintech de Londres y de una empresa de ciberseguridad se iban a enviar como export
 plano de Google Docs (Arial 11pt, todo negro, sin jerarquia) mientras que los de
 `~/Desktop/cv/ACTIVOS/` llevan la identidad visual de Vero. En la bandeja de un
 recruiter esa diferencia se nota en los primeros diez segundos.
 
-El diseno sale de `~/Desktop/cv/_fuentes/cv-4-edreams-frontend-lead.html`: azul
+El diseno sale de `~/Desktop/cv/_fuentes/<plantilla>.html`: azul
 #14487f, secciones en versalitas con filete, competencias a dos columnas, 8,6pt para
 que entre en dos paginas.
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Apunta una entrada fechada en el historial de una candidatura.
 
-    python3 scripts/apuntar_en_oferta.py "Alan" "Respondida por correo..."
-    python3 scripts/apuntar_en_oferta.py "Alan" "..." --estado Entrevista
-    python3 scripts/apuntar_en_oferta.py "Alan" "..." --seguimiento 2026-08-20
+    python3 scripts/apuntar_en_oferta.py "Acme" "Respondida por correo..."
+    python3 scripts/apuntar_en_oferta.py "Acme" "..." --estado Entrevista
+    python3 scripts/apuntar_en_oferta.py "Acme" "..." --seguimiento 2026-08-20
 
 Escribe en el CUERPO de la página, no en la propiedad `Notas`. La propiedad
 admite 2.000 caracteres y las fichas activas ya los rozaban: cada añadido
