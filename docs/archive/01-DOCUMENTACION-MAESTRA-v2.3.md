@@ -227,10 +227,10 @@ Con Groq Free + Render Free:
 ## 🔐 Pendientes de seguridad
 
 1. **Rotar API keys expuestas en chats:**
-   - Notion token (`ntn_G46487...`)
-   - Brevo (`xkeysib-2e087...`)
-   - Groq (`gsk_Nr7Pm...`)
-   - Gemini (`AIzaSyDrSFZqms...`)
+   - Notion token (`ntn_...`)
+   - Brevo (`xkeysib-...`)
+   - Groq (`gsk_...`)
+   - Gemini (`AIza...`)
 2. **Repo `cv-server` → privado** en GitHub
 3. **Suspender `n8n-qwmu`** si no se usa
 4. **Limpiar usuarios y ofertas de prueba** en Notion

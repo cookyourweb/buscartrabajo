@@ -3,9 +3,9 @@
 
 Los cinco checks salen de casos reales, no de teoria (25-27 jul 2026):
 
-  1. Cuantificadores inventados  - "millions of transactions" (Malwarebytes)
-  2. Coletillas sin metrica      - "improving operational efficiency" (Malwarebytes),
-                                   "reducing manual effort and error rates" (Revolut)
+  1. Invented quantifiers      - "millions of transactions" (CV for a cybersecurity company)
+  2. Filler without a metric   - "improving operational efficiency" (CV for a cybersecurity company),
+                                 "reducing manual effort and error rates" (CV for a London fintech)
   3. Afirmaciones de ROL falsas  - "designed backend services" (el Master solo dice
                                    "coordinated data contracts WITH the backend team")
   4. Titular roto                - duplicado o con el titulo de la vacante dentro

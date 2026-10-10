@@ -1,174 +1,172 @@
-# BuscarTrabajo · cómo se trabaja aquí
+# BuscarTrabajo · how we work here
 
-Las reglas del proyecto. Valen igual para una persona que llega al repositorio
-y para un agente: **no dependen de qué herramienta las lea.** Los ficheros que
-las cargan (`AGENTS.md`, `CLAUDE.md`) solo apuntan aquí, y son desechables.
+The rules of the project. They apply equally to a person who arrives at the repository
+and to an agent: **they do not depend on which tool reads them.** The files that load
+them (`AGENTS.md`, `CLAUDE.md`) only point here, and are disposable.
 
-Lo que esté aquí se cumple; lo que esté en `docs/` hay que ir a buscarlo, y por
-eso se olvida.
+What is here is enforced; what is in `docs/` has to be looked up, and that is why it
+gets forgotten.
 
-**Este repositorio es PÚBLICO.** Antes de escribir cualquier cosa, asumir que la
-va a leer alguien que no eres tú.
-
----
-
-## 1. Qué es esto
-
-Un sistema que capta ofertas de trabajo y las lleva hasta un CV enviado. Tres
-piezas, y solo la primera vive aquí:
-
-```
-n8n (este repo)          capta la oferta, la filtra con un LLM, la escribe en Notion
-cv-server (otro repo)    genera el CV y la carta, los sube a Drive
-Notion                   es el estado: lo que hay pendiente, aprobado y enviado
-```
-
-El corazón es **un workflow de n8n de 50 nodos**, no una aplicación. Aquí no hay
-`src/`, y `package.json` no tiene ni una dependencia. Es deliberado: lo que se
-versiona es la automatización, más los scripts que la rodean.
-
-- `workflows/PROD/` el workflow, partido en piezas que git puede diffear
-- `scripts/` herramientas de Node (partir, unir, comprobar) y de Python (Notion, Drive)
-- `tests/` `node --test`, sin framework
-- `docs/` runbooks fechados y ADRs
+**This repository is PUBLIC.** Before writing anything, assume it will be read by
+someone who is not you.
 
 ---
 
-## 2. Ninguna ruta de webhook entra en el repositorio
+## 1. What this is
 
-**Esta es la regla que más duele y la que más importa.**
+A system that gathers job offers and takes them all the way to a sent CV. Three
+pieces, and only the first one lives here:
 
-El workflow expone cuatro webhooks. Tres ejecutan acciones con efectos externos
-irreversibles y **no piden ninguna credencial**. Lo único que los separa de
-cualquiera que sepa leer el repositorio es que su ruta sea impredecible. El
-porqué, y por qué no se usa autenticación por cabecera, está en
-[ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md).
+```
+n8n (this repo)          gathers the offer, filters it with an LLM, writes it to Notion
+cv-server (other repo)   generates the CV and cover letter, uploads them to Drive
+Notion                   is the state: what is pending, approved and sent
+```
 
-Consecuencia práctica, y no admite excepción:
+The heart is **an n8n workflow of 50 nodes**, not an application. There is no `src/`
+here, and `package.json` has not a single dependency. This is deliberate: what is
+versioned is the automation, plus the scripts around it.
 
-| Dónde | Qué se escribe |
+- `workflows/PROD/` the workflow, split into pieces that git can diff
+- `scripts/` Node tools (split, join, check) and Python tools (Notion, Drive)
+- `tests/` `node --test`, no framework
+- `docs/` dated runbooks and ADRs
+
+---
+
+## 2. No webhook route enters the repository
+
+**This is the rule that hurts the most and the one that matters the most.**
+
+The workflow exposes four webhooks. Three run actions with irreversible external
+effects and **ask for no credential**. The only thing separating them from anyone who
+can read the repository is that their route is unpredictable. The why, and why header
+authentication is not used, is in
+[ADR-001](docs/adr/ADR-001-webhook-protection.md).
+
+Practical consequence, with no exceptions:
+
+| Where | What is written |
 |---|---|
-| Campo `path` de un nodo webhook | `@@SECRET:<nombre del nodo>` |
-| Dentro del código de un nodo (enlaces de correo) | `@@SECRET:<nombre del nodo>` |
-| Documentación | el hueco `<RUTA>` |
-| `workflows/PROD/secrets.local.json` | la ruta viva, y ese fichero no está en git |
+| `path` field of a webhook node | `@@SECRET:<node name>` |
+| Inside the code of a node (email links) | `@@SECRET:<node name>` |
+| Documentation | a placeholder such as `<WEBHOOK_PATH>` |
+| `workflows/PROD/secrets.local.json` | the live route, and that file is not in git |
 
-**No escribas nunca una ruta a mano, ni siquiera una que creas muerta.** El
-1-sep-2026 tres rutas ya rotadas sobrevivieron meses en el código de los nodos
-que arman los correos. No filtraban nada, y por eso nadie las miraba. El daño
-era el contrario: `wf-join` las devolvía a producción y los botones de aprobar y
-descartar de los correos llevaban a un 404.
+**Never write a route by hand, not even one you believe is dead.** On 1 Sep 2026 three
+already-rotated routes survived for months in the code of the nodes that build the
+emails. They leaked nothing, and that is why nobody looked at them. The damage was the
+opposite: `wf-join` put them back into production and the approve and discard buttons
+in the emails led to a 404.
 
-`scripts/check-secretos.mjs` lo comprueba en el hook de pre-commit y en CI. Una
-prohibición escrita no es un control; un control es código que falla.
+`scripts/check-secretos.mjs` checks this in the pre-commit hook and in CI. A written
+prohibition is not a control; a control is code that fails.
 
 ---
 
-## 3. Los workflows: solo se versiona `PROD/`
+## 3. The workflows: only `PROD/` is versioned
 
-n8n exporta un JSON de 46 KB en una sola línea, ilegible en un diff. Por eso
-existe `wf-split`, que lo parte: cada nodo de código sale a su fichero, y las
-rutas a `secrets.local.json`.
+n8n exports a 46 KB JSON on a single line, unreadable in a diff. That is why
+`wf-split` exists, which splits it: each code node goes out to its own file, and the
+routes go to `secrets.local.json`.
 
-El ciclo, siempre en este orden:
+The cycle, always in this order:
 
 ```
-1. Exportar el workflow desde n8n
+1. Export the workflow from n8n
 2. npm run wf:split
-3. Editar el .js del nodo
+3. Edit the node's .js
 4. npm run wf:join
-5. Importar en n8n
+5. Import into n8n
 ```
 
-Se edita el fichero del nodo en el editor, **nunca en la interfaz de n8n**. Así
-el cambio pasa por git antes que por producción.
+The node file is edited in the editor, **never in the n8n interface**. That way the
+change goes through git before it goes through production.
 
-`wf-join` para con error si encuentra una ruta escrita a mano (código 3) o un
-marcador cuyo nombre no está en el fichero de secretos (código 4).
+`wf-join` stops with an error if it finds a route written by hand (code 3) or a marker
+whose name is not in the secrets file (code 4).
 
-**Todo lo que hay bajo `workflows/` que no sea `PROD/` está ignorado.** El
-1-sep-2026 se sacaron 47 exports del mismo workflow que ocupaban 38.000 líneas.
-Git ya es la copia de seguridad: un fichero llamado `antes-fix-adzuna.json`
-guarda en el nombre justo lo que va en un mensaje de commit. Para recuperar uno,
-`git log --all -- 'workflows/BACKUP-*'`.
+**Everything under `workflows/` that is not `PROD/` is ignored.** On 1 Sep 2026, 47
+exports of the same workflow, taking up 38,000 lines, were removed. Git is already the
+backup: a file called `antes-fix-adzuna.json` stores in its name exactly what belongs
+in a commit message. To recover one, `git log --all -- 'workflows/BACKUP-*'`.
 
 ---
 
-## 4. Antes de decir que está
+## 4. Before saying it is done
 
 ```
-npm test              25 tests, node --test, sin framework
-npm run check:secretos ninguna ruta en el repositorio
-npm run wf:check      avisos del workflow
-npm run hooks         instala el pre-commit (una vez por clon)
+npm test              25 tests, node --test, no framework
+npm run check:secretos no route in the repository
+npm run wf:check      workflow warnings
+npm run hooks         installs the pre-commit (once per clone)
 ```
 
-El pre-commit corre las dos primeras y no deja commitear si fallan.
+The pre-commit runs the first two and does not let you commit if they fail.
 
-Node 20 o superior. CI fija Node 20; el desarrollo suele ir por Node 23, así que
-el script de test usa `tests/*.test.mjs` y no `tests/`, que en Node 22 y
-posteriores revienta con `MODULE_NOT_FOUND`.
+Node 20 or higher. CI pins Node 20; development usually runs on Node 23, so the test
+script uses `tests/*.test.mjs` and not `tests/`, which on Node 22 and later blows up
+with `MODULE_NOT_FOUND`.
 
-Los tests nuevos van con la prueba primero. Rojo, verde, refactor, y ver el rojo
-fallar por el motivo correcto.
+New tests are written test first. Red, green, refactor, and watch the red fail for the
+right reason.
 
 ---
 
-## 5. Deuda conocida y declarada
+## 5. Known and declared debt
 
-**Las reglas de negocio del filtro viven dentro del prompt.** El suelo de 60.000
-euros, la restricción de remoto a España, Europa o EMEA, y la prioridad de las
-ofertas de IA están escritas en el texto de
-`workflows/PROD/nodes/groq-generar-ofertas.body.txt`. No hay ningún test que las
-cubra: se cambia una coma y nada se pone en rojo.
+**The business rules of the filter live inside the prompt.** The 60,000 euro floor,
+the restriction of remote to Spain, Europe or EMEA, and the priority of AI offers are
+written in the text of `workflows/PROD/nodes/groq-generar-ofertas.body.txt`. No test
+covers them: change a comma and nothing turns red.
 
-Está anotado aquí a propósito, porque es lo primero que pregunta quien abre ese
-fichero. Lo que decide una regla no debería decidirlo un modelo: los filtros
-duros son código. Cuando se toque, salen a un módulo con tests y el prompt se
-queda con lo que solo un modelo puede hacer.
+It is noted here on purpose, because it is the first thing asked by whoever opens that
+file. What decides a rule should not be decided by a model: hard filters are code. When
+it is touched, they move out to a module with tests and the prompt keeps what only a
+model can do.
 
 ---
 
-**Los tests cubren solo dos piezas.** De las 25 pruebas, 22 son de
-`scripts/lib/secretos.mjs` y 3 del formateo de ofertas. Los cuatro `wf-*.mjs` no
-tienen pruebas propias, y los ficheros de Python (Notion y Drive) no tienen
-ninguna ni las ejecuta CI, que corre solo sobre Node 20.
+**The tests cover only two pieces.** Of the 25 tests, 22 are for
+`scripts/lib/secretos.mjs` and 3 for the offer formatting. The four `wf-*.mjs` have no
+tests of their own, and the Python files (Notion and Drive) have none, nor does CI run
+them, since it runs only on Node 20.
 
-Se eligió cubrir secretos primero porque es la única pieza cuyo fallo es
-irreversible: una ruta publicada ya no se despublica. El resto falla de forma
-ruidosa y recuperable. Está escrito aquí y en el README para que un badge verde no
-diga más de lo que cubre.
+Covering secrets first was chosen because it is the only piece whose failure is
+irreversible: a published route cannot be unpublished. The rest fails loudly and
+recoverably. It is written here and in the README so that a green badge does not say
+more than it covers.
 
-## 6. Lo que no se cambia sin un ADR
+## 6. What is not changed without an ADR
 
-- Cómo se protegen los webhooks ([ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md))
-- Qué framework usa el frontend cuando exista
-- Que `secrets.local.json` no entre en git
-- Dónde vive Postgres ([ADR-002](docs/adr/ADR-002-donde-vive-postgres.md))
-- Contra quién se autentica y qué valida el backend ([ADR-003](docs/adr/ADR-003-autenticacion.md))
-- Que cada usuaria traiga su propia clave de IA ([ADR-004](docs/adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md))
-- Que Notion se congele al migrar ([ADR-005](docs/adr/ADR-005-notion-se-congela.md))
-- Dónde se publica el producto ([ADR-006](docs/adr/ADR-006-subdominios.md))
+- How the webhooks are protected ([ADR-001](docs/adr/ADR-001-webhook-protection.md))
+- Which framework the frontend uses when it exists
+- That `secrets.local.json` does not enter git
+- Where Postgres lives ([ADR-002](docs/adr/ADR-002-where-postgres-lives.md))
+- Who authenticates against what and what the backend validates ([ADR-003](docs/adr/ADR-003-authentication.md))
+- That each user brings their own AI key ([ADR-004](docs/adr/ADR-004-each-user-brings-their-own-ai-key.md))
+- That Notion is frozen on migration ([ADR-005](docs/adr/ADR-005-notion-is-frozen.md))
+- Where the product is published ([ADR-006](docs/adr/ADR-006-subdomains.md))
 
-ADR-001 **caduca cuando exista el frontend**: una aplicación en el navegador
-enseña la ruta en la pestaña de red, y la ruta impredecible deja de proteger
-nada. El frontend obliga a autenticación de verdad, con un backend que guarde el
-secreto. El frontend y la seguridad de estos webhooks son la misma tarea, no dos.
+ADR-001 **expires when the frontend exists**: a browser application shows the route in
+the network tab, and the unpredictable route stops protecting anything. The frontend
+forces real authentication, with a backend that holds the secret. The frontend and the
+security of these webhooks are the same task, not two.
 
-## 7. Idioma: commits y comentarios en inglés
+## 7. Language: commits and comments in English
 
-Desde el 8 de octubre de 2026. El repositorio es público y lo leen empresas de
-fuera, así que lo que se escribe a partir de ahora va en inglés:
+Since 8 October 2026. The repository is public and read by companies abroad, so what is
+written from now on goes in English:
 
-- **Mensajes de commit y descripciones de PR, en inglés.** Son lo primero que se
-  lee del historial. Se mantiene el formato convencional (`fix:`, `feat:`...) y
-  la regla de explicar el porqué.
-- **Comentarios del código nuevo o del que se toque, en inglés.**
-- **Los nombres del dominio se quedan en español** (`Oferta`, `Candidatura`,
-  `autenticacion`, `ClavesPublicas`...). Son el lenguaje del negocio, una
-  búsqueda de empleo en España, y el código usa las mismas palabras (lenguaje
-  ubicuo). No se renombran.
-- **Los comentarios antiguos no se traducen de golpe:** pasan a inglés cuando se
-  toca ese fichero. Traducirlo todo de una vez llena el historial de ruido.
-- **La documentación sigue bilingüe:** `README.md` en inglés y `README.es.md` en
-  español, con los mismos datos.
+- **Commit messages and PR descriptions, in English.** They are the first thing read of
+  the history. The conventional format (`fix:`, `feat:`...) and the rule of explaining
+  the why are kept.
+- **Comments in new code, or in code that is touched, in English.**
+- **Domain names stay in Spanish** (`Oferta`, `Candidatura`, `autenticacion`,
+  `ClavesPublicas`...). They are the language of the business, a job search in Spain,
+  and the code uses the same words (ubiquitous language). They are not renamed.
+- **Old comments are not translated all at once:** they move to English when that file
+  is touched. Translating everything in one go fills the history with noise.
+- **The documentation is in English** (ADRs, design, reference and runbooks), except
+  `docs/archive/`, which is kept in its original Spanish. The README exists in both
+  languages: `README.md` in English and `README.es.md` in Spanish, with the same facts.

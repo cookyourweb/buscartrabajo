@@ -1,6 +1,6 @@
 # Claude Code
 
-Las reglas de este proyecto están en **[CONTRIBUTING.md](CONTRIBUTING.md)**.
+The rules of this project are in **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 
-Este fichero es un adaptador de una herramienta concreta, igual que
-`AGENTS.md`. Se puede borrar sin perder nada.
+This file is an adapter for one specific tool, just like `AGENTS.md`. It can be deleted
+without losing anything.

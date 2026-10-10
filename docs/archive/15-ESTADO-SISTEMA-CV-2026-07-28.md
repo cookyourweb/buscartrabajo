@@ -6,9 +6,9 @@
 
 ## ⏭️ LO ÚNICO PENDIENTE
 
-**Regenerar PANEL Sistemas Informáticos.**
+**Regenerar la oferta de la consultora IT.**
 
-En Notion, `Ofertas de Trabajo` → PANEL → Estado a `Pendiente` y luego otra vez a
+En Notion, `Ofertas de Trabajo` → esa oferta → Estado a `Pendiente` y luego otra vez a
 `Aprobado`. La oferta ya apunta al usuario correcto, así que el CV saldrá con la
 identidad buena.
 
@@ -19,7 +19,7 @@ python3 buscartrabajo/scripts/revisar_cv_generado.py <file_id_de_drive>
 ```
 
 Comparar contra el de la mañana del 28 (`1bh2R0AXk00XoVPZsgyeXCV19wuqJpqu2`), que
-salió con la identidad equivocada. **Si sale limpio → lanzar Revolut y Malwarebytes**
+salió con la identidad equivocada. **Si sale limpio → lanzar las ofertas de la fintech de Londres y de la empresa de ciberseguridad**
 (esas dos ya apuntaban al registro bueno; no hizo falta tocarlas).
 
 ---
@@ -82,7 +82,7 @@ Las ofertas llegan a dos buzones y se habían creado dos registros. El segundo q
 el Master a medias (4.689 chars **sin `PERFIL BASE`**, frente a 8.702 del bueno), sin
 `Email CV` y con la ciudad en minúsculas.
 
-El CV de PANEL salió con cabecera `<correo antiguo>`, titular haciendo **eco
+El CV de la consultora IT salió con cabecera `<correo antiguo>`, titular haciendo **eco
 literal de la vacante** (`Tech Lead Full Stack | Java · Angular · Microservicios`) y
 tecnologías ajenas (Maven, Oracle).
 
@@ -124,7 +124,7 @@ variantes.
 **`buscartrabajo`**
 
 - `scripts/revisar_cv_generado.py` — los cinco fallos **medidos**, no teóricos.
-  Validado contra el crudo de Malwarebytes, donde caza 4/5.
+  Validado contra el crudo de la empresa de ciberseguridad, donde caza 4/5.
 - `scripts/subir_cv_drive.py` — sube a `FOLDER_CV_GENERADOS` solo con stdlib.
 
 ---
@@ -132,7 +132,7 @@ variantes.
 ## Migración de Notion (ya ejecutada por API)
 
 1. `Email alias = <correo antiguo>` en el registro bueno
-2. Cinco ofertas reapuntadas: Grupo NS, PANEL, Clipster, A.Team, EXDESIS
+2. Cinco ofertas reapuntadas: consultora IT, empresa de servicios B, startup de creadores, plataforma de talento, consultora E
 3. Registro `veronica serna` **desactivado, no borrado** (si algo lo referencia, la
    relación sobrevive)
 4. Verificado: **0** ofertas apuntando al duplicado
@@ -145,10 +145,10 @@ variantes.
   así que cazan `FastAPI` y cazan `166.000`, pero no *"designed backend services"* ni
   *"built resilient systems"*, que son semánticas. Cuatro casos reales confirmados.
 - **Nada avisa de un Master sin bloque `PERFIL BASE`.** Es lo que dejó pasar el titular
-  con eco en PANEL.
+  con eco en la consultora IT.
 - **De 15 ofertas pendientes, 9 no tienen descripción utilizable** (LinkedIn e Indeed).
-  Para probar solo sirven las de Tecnoempleo y Remotive: PANEL, Grupo NS, A.Team ×2,
-  Lemon.io, Clipster.
+  Para probar solo sirven las de Tecnoempleo y Remotive: consultora IT, empresa de servicios B, plataforma de talento ×2,
+  Lemon.io, startup de creadores.
 
 ---
 

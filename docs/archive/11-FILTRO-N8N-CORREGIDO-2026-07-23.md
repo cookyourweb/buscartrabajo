@@ -181,7 +181,7 @@ Ambos cambios están aplicados en
 ## Corrección 3: rellenar `Tipo Contrato`
 
 El campo existe en el schema de Notion y hoy está vacío en todas las ofertas menos en la de
-Tenth Revolution. Sin él no se puede comparar un salario anual con una tarifa por hora.
+una agencia de reclutamiento. Sin él no se puede comparar un salario anual con una tarifa por hora.
 
 En el nodo que escribe en Notion, añadir `Tipo Contrato` (texto): "Indefinido", "Freelance",
 "Temporal", lo que diga la oferta. Vacío si no lo dice.

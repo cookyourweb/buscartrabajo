@@ -91,17 +91,17 @@ panel es la cara visible.
 2. **El workflow de n8n vive en git, partido en piezas que se pueden diffear.**
    Un export de n8n es un JSON enorme con cada nodo de código dentro de un string escapado, así que un cambio de tres líneas es invisible en `git diff`. `wf-split` lo parte en piezas legibles, `wf-join` lo rehace, y `wf-check` tiene ocho reglas que salieron de averías reales. Ver [workflows/PROD](workflows/PROD/README.md).
 3. **Las rutas de los webhooks no entran en el repositorio, y lo comprueba código.**
-   Los webhooks ejecutan acciones con efectos externos, se midió que la autenticación por cabecera no funciona en ellos y las rutas llevaban meses publicadas; `check-secretos` falla en el hook de pre-commit y en CI, porque una regla escrita no es un control, un control es código que falla. Ver [ADR-001](docs/adr/ADR-001-proteccion-de-los-webhooks.md).
+   Los webhooks ejecutan acciones con efectos externos, se midió que la autenticación por cabecera no funciona en ellos y las rutas llevaban meses publicadas; `check-secretos` falla en el hook de pre-commit y en CI, porque una regla escrita no es un control, un control es código que falla. Ver [ADR-001](docs/adr/ADR-001-webhook-protection.md).
 4. **Guardrails deterministas contrastan la salida con el CV maestro, en vez de más reglas en el prompt.**
    Un modelo no falla con una excepción: devuelve algo verosímil y peor, y añadir reglas a un prompt que ya lo satura lo empeora. Ver [`cv-server`](https://github.com/cookyourweb/cv-server).
 5. **El CV lo escribe `claude-sonnet-4-6`, no Haiku.**
-   Con unas 68 reglas en el prompt, Haiku se saltaba algunas de forma no determinista, y el sobrecoste medido es de 0,94 $ al mes para 40 CVs. Ver [ADR-002 de cv-server](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-002-modelo-del-cv.md).
+   Con unas 68 reglas en el prompt, Haiku se saltaba algunas de forma no determinista, y el sobrecoste medido es de 0,94 $ al mes para 40 CVs. Ver [ADR-002 de cv-server](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-002-cv-model.md).
 6. **La cascada de modelos está escrita a mano, no con LiteLLM.**
-   Se midió LiteLLM: +146 MB de disco, +5,96 s de arranque y 207 MB de RAM frente a 9 MB, demasiado para un servidor web pequeño. Ver [ADR-004 de cv-server](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-004-backend-llm.md).
+   Se midió LiteLLM: +146 MB de disco, +5,96 s de arranque y 207 MB de RAM frente a 9 MB, demasiado para un servidor web pequeño. Ver [ADR-004 de cv-server](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-004-llm-backend.md).
 7. **Dos puertas: entrada con Google y lista de invitadas para personas, clave de máquina (`X-Clave-Maquina`) para n8n.**
-   Google no añade ningún servicio, ningún plan que caduque ni contraseñas que custodiar, mientras que el plan gratuito de Auth0 borra el tenant tras 150 días sin actividad; la clave de máquina separa las llamadas de las máquinas de la identidad de las personas. Ver [ADR-003](docs/adr/ADR-003-autenticacion.md).
+   Google no añade ningún servicio, ningún plan que caduque ni contraseñas que custodiar, mientras que el plan gratuito de Auth0 borra el tenant tras 150 días sin actividad; la clave de máquina separa las llamadas de las máquinas de la identidad de las personas. Ver [ADR-003](docs/adr/ADR-003-authentication.md).
 8. **Notion hoy, Postgres en el plan gratuito de Neon después, y Notion congelado en solo lectura el día de la migración.**
-   Desde el 2 oct 2026 el coste cero es el primer criterio, y Neon se despierta solo al llegar una consulta, mientras que la base gratuita de Render se borra y Supabase se pausa hasta que alguien la reactiva a mano; escribir en dos sitios es la forma más segura de desordenar los datos. Ver [ADR-002](docs/adr/ADR-002-donde-vive-postgres.md) y [ADR-005](docs/adr/ADR-005-notion-se-congela.md).
+   Desde el 2 oct 2026 el coste cero es el primer criterio, y Neon se despierta solo al llegar una consulta, mientras que la base gratuita de Render se borra y Supabase se pausa hasta que alguien la reactiva a mano; escribir en dos sitios es la forma más segura de desordenar los datos. Ver [ADR-002](docs/adr/ADR-002-where-postgres-lives.md) y [ADR-005](docs/adr/ADR-005-notion-is-frozen.md).
 
 ### Estructura del repositorio
 
@@ -169,7 +169,7 @@ avisa.
 | 3. Design system y landing | Componentes Angular sobre los tokens de marca ya probados, compartidos entre una landing pública prerenderizada y el panel | Siguiente |
 | 4. CV maestro | Un comprobador que dice qué le falta al CV maestro antes de generar nada | Planificado |
 | 5. Asistente del CV maestro | Ayuda a completar el CV entrevistando a la persona, sin inventar experiencia | Más adelante |
-| 6. Claves de IA por usuaria | Cada persona trae su clave; ninguna petición cae a las claves de la dueña ([ADR-004](docs/adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md)) | Más adelante |
+| 6. Claves de IA por usuaria | Cada persona trae su clave; ninguna petición cae a las claves de la dueña ([ADR-004](docs/adr/ADR-004-each-user-brings-their-own-ai-key.md)) | Más adelante |
 | 7. Preparación de entrevista | Por oferta: qué piden y qué evidencia tiene la persona; un simulador que no da respuestas para leer y no obedece instrucciones escondidas en una oferta | Más adelante |
 
 Sin fechas a propósito: el plan dice el orden y el porqué, y el detalle de cada
@@ -205,7 +205,7 @@ hacer.
 El workflow de producción de n8n solo llama a `/health`, `/generar-cv` y
 `/generar-carta`. El 7 de octubre de 2026 se eliminaron `/check-email`,
 `/accion-existente` y el formulario de alta antiguo. La autenticación del panel se
-explica en [ADR-003](docs/adr/ADR-003-autenticacion.md).
+explica en [ADR-003](docs/adr/ADR-003-authentication.md).
 
 ### Webhooks n8n
 

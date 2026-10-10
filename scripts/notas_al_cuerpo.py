@@ -6,7 +6,7 @@
     python3 scripts/notas_al_cuerpo.py --migrar --todas  mueve todas las que tengan notas
 
 POR QUÉ EXISTE. La propiedad `Notas` de Notion admite 2.000 caracteres. La ficha de
-Alan llegó a 1.990 y su final ya estaba cortado a media frase: cada vez que se
+Una ficha llegó a 1.990 y su final ya estaba cortado a media frase: cada vez que se
 añadía algo nuevo delante, el historial más viejo se caía por el otro extremo y se
 perdía sin avisar. El cuerpo de la página no tiene ese límite.
 
@@ -61,7 +61,7 @@ def texto(props, nombre, tipo="rich_text"):
     """Concatena TODOS los fragmentos, no solo el primero.
 
     Notion parte el valor en varios rich_text cuando se edita desde su interfaz.
-    Leer solo v[0] perdía 1.047 caracteres en la ficha de Builder.io, que tiene
+    Leer solo v[0] perdía 1.047 caracteres en una ficha concreta, que tiene
     el historial repartido en tres trozos. Comprobado el 10-ago-2026.
     """
     v = props.get(nombre, {}).get(tipo, [])

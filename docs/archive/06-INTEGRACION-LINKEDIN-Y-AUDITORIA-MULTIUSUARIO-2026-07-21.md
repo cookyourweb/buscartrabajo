@@ -14,7 +14,7 @@ Remotive/Adzuna/Tecnoempleo dentro de n8n.
 **Solución:** una tarea programada de Claude (Cowork), separada de n8n, que:
 
 - Corre **diariamente a las 9:10h** (`busqueda-empleos-mejor-pagados`, taskId en
-  `/Users/vero/Claude/Scheduled/busqueda-empleos-mejor-pagados/SKILL.md`).
+  `<local-path>/busqueda-empleos-mejor-pagados/SKILL.md`).
 - Busca "AI Engineer" y "Frontend Lead" en LinkedIn (`COMPOSIO_SEARCH_WEB` sobre
   `site:linkedin.com/jobs`) + Indeed, remoto o híbrido Madrid.
 - Verifica que la oferta siga abierta (descarta "No longer accepting applications").

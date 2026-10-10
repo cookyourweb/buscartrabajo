@@ -48,7 +48,7 @@ test('una oferta de Adzuna que ya esta en Notion no se vuelve a crear', () => {
       { results: [paginaNotion('https://otra.example/1'), paginaNotion(LINK_REPETIDO)] },
     ],
     'Buscar en Adzuna': [
-      { results: [ofertaAdzuna(LINK_REPETIDO, 'Senior Software Engineer AI Agentic Workflows', 'AgileEngine')] },
+      { results: [ofertaAdzuna(LINK_REPETIDO, 'Senior Software Engineer AI Agentic Workflows', 'Acme Engineering')] },
     ],
   });
   assert.equal(salida.total, 0, 'la oferta repetida se coló como nueva');
@@ -62,7 +62,7 @@ test('el dedup lee todas las paginas de Notion, no solo la primera', () => {
       { results: [paginaNotion(LINK_REPETIDO)] },
     ],
     'Buscar en Adzuna': [
-      { results: [ofertaAdzuna(LINK_REPETIDO, 'Senior Software Engineer AI Agentic Workflows', 'AgileEngine')] },
+      { results: [ofertaAdzuna(LINK_REPETIDO, 'Senior Software Engineer AI Agentic Workflows', 'Acme Engineering')] },
     ],
   });
   assert.equal(salida.total, 0, 'la oferta de la segunda pagina se coló como nueva');

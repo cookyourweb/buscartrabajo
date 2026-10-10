@@ -9,9 +9,11 @@ Responde a las tres preguntas que importan:
   3. Los crons siguen donde deben (nadie los ha vuelto a poner a cada minuto)
 
 Lee las credenciales del .env y NUNCA las imprime.
-Documentado en docs/runbooks/19-RUNBOOK-SISTEMA-PARADO-2026-08-05.md
+El host de n8n sale de la variable de entorno N8N_HOST (o del .env).
+Documentado en docs/runbooks/19-RUNBOOK-SYSTEM-DOWN-2026-08-05.md
 """
 import json
+import os
 import re
 import sys
 import time
@@ -21,7 +23,6 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-HOST = "https://n8n-asistente-correo.onrender.com"
 WF_ID = "CsvmtPcLVmGIZg6C"          # BuscarTrabajo - Ofertas Diarias (PROD, dedup ON)
 DB_OFERTAS = "33d11515f4b281efa776d0ea698b748f"
 RAIZ = Path(__file__).resolve().parent.parent
@@ -55,6 +56,10 @@ if jwt.group(0) != bruto:
           f"Se ignoran, pero conviene limpiarlos.{FIN}")
 N8N_KEY = jwt.group(0)
 NOTION = E.get("NOTION_TOKEN", "")
+HOST = (os.environ.get("N8N_HOST") or E.get("N8N_HOST", "")).strip().rstrip("/")
+if not HOST:
+    sys.exit("N8N_HOST is not set. Export it or add it to .env, "
+             "e.g. N8N_HOST=https://<your-n8n-host>")
 
 
 def pedir(url, cabeceras, cuerpo=None, metodo="GET", intentos=3):
