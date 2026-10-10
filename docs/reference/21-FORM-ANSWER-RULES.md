@@ -1,65 +1,66 @@
-# Reglas para las preguntas abiertas de los formularios
+# Rules for the open questions in application forms
 
-**31 ago 2026** · Salieron de corregir once veces la respuesta al formulario de Lodgify.
-No es teoría: cada regla viene de un borrador que no servía.
+**31 Aug 2026** · They came out of correcting the answer to the Lodgify form eleven times.
+It is not theory: every rule comes from a draft that did not work.
 
-**Relacionado:** `16-REGLAS-CARTA-PRESENTACION.md` (la carta), `18-REGLAS-ADAPTACION-CV.md` (el CV).
-Este documento cubre las **preguntas abiertas de los ATS**, que es lo que ninguno de los otros dos cubría.
+**Related:** `16-COVER-LETTER-RULES.md` (the cover letter), `18-CV-ADAPTATION-RULES.md` (the CV).
+This document covers the **open questions in ATS forms**, which neither of the other two covered.
 
 ---
 
-## Qué están evaluando de verdad
+## What they are really evaluating
 
-No es si sabes escribir prompts. Están separando dos perfiles:
+It is not whether you can write prompts. They are separating two profiles:
 
-| Perfil A · integrador de IA | Perfil B · AI Engineer |
+| Profile A · AI integrator | Profile B · AI Engineer |
 |---|---|
-| *"Conecté GPT, hice un RAG, ajusté el prompt y funcionaba bastante bien."* | *"Tengo un sistema probabilístico en producción. Sé definir qué significa que falle, cómo detectarlo, medirlo y cambiar la arquitectura para reducir la clase de error."* |
+| *"I connected GPT, built a RAG, tuned the prompt and it worked pretty well."* | *"I have a probabilistic system in production. I know how to define what failing means, how to detect it, measure it and change the architecture to reduce that class of error."* |
 
-Buscan el B. Las **cinco señales** que rastrean, en este orden:
+They are looking for B. The **five signals** they track, in this order:
 
-1. ¿Ha puesto un sistema LLM **real en producción**?
-2. ¿Entiende que puede fallar **aunque la respuesta parezca buena**?
-3. ¿Tiene estrategia de evaluación **y sabe decir cómo sabe que AHORA funciona**?
-4. ¿Ha descubierto un **failure mode real, con datos**?
-5. ¿**Qué cambió** a raíz de eso?
+1. Has this person put a **real** LLM system **into production**?
+2. Do they understand that it can fail **even when the answer looks good**?
+3. Do they have an evaluation strategy **and can they say how they know it works NOW**?
+4. Have they discovered a **real failure mode, with data**?
+5. **What changed** as a result?
 
-La señal 3 es la que más se olvida. Contar la arquitectura nueva no es contar la garantía.
+Signal 3 is the one most often forgotten. Describing the new architecture is not describing the guarantee.
 
 ---
 
-## Las ocho reglas de redacción
+## The eight writing rules
 
-### 1. Empezar por el PROBLEMA, con sus cabeceras y en su orden
+### 1. Start with the PROBLEM, with its headings and in their order
 
-Si la pregunta pide `Problem, Evaluation Strategy, Critical Failure Mode, Impact`,
-la respuesta lleva esas cuatro cabeceras, en mayúsculas, en ese orden, separadas por
-líneas en blanco. **Escaneable.** Sin cabeceras el buen material llega tarde y se pierde.
+If the question asks for `Problem, Evaluation Strategy, Critical Failure Mode, Impact`,
+the answer carries those four headings, in capitals, in that order, separated by
+blank lines. **Scannable.** Without headings the good material arrives late and gets lost.
 
-### 2. No decir para qué usas la herramienta: decir cómo trabajas
+### 2. Do not say what you use the tool for: say how you work
 
-Contar que `cv-server` es "una aplicación para buscar trabajo" te coloca como candidata
-en paro antes de que te lean. El sistema es el mismo; lo que cambia es desde dónde se cuenta.
+Saying that `cv-server` is "an application for finding a job" places you as an
+unemployed candidate before they read you. The system is the same; what changes is where
+it is told from.
 
-### 3. Enseñar el bucle, no una lista de logros
+### 3. Show the loop, not a list of achievements
 
 ```
 Build
-  ↓ observar fallos
-  ↓ crear casos de evaluación
-  ↓ medir
-  ↓ encontrar patrones de fallo
-  ↓ mejorar contexto / retrieval / prompts
-  ↓ repetir
+  then observe failures
+  then create evaluation cases
+  then measure
+  then find failure patterns
+  then improve context / retrieval / prompts
+  then repeat
 ```
 
-NO: prompt, "looks good!", producción.
+NOT: prompt, "looks good!", production.
 
-### 4. Vocabulario profesional, voz humana
+### 4. Professional vocabulary, human voice
 
-La diferencia **no está en el léxico técnico**. Está en los conectores.
+The difference **is not in the technical vocabulary**. It is in the connectors.
 
-| Suena a informe | Suena a persona |
+| Sounds like a report | Sounds like a person |
 |---|---|
 | *"which created a specific reliability problem"* | *"and that is where the real difficulty sits"* |
 | *"The challenge was therefore not simply generating good text"* | *"So the hard part was never writing good text"* |
@@ -67,128 +68,129 @@ La diferencia **no está en el léxico técnico**. Está en los conectores.
 | *"The main architectural lesson was that context injection is not evidence of context use"* | *"Context injection is not evidence of context use."* |
 | *"yet every output read naturally and plausibly"* | *"and every single one read naturally"* |
 
-**Fuera:** `therefore`, `moreover`, `thus`, `which created`, `the main lesson was`,
-`it is worth noting that`, y las nominalizaciones (*"the challenge was not simply generating"*
-en vez de *"the hard part was never writing"*).
+**Out:** `therefore`, `moreover`, `thus`, `which created`, `the main lesson was`,
+`it is worth noting that`, and nominalizations (*"the challenge was not simply generating"*
+instead of *"the hard part was never writing"*).
 
-### 5. No despersonalizar la propiedad
+### 5. Do not depersonalize ownership
 
-*"That baseline was me"* es mejor que *"that baseline was human review"*.
+*"That baseline was me"* is better than *"that baseline was human review"*.
 
-"Human review" es pasivo: podría ser un becario o un equipo de anotadores.
-*"Was me"* dice que la experta del dominio eras tú, y eso es lo que hace creíble
-todo lo que viene después. Para un puesto donde vas a ser dueña de la evaluación,
-asumir la propiedad **no es informal**.
+"Human review" is passive: it could be an intern or a team of annotators.
+*"Was me"* says that the domain expert was you, and that is what makes
+everything that follows credible. For a role where you will own the evaluation,
+taking ownership **is not informal**.
 
-### 6. Nada de absolutos que no sostengas al 100%
+### 6. No absolutes you cannot back 100%
 
-*"Tracked every change to the domain logic"* se cambió por *"followed changes in the
-domain logic"*. Un absoluto que no puedes defender es una trampa que te pones tú misma.
+*"Tracked every change to the domain logic"* was changed to *"followed changes in the
+domain logic"*. An absolute you cannot defend is a trap you set for yourself.
 
-### 7. Adelántate a la pregunta incómoda
+### 7. Get ahead of the uncomfortable question
 
-Si algo está a medias, dilo tú primero. Nadie puede pillarte en algo que has declarado.
+If something is half-done, say so first. Nobody can catch you on something you declared.
 
 > *"I did not start with a formal evaluation framework; I arrived at one by turning
 > real production failures into explicit, testable criteria."*
 
-### 8. Un solo dato duro
+### 8. A single hard number
 
-El segundo se guarda para la entrevista: dos cifras en el mismo texto compiten entre sí.
+The second is kept for the interview: two figures in the same text compete with each other.
 
-| Dato | Dónde |
+| Figure | Where |
 |---|---|
-| **77 de 78** items con atributo calculado erróneo, y todos se leían perfectamente | En el texto escrito |
-| **166 ficheros de prosa** sin la respuesta frente a **14 commits** que la tenían | Guardado para la entrevista |
+| **77 of 78** items with a wrongly calculated attribute, and all of them read perfectly | In the written text |
+| **166 prose files** without the answer versus **14 commits** that had it | Kept for the interview |
 
 ---
 
-## La narrativa profesional
+## The professional narrative
 
-**NO** venderse como alguien con cinco años montando plataformas enterprise de evaluación de LLM.
+Do **NOT** sell yourself as someone with five years building enterprise LLM evaluation platforms.
 
-**SÍ** como **ingeniera de software senior (20+ años) que ha evolucionado hacia AI Systems
-Engineering y ha llegado por experiencia propia a conclusiones arquitectónicas correctas**:
-separar la IA del core, diseñar el contexto explícitamente, contratos estructurados, validar
-salidas, descubrir failure modes, convertir fallos observados en reglas verificables,
-TDD en la capa determinista.
+**DO** present as a **senior software engineer (20+ years) who has evolved towards AI Systems
+Engineering and has reached the right architectural conclusions through her own experience**:
+separating AI from the core, designing context explicitly, structured contracts, validating
+outputs, discovering failure modes, turning observed failures into verifiable rules,
+TDD in the deterministic layer.
 
-Coincide con lo que ya dice el PPS: *"I am not a Data Scientist. I am not an AI researcher."*
+It matches what the PPS already says: *"I am not a Data Scientist. I am not an AI researcher."*
 
-**La ventaja real de 20 años: sabe que un sistema no está terminado porque una demo funcione.**
+**The real advantage of 20 years: she knows a system is not finished because a demo works.**
 
-Y hay una asimetría a favor: la mayoría llega desde el ML y está aprendiendo ingeniería de
-sistemas. Ella llega desde la ingeniería y está aprendiendo IA. Para un puesto que pide
-*evaluation, retrieval, production readiness y failure analysis*, ese camino es el que sirve.
+And there is an asymmetry in her favor: most people arrive from ML and are learning systems
+engineering. She arrives from engineering and is learning AI. For a role that asks for
+*evaluation, retrieval, production readiness and failure analysis*, that is the path that works.
 
 ---
 
-## Qué material usar
+## Which material to use
 
-**El bueno es `tu-vuelta-al-sol`, no `cv-server`.** Producto en producción con usuarios
-reales desde agosto de 2025. cv-server es una herramienta propia; tuvueltalsol es un producto.
-Para una candidatura eso pesa mucho más. cv-server sirve como enlace de código público auditable.
+**The good one is `tu-vuelta-al-sol`, not `cv-server`.** A product in production with real
+users since August 2025. cv-server is a tool of her own; tuvueltalsol is a product.
+For an application that weighs far more. cv-server serves as an auditable public code link.
 
-Repo real (largo y nada obvio, por eso se pierde):
+Real repo (long and not at all obvious, which is why it gets lost):
 `~/familiasEsteleares/react/agenda-tu-vuelta-al-sol/proyectoAgendaAstrologica/next-build-estable/tu-vuelta-al-sol`
 
-Las copias en `Documents/`, `Downloads/`, `n8nClaude/` y `lovable/` están **muertas**.
+The copies in `Documents/`, `Downloads/`, `n8nClaude/` and `lovable/` are **dead**.
 
 ---
 
-## La distinción que evita quedar mal
+## The distinction that avoids looking bad
 
-> *"Ahora que sé que los prompts no pueden estar en el proyecto como los tenía, igual queda mal."*
+> *"Now that I know the prompts cannot be in the project the way I had them, it probably looks bad."*
 
-**Premisa falsa.** Son dos cosas distintas:
+**False premise.** They are two different things:
 
-1. **Prompts versionados dentro del proyecto: ESTÁ BIEN.** Es lo profesional, si están
-   versionados, tienen tests, están separados de la lógica de negocio y se pueden evaluar
-   los cambios.
-2. **Una regla crítica de negocio que vive SOLO dentro del prompt: ESE es el fallo.**
+1. **Versioned prompts inside the project: THAT IS FINE.** It is the professional thing, if they are
+   versioned, have tests, are separated from the business logic and changes to them can
+   be evaluated.
+2. **A critical business rule that lives ONLY inside the prompt: THAT is the failure.**
 
-El propio código demuestra las dos partes: en `cv-server` los prompts salieron de dentro de
-las funciones a constantes de módulo con tests, y siguen en el proyecto. En `tu-vuelta-al-sol`,
-`validarCandidataActivacion.ts` dice: *"una prohibición dentro del prompt no es un control"*.
+The code itself shows both parts: in `cv-server` the prompts moved out of the
+functions into module constants with tests, and they are still in the project. In `tu-vuelta-al-sol`,
+`validarCandidataActivacion.ts` says: *"a prohibition inside the prompt is not a control"*
+(in Spanish in the source: *"una prohibición dentro del prompt no es un control"*).
 
-**La evolución se cuenta así:**
+**The evolution is told like this:**
 
 ```
-ANTES:  datos de dominio · contexto grande · prompt con instrucciones y reglas · LLM · salida
+BEFORE: domain data, big context, prompt with instructions and rules, LLM, output
 
-AHORA:  cómputo determinista del dominio · evidencia estructurada · generación LLM
-        · validación de la salida · tests y evaluadores
+NOW:    deterministic domain computation, structured evidence, LLM generation,
+        output validation, tests and evaluators
 ```
 
-No se dice "tenía los prompts mal". Se dice **"moví la responsabilidad al nivel correcto
-de la arquitectura"**.
+You do not say "I had the prompts wrong". You say **"I moved the responsibility to the right level
+of the architecture"**.
 
 ---
 
-## La evaluación empieza en el dominio
+## Evaluation starts in the domain
 
-> *"Lo primero, aprender el producto perfectamente, saber qué cambios se están haciendo.
-> Sin eso no es medible, y tiene que haber un human in the loop, que soy yo en mi primer proyecto."*
+> *"First, learn the product perfectly, know what changes are being made.
+> Without that it is not measurable, and there has to be a human in the loop, which is me in my first project."*
 
-Antes de evaluar un sistema LLM hay que saber **qué significa "correcto" para ese producto**.
-Nadie construye un pipeline de evaluación el día uno.
+Before evaluating an LLM system you have to know **what "correct" means for that product**.
+Nobody builds an evaluation pipeline on day one.
 
 ```
-comprensión humana del dominio
-  ↓ evaluación manual
-  ↓ fallos observados
-  ↓ casos de fallo definidos
-  ↓ validators
-  ↓ tests de regresión automáticos
+human understanding of the domain
+  then manual evaluation
+  then observed failures
+  then defined failure cases
+  then validators
+  then automatic regression tests
 ```
 
-**Cuidado con "human-in-the-loop":** hoy mucha gente lo entiende como *"un humano aprueba
-cada respuesta antes de enviarla"*. No es lo que pasó. Lo suyo fue ser el **oráculo inicial**
-que permitió construir la evaluación.
+**Careful with "human-in-the-loop":** today many people understand it as *"a human approves
+every answer before it is sent"*. That is not what happened. Her role was to be the **initial oracle**
+that made it possible to build the evaluation.
 
 ---
 
-## Las frases que hacen el trabajo
+## The sentences that do the work
 
 - *"A fluent claim that is not grounded looks exactly like one that is."*
 - *"Telling the model a rule is not the same as enforcing it."*
@@ -198,62 +200,62 @@ que permitió construir la evaluación.
   and established the ground truth that later became automated checks."*
 - *"I did not start with a formal evaluation framework; I arrived at one by turning real
   production failures into explicit, testable criteria."*
-- **El cierre:** *"Prompts guide behaviour, but critical invariants belong in the deterministic,
+- **The closing:** *"Prompts guide behaviour, but critical invariants belong in the deterministic,
   observable and testable parts of the architecture."*
 
 ---
 
-## Preparación de entrevista
+## Interview preparation
 
-**P: "So, did you have an evaluation framework from the beginning?"**
+**Q: "So, did you have an evaluation framework from the beginning?"**
 
-No aparentar que sí.
+Do not pretend that you did.
 
 > *"No. I started with human evaluation because I first needed to understand what correctness
 > meant for the product. The important part was turning what I learned from those reviews into
 > explicit failure cases and then automating them."*
 
-**P: "Why were you the human in the loop?"**
+**Q: "Why were you the human in the loop?"**
 
 > *"Because I was also responsible for the product and the domain logic. I couldn't meaningfully
 > evaluate the model without understanding what the underlying data meant and what the expected
 > behaviour was. Once those criteria were stable, the goal was to remove myself from the critical
 > path by turning them into automated checks."*
 
-Esta segunda es la buena. No dice *"yo revisaba porque no me fiaba de la IA"*: dice que usó
-conocimiento humano para construir el mecanismo que permite que el sistema se evalúe solo.
-Y termina en **"remove myself from the critical path"**, que es mentalidad de ingeniería.
+This second one is the good one. It does not say *"I reviewed because I did not trust the AI"*: it says she used
+human knowledge to build the mechanism that lets the system evaluate itself.
+And it ends on **"remove myself from the critical path"**, which is an engineering mindset.
 
 ---
 
-## Errores de método que no repetir
+## Method mistakes not to repeat
 
-**Sesgo de recencia.** Al empezar el día nos centramos en `cv-server` y se ignoró
-`tu-vuelta-al-sol`, que era el material bueno, solo porque las últimas sesiones habían ido de
-cv-server. Es el hallazgo de `POR_QUE_FALLA_LA_IA_Y_QUE_CONTROL_SIRVE.md` aplicado a nosotros
-mismos: el marco se fija en los primeros treinta segundos y no se revisa.
+**Recency bias.** At the start of the day we focused on `cv-server` and ignored
+`tu-vuelta-al-sol`, which was the good material, only because the latest sessions had been about
+cv-server. It is the finding of `POR_QUE_FALLA_LA_IA_Y_QUE_CONTROL_SIRVE.md` applied to ourselves:
+the frame is set in the first thirty seconds and is not revisited.
 
-**Un resultado negativo sobre la fuente equivocada parece un hecho.** Se afirmó "no existe la
-capa de evaluación" tras buscar en copias muertas del repo. Antes de decir que algo no existe,
-confirmar cuál es el repo con historia de commits.
+**A negative result on the wrong source looks like a fact.** "The evaluation layer does not exist" was
+stated after searching dead copies of the repo. Before saying something does not exist,
+confirm which repo has the commit history.
 
-**Traer contraste de fuera funciona, pero no se acepta sin verificar.** Cuando un consejo externo
-dijo "no te vendas como Data Scientist", se comprobó contra el PPS: ya estaba escrito ahí.
-Cuando dijo "despersonaliza el baseline", se rechazó con argumento.
-
----
-
-## Checklist antes de enviar
-
-- [ ] ¿Empieza por el problema?
-- [ ] ¿Usa sus cabeceras, en su orden?
-- [ ] ¿Cuenta cómo se sabe que AHORA funciona?
-- [ ] ¿Hay un dato duro, y solo uno?
-- [ ] ¿Algún absoluto que no se pueda sostener?
-- [ ] ¿Suena a persona o a informe? (buscar `therefore`, `the main lesson was`)
-- [ ] ¿Se puede defender cada frase en entrevista?
-- [ ] ¿Cero guiones largos y cero flechas en lo que sale a la empresa?
+**Bringing in outside contrast works, but it is not accepted without checking.** When outside advice
+said "don't sell yourself as a Data Scientist", it was checked against the PPS: it was already written there.
+When it said "depersonalize the baseline", it was rejected with an argument.
 
 ---
 
-*Origen: sesión del 31 de agosto de 2026, candidatura a Lodgify (Senior AI Engineer, vía Lever).*
+## Checklist before sending
+
+- [ ] Does it start with the problem?
+- [ ] Does it use their headings, in their order?
+- [ ] Does it say how we know it works NOW?
+- [ ] Is there one hard figure, and only one?
+- [ ] Any absolute that cannot be sustained?
+- [ ] Does it sound like a person or a report? (look for `therefore`, `the main lesson was`)
+- [ ] Can every sentence be defended in an interview?
+- [ ] Zero long dashes and zero arrows in what goes to the company?
+
+---
+
+*Origin: session of 31 August 2026, application to Lodgify (Senior AI Engineer, via Lever).*

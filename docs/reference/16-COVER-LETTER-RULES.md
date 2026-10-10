@@ -1,82 +1,84 @@
-# Reglas para las cartas de presentación
+# Rules for cover letters
 
-**31 ago 2026** · Reescrito entero. La versión anterior (29 jul) mandaba lo contrario
-de lo que se decide aquí, y siguió vigente dos días después de que la regla cambiara.
-
----
-
-## La regla que manda sobre las demás
-
-**La carta no argumenta. Abre la puerta.**
-
-Sus palabras, corrigiendo tres borradores seguidos:
-
-> *"Estoy justificando antes de hablar."*
-
-Nadie ha preguntado todavía por qué encajas. Una carta que responde a esa pregunta
-compite con el CV y pierde: el reclutador lee dos textos que dicen lo mismo, y ninguno
-con atención. **El que argumenta es el CV. La carta solo consigue que lo abran.**
+**31 Aug 2026** · Fully rewritten. The previous version (29 Jul) mandated the opposite
+of what is decided here, and stayed in force for two days after the rule changed.
 
 ---
 
-## Las seis reglas
+## The rule that overrides the others
 
-### 1. Cero justificación
+**The letter does not argue. It opens the door.**
 
-No se nombra ninguna razón, ningún logro, ninguna competencia. **Ni una.**
+Her words, correcting three drafts in a row:
 
-Esto incluye las que suenan bien y son verdad. Cualquiera de estas sobra:
+> *"I'm justifying myself before speaking."*
 
-| Sobra | Por qué |
+Nobody has yet asked why you fit. A letter that answers that question competes with the
+CV and loses: the recruiter reads two texts that say the same thing, and neither with
+attention. **The CV is what argues. The letter only gets it opened.**
+
+---
+
+## The six rules
+
+### 1. Zero justification
+
+No reason, no achievement, no skill is named. **Not one.**
+
+This includes those that sound good and are true. Any of these is surplus:
+
+| Surplus | Why |
 |---|---|
-| *"I make LLM behaviour testable"* | Es un mérito. Ya está en el CV. |
-| *"I measure a tool before adopting it"* | Es un mérito. Ya está en el CV. |
-| *"llevo tiempo poniendo modelos en producción"* | Es un mérito. Ya está en el CV. |
-| *"con código público que podéis revisar"* | Es darse bombo. |
+| *"I make LLM behaviour testable"* | It is a merit. It is already in the CV. |
+| *"I measure a tool before adopting it"* | It is a merit. It is already in the CV. |
+| *"llevo tiempo poniendo modelos en producción"* (I have been putting models into production for a while) | It is a merit. It is already in the CV. |
+| *"con código público que podéis revisar"* (with public code you can review) | It is self-promotion. |
 
-### 2. Lenguaje no afirmativo
+### 2. Non-assertive language
 
-> Sí: *"creo que **puede encajar** con lo que hago en mi trabajo"*
-> No: *"este puesto **está hecho para mí**"*
+> Yes: *"creo que **puede encajar** con lo que hago en mi trabajo"* (I think it **could fit** what I do in my work)
+> No: *"este puesto **está hecho para mí**"* (this position **was made for me**)
 
-Es una hipótesis, no una sentencia. Que lo confirmen ellos.
+It is a hypothesis, not a verdict. Let them confirm it.
 
-### 3. Tres movimientos, y ninguno más
+### 3. Three moves, and no more
 
-1. Me presento.
-2. La oferta me ha parecido interesante y creo que puede encajar con lo que hago.
-3. Remito al CV: *"El detalle está en mi CV."*
+1. I introduce myself.
+2. I found the offer interesting and I think it could fit what I do.
+3. I refer to the CV: *"El detalle está en mi CV."* (The detail is in my CV.)
 
-### 4. Un solo guiño, y apunta a LA OFERTA
+### 4. A single nod, and it points to THE OFFER
 
-Una sola frase de su oferta demuestra que la leíste. Dos o más suenan a eco, y el eco
-es lo que hace que una carta parezca generada.
+A single sentence from their offer shows that you read it. Two or more sound like an
+echo, and the echo is what makes a letter look generated.
 
-**El guiño apunta a lo que ELLOS piden, nunca a tus méritos.** Esa es la diferencia
-entre demostrar que leíste el anuncio y volver a justificarte:
+**The nod points to what THEY ask for, never to your merits.** That is the difference
+between showing you read the ad and justifying yourself again:
 
-> Sí: *"en particular la parte de Google Cloud y Gemini"*
-> No: *"vengo de años diseñando arquitecturas y hoy diseño arquitecturas con LLMs"*
+> Yes: *"en particular la parte de Google Cloud y Gemini"* (in particular the Google Cloud and Gemini part)
+> No: *"vengo de años diseñando arquitecturas y hoy diseño arquitecturas con LLMs"* (I come from years of designing architectures and today I design architectures with LLMs)
 
-Si el título de la oferta es genérico (*"Senior AI Engineer"* a secas) y no tienes su
-texto delante, **la carta va sin guiño**. No se inventa qué piden.
+If the offer title is generic (a bare *"Senior AI Engineer"*) and you do not have their
+text in front of you, **the letter goes without a nod**. What they ask for is not
+invented.
 
-### 5. Cita bien el nombre del puesto
+### 5. Quote the job title correctly
 
-El de la vacante, entero y tal cual lo escriben ellos. Si se llama
-*"Arquitecto de Soluciones IA y GenAI"*, no se recorta a *"Arquitecto de Soluciones IA"*.
+The one on the vacancy, in full and exactly as they write it. If it is called
+*"Arquitecto de Soluciones IA y GenAI"*, it is not shortened to
+*"Arquitecto de Soluciones IA"*.
 
-### 6. Corta, y en español con tildes
+### 6. Short, and in Spanish with accents
 
-~50-70 palabras. Máximo 100. Cero guiones largos y cero flechas.
+~50-70 words. Maximum 100. Zero long dashes and zero arrows.
 
-Las tildes no son un detalle: el 29-ago salieron dos cartas al mercado español
-**sin una sola tilde en el cuerpo**, con el membrete de encima bien acentuado. El
-contraste dentro del mismo folio es lo que canta.
+The accents are not a detail: on 29 Aug two letters went out to the Spanish market
+**without a single accent in the body**, with the letterhead above it correctly
+accented. The contrast within the same page is what gives it away.
 
 ---
 
-## La plantilla
+## The template
 
 ```
 Hola,
@@ -91,42 +93,47 @@ Un saludo,
 Verónica Serna Pérez
 ```
 
-En inglés, mismo esqueleto: *"I found your {PUESTO} opening very interesting and I
+The template is the Spanish-language letter; `{PUESTO EXACTO}` is the exact job title
+and `{GUIÑO A LA OFERTA}` is the nod to the offer.
+
+In English, same skeleton: *"I found your {PUESTO} opening very interesting and I
 think it could fit with what I do in my work."*
 
-**Sin guiño, dos cartas a empresas distintas salen casi idénticas. Está bien:**
-nadie compara tus cartas entre empresas, y el trabajo pesado lo hace el CV.
+**Without a nod, two letters to different companies come out almost identical. That is
+fine:** nobody compares your letters across companies, and the CV does the heavy
+lifting.
 
 ---
 
-## Antes de enviarla
+## Before sending it
 
-- [ ] ¿Nombra algún mérito, logro o competencia? Si sí, **fuera**.
-- [ ] ¿Dice "puede encajar" y no "está hecho para mí"?
-- [ ] ¿Cita el nombre de la vacante entero?
-- [ ] ¿El guiño apunta a la oferta, y no a ella?
-- [ ] ¿Menos de 100 palabras?
-- [ ] Si va en español, ¿lleva todas las tildes?
-- [ ] ¿Cero guiones largos y cero flechas?
+- [ ] Does it name any merit, achievement or skill? If so, **out**.
+- [ ] Does it say "could fit" and not "was made for me"?
+- [ ] Does it quote the full vacancy name?
+- [ ] Does the nod point to the offer, and not to her?
+- [ ] Fewer than 100 words?
+- [ ] If it is in Spanish, does it carry all the accents?
+- [ ] Zero long dashes and zero arrows?
 
-Las dos últimas las verifica sola `scripts/render_carta.py`: **aborta el render** si
-encuentra un guion largo o una flecha.
-
----
-
-## Qué se ha quedado por el camino
-
-La versión del 29-jul mandaba *"tres o cuatro párrafos breves"*, *"el solape de stack
-como lista de hechos"* y *"dónde está tu profundidad, con 2 hechos concretos"*. Todo eso
-**es justificarse**, y se ha eliminado.
-
-Sobrevive una sola de sus reglas, la 4: *una sola frase de su oferta*.
-
-Su regla maestra, **hechos, no afirmaciones**, sigue siendo cierta y ahora vive en el CV,
-que es donde toca. En la carta no hace falta: sin méritos no hay nada que defender.
+The last two are checked automatically by `scripts/render_carta.py`: it **aborts the
+render** if it finds a long dash or an arrow.
 
 ---
 
-**Relacionado:** el LEEME del CV Master (líneas rojas y datos canónicos),
-`PROMPT_CARTA` en `cv-server/server.py` (**pendiente de alinear**: aún pide
-"UNA SOLA ancla concreta", que esta versión elimina).
+## What was left behind
+
+The 29 Jul version mandated *"three or four short paragraphs"*, *"the stack overlap as
+a list of facts"* and *"where your depth is, with 2 concrete facts"*. All of that **is
+justifying yourself**, and it has been removed.
+
+Only one of its rules survives, rule 4: *a single sentence from their offer*.
+
+Its master rule, **facts, not claims**, is still true and now lives in the CV, which is
+where it belongs. In the letter it is not needed: without merits there is nothing to
+defend.
+
+---
+
+**Related:** the CV Master's LEEME (red lines and canonical data),
+`PROMPT_CARTA` in `cv-server/server.py` (**pending alignment**: it still asks for
+"ONE SINGLE concrete anchor", which this version removes).

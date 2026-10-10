@@ -1,122 +1,126 @@
-# Workflows en n8n: qué está subido y su estado
+# n8n workflows: what is deployed and its status
 
-Inventario de lo que está SUBIDO Y CORRIENDO en la instancia de n8n. Los ficheros `.json`
-de `workflows/` NO son la fuente de verdad (son exports/backups); la fuente de verdad es la
-instancia n8n. Este documento existe para saber, de un vistazo, qué corre en producción sin
-tener que abrir n8n.
+Inventory of what is DEPLOYED AND RUNNING on the n8n instance. The `.json` files in
+`workflows/` are NOT the source of truth (they are exports/backups); the source of
+truth is the n8n instance. This document exists to know at a glance what runs in
+production without having to open n8n.
 
-**Estado verificado vía n8n API el 28-ago-2026.** Si cambias algo en n8n, actualiza esta tabla.
+**Status verified via the n8n API on 28 Aug 2026.** If you change something in n8n,
+update this table.
 
-> **Atención: NO te fíes de los IDs escritos aquí.** El ID cambia cada vez que se importa un export.
-> Esta tabla apuntó al workflow equivocado del 5 al 28 de agosto: señalaba `5pTwriXcc6aYHO1Y`,
-> que lleva APAGADO desde entonces, mientras producción corría en `CsvmtPcLVmGIZg6C`.
-> Antes de tocar nada, lista los workflows y quédate con el que esté `active`.
-> Ver `19-RUNBOOK-SISTEMA-PARADO-2026-08-05.md`, "Engaño 4".
+> **Warning: DO NOT trust the IDs written here.** The ID changes every time an export
+> is imported. This table pointed at the wrong workflow from 5 to 28 August: it
+> pointed to `5pTwriXcc6aYHO1Y`, which has been OFF since then, while production was
+> running on `CsvmtPcLVmGIZg6C`. Before touching anything, list the workflows and keep
+> the one that is `active`.
+> See `19-RUNBOOK-SYSTEM-DOWN-2026-08-05.md`, "Deception 4".
 
-> **¿Buscas los endpoints de webhook?** Están en [`../README.es.md`](../../README.es.md), sección
-> **"Webhooks n8n"** (`/webhook/<RUTA_OCULTA>?id=`, `/-descartar`, `/-mandar-empresa`,
-> `/<RUTA_OCULTA>`, `/<RUTA_OCULTA>`, `/buscar-para-user`), sobre el host
-> de la variable `N8N_HOST`.
+> **Looking for the webhook endpoints?** They are in [`../../README.md`](../../README.md),
+> section **"n8n webhooks"** (`/webhook/<HIDDEN_PATH>?id=`, `/-descartar`,
+> `/-mandar-empresa`, `/<HIDDEN_PATH>`, `/<HIDDEN_PATH>`, `/buscar-para-user`), on the
+> host in the `N8N_HOST` variable.
 >
-> No se duplican aquí a propósito: dos copias de la misma tabla se desincronizan y acabas
-> sin saber cuál es la buena. Este fichero cubre QUÉ workflows corren; el README, CÓMO se
-> les llama.
+> They are deliberately not duplicated here: two copies of the same table drift apart
+> and you end up not knowing which one is right. This file covers WHICH workflows run;
+> the README covers HOW they are called.
 
 ---
 
-## Workflows activos y su estado
+## Active workflows and their status
 
-Los 10 workflows de la instancia, leídos por API el 28-ago-2026. Seis activos.
+The 10 workflows on the instance, read via the API on 28 Aug 2026. Six active.
 
-| Workflow | ID n8n | Estado | Qué hace |
-|----------|--------|--------|----------|
-| **`BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)`** | `CsvmtPcLVmGIZg6C` | ACTIVO | **EL DE PRODUCCIÓN.** 50 nodos. Cron `0 9 * * *` (09:00 Madrid = 07:00Z) busca ofertas, las escribe en Notion y manda el mail diario. Sender `veronica@cookyourwebai.es`. Además, `Cron - Revisar Aprobadas` cada 15 min. |
-| **Asistente Correo Outlook - FIX 14-07** | `tVLM6O2a5doN2XZr` | ACTIVO | Fuera del flujo de ofertas. |
-| **Búsqueda Empleo Diaria** (Telegram) | `LODaOAsNrmU7NnJ4` | ACTIVO | Manda ofertas por Telegram. NO escribe Notion. Que funcione NO dice nada del de producción. |
-| **Captura Gmail - v4.1** | `yfmYPJc4FN2425Dt` | ACTIVO | Facturas de Gmail a Notion + PDF a Drive. Export canónico: `workflows/captura-gmail-facturas-BUENA-v4.1.json`. |
-| **Digest Diario Correo** | `Nejqg3ETO8aIljp4` | ACTIVO | Fuera del flujo de ofertas. |
-| **Keep-Warm CV Server** | `JAAqWbDvwAWqDvcN` | ACTIVO | Mantiene despierto el cv-server de Render. **Es el mayor consumidor de ejecuciones de la instancia.** |
-| `BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)` | `5pTwriXcc6aYHO1Y` | APAGADO | **Atención: MISMO NOMBRE EXACTO que el activo.** Buscar por nombre en n8n no los distingue: hay que mirar el ID. |
-| Busqueda Empleo Diaria | `PCBULbYMrFCvzRPg` | APAGADO | Duplicado apagado. |
-| WF2 Integrado v3 - Ofertas Reales | `3zFJWSkPPHDi4yMp` | APAGADO | Del plan original, nunca se usó. |
-| WF2 Integrado v3 - Ofertas Reales | `OVoFiXTQwXmiyMfW` | APAGADO | Reimportación del anterior, con otro ID. |
+| Workflow | n8n ID | Status | What it does |
+|----------|--------|--------|--------------|
+| **`BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)`** | `CsvmtPcLVmGIZg6C` | ACTIVE | **THE PRODUCTION ONE.** 50 nodes. Cron `0 9 * * *` (09:00 Madrid = 07:00Z) searches for offers, writes them to Notion and sends the daily email. Sender `veronica@cookyourwebai.es`. Also `Cron - Revisar Aprobadas` every 15 min. |
+| **Asistente Correo Outlook - FIX 14-07** | `tVLM6O2a5doN2XZr` | ACTIVE | Outside the offers flow. |
+| **Búsqueda Empleo Diaria** (Telegram) | `LODaOAsNrmU7NnJ4` | ACTIVE | Sends offers over Telegram. Does NOT write to Notion. That it works says nothing about the production one. |
+| **Captura Gmail - v4.1** | `yfmYPJc4FN2425Dt` | ACTIVE | Gmail invoices to Notion + PDF to Drive. Canonical export: `workflows/captura-gmail-facturas-BUENA-v4.1.json`. |
+| **Digest Diario Correo** | `Nejqg3ETO8aIljp4` | ACTIVE | Outside the offers flow. |
+| **Keep-Warm CV Server** | `JAAqWbDvwAWqDvcN` | ACTIVE | Keeps the Render cv-server awake. **It is the instance's biggest consumer of executions.** |
+| `BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)` | `5pTwriXcc6aYHO1Y` | OFF | **Warning: EXACTLY THE SAME NAME as the active one.** Searching by name in n8n does not tell them apart: you have to look at the ID. |
+| Busqueda Empleo Diaria | `PCBULbYMrFCvzRPg` | OFF | Duplicate, switched off. |
+| WF2 Integrado v3 - Ofertas Reales | `3zFJWSkPPHDi4yMp` | OFF | From the original plan, never used. |
+| WF2 Integrado v3 - Ofertas Reales | `OVoFiXTQwXmiyMfW` | OFF | Re-import of the previous one, with another ID. |
 
-### Webhooks: cuáles existen de verdad
+### Webhooks: which ones really exist
 
-Barridos los 10 workflows nodo a nodo el 28-ago-2026.
+All 10 workflows were swept node by node on 28 Aug 2026.
 
-| Path | ¿Existe? | Dónde |
-|------|----------|-------|
-| `buscar-para-user` | Sí | `CsvmtPcLVmGIZg6C`. Es por donde el cv-server pide una búsqueda para un usuario. |
-| `<RUTA_OCULTA>` | Sí | `CsvmtPcLVmGIZg6C` |
-| `<RUTA_OCULTA>` | Sí | `CsvmtPcLVmGIZg6C` |
-| `<RUTA_OCULTA>` | Sí | `CsvmtPcLVmGIZg6C` |
-| `<RUTA_OCULTA>` | **NO EXISTE** | En ninguno. Lo que la documentación llamaba "WF1" nunca llegó a estar dado de alta. |
-| `<RUTA_OCULTA>` | **NO EXISTE** | En ninguno. El cv-server le llamaba y se comía un 404 en silencio hasta el 28-ago-2026. |
+| Path | Exists? | Where |
+|------|---------|-------|
+| `buscar-para-user` | Yes | `CsvmtPcLVmGIZg6C`. It is how the cv-server requests a search for a user. |
+| `<HIDDEN_PATH>` | Yes | `CsvmtPcLVmGIZg6C` |
+| `<HIDDEN_PATH>` | Yes | `CsvmtPcLVmGIZg6C` |
+| `<HIDDEN_PATH>` | Yes | `CsvmtPcLVmGIZg6C` |
+| `<HIDDEN_PATH>` | **DOES NOT EXIST** | In none. What the documentation called "WF1" was never registered. |
+| `<HIDDEN_PATH>` | **DOES NOT EXIST** | In none. The cv-server called it and silently swallowed a 404 until 28 Aug 2026. |
 
-Otros workflows menores comparten la credencial Groq viva `Groq account 2`
-(`Ewz07GBHAM5voex1`): **Digest** y **Outlook FIX**. Estado no verificado en detalle aquí.
-
----
-
-## Notas importantes (no perder)
-
-- **El "workflow bueno" ya NO es WF2 v3.** El que corre en PROD es el de
-  `workflows/PROD/`. Por reimportaciones sucesivas el mismo workflow ha tenido varios
-  IDs en n8n; los anteriores siguen existiendo, apagados.
+Other minor workflows share the live Groq credential `Groq account 2`
+(`Ewz07GBHAM5voex1`): **Digest** and **Outlook FIX**. Status not verified in detail
+here.
 
 ---
 
-## Filtro de modalidad (20-jul-2026)
+## Important notes (do not lose)
 
-**Preferencia de Vero**: Remoto SIEMPRE, Híbrido SOLO Madrid, Presencial NUNCA, Híbrido de
-otras ciudades fuera. Ver [[preferencia-modalidad-vero]].
-
-**Fuentes de ofertas** (3 declaradas, **2 funcionando**), en el workflow PROD `CsvmtPcLVmGIZg6C`:
-- **Remotive** (`Buscar en Remotive`): funciona. 100% remoto por diseño. Devuelve un aviso
-  de que el dominio se movió a `remotive.com`.
-- **Tecnoempleo** (`Buscar en Tecnoempleo`, RSS): funciona. Portal español, de aquí salen
-  las presenciales y las que no cuadraban.
-- **Adzuna** (`Buscar en Adzuna`): **MUERTA desde el 6-ago-2026.** Devuelve
-  `{"error": "access to env vars denied"}`. La URL usa `{{ $env.ADZUNA_APP_KEY }}` y esta
-  instancia de n8n tiene bloqueado el acceso a variables de entorno. **Falla en silencio
-  dentro de una ejecución que acaba en `success`**, por eso nadie lo vio en tres semanas.
-  Medido en la ejecución 40330. Para arreglarlo hay que meter la key como credencial de n8n,
-  no como variable de entorno.
-
-**El problema**: el nodo `Code - Normalizar Modalidad` clasificaba Remoto/Híbrido/Presencial
-pero las pasaba TODAS a Notion. La preferencia de modalidad del usuario (`U.modalidad`) y la
-ciudad viajaban por el workflow pero no se usaban para filtrar.
-
-**El fix** (2 nodos, sin nodos nuevos ni tocar credenciales):
-1. `Formatear ofertas`: además del idioma, ahora guarda `ubicacion_por_link` (ubicación de
-   cada oferta por su link, de las 3 fuentes).
-2. `Code - Normalizar Modalidad`: descarta `Presencial` y `Hibrido` no-Madrid justo antes de
-   `Notion - Crear Oferta` (`return null` + `.filter(x => x !== null)`).
-
-Nota: el filtro de PERFIL ya existía en `Formatear ofertas` (función `matchea`): exige señal
-del perfil en el título (frontend/React/fullstack/AI/tech lead) y descarta backend puro.
-Un ".NET + Angular" cuela porque tiene "Angular" (señal válida); endurecer eso queda como
-mejora aparte.
-
-**Edge case**: si un día TODAS las ofertas son presencial/híbrido-no-Madrid, no llega
-ninguna (preferible a recibir presenciales). Raro, porque Remotive es 100% remoto.
+- **The "good workflow" is NO LONGER WF2 v3.** The one running in PROD is the one in
+  `workflows/PROD/`. Through successive re-imports the same workflow has had several
+  IDs in n8n; the previous ones still exist, switched off.
 
 ---
 
-## Ficheros de export en `workflows/` (NO son la fuente de verdad)
+## Work-mode filter (20 Jul 2026)
 
-Son backups/exports, útiles para reimportar. **Trampa conocida**: el sufijo `(5)` en un
-nombre de fichero descargado NO es la versión 5, es el contador de descargas del navegador.
-No fiarse del número del nombre.
+**Vero's preference**: Remote ALWAYS, Hybrid ONLY Madrid, On-site NEVER, Hybrid in
+other cities out. See [[preferencia-modalidad-vero]].
+
+**Offer sources** (3 declared, **2 working**), in the PROD workflow `CsvmtPcLVmGIZg6C`:
+- **Remotive** (`Buscar en Remotive`): works. 100% remote by design. Returns a notice
+  that the domain moved to `remotive.com`.
+- **Tecnoempleo** (`Buscar en Tecnoempleo`, RSS): works. Spanish portal, the on-site
+  ones and the ones that did not fit come from here.
+- **Adzuna** (`Buscar en Adzuna`): **DEAD since 6 Aug 2026.** Returns
+  `{"error": "access to env vars denied"}`. The URL uses `{{ $env.ADZUNA_APP_KEY }}` and
+  this n8n instance has access to environment variables blocked. **It fails silently
+  inside an execution that ends as `success`**, which is why nobody saw it for three
+  weeks. Measured in execution 40330. To fix it, the key has to go in as an n8n
+  credential, not as an environment variable.
+
+**The problem**: the `Code - Normalizar Modalidad` node classified
+Remote/Hybrid/On-site but passed ALL of them to Notion. The user's work-mode
+preference (`U.modalidad`) and the city travelled through the workflow but were not
+used to filter.
+
+**The fix** (2 nodes, no new nodes and no credentials touched):
+1. `Formatear ofertas`: besides the language, it now stores `ubicacion_por_link` (the
+   location of each offer by its link, from the 3 sources).
+2. `Code - Normalizar Modalidad`: drops `Presencial` and non-Madrid `Hibrido` right
+   before `Notion - Crear Oferta` (`return null` + `.filter(x => x !== null)`).
+
+Note: the PROFILE filter already existed in `Formatear ofertas` (the `matchea`
+function): it requires a profile signal in the title (frontend/React/fullstack/AI/tech
+lead) and drops pure backend. A ".NET + Angular" slips through because it has "Angular"
+(a valid signal); tightening that is left as a separate improvement.
+
+**Edge case**: if one day ALL offers are on-site/non-Madrid hybrid, none arrive
+(preferable to receiving on-site ones). Rare, because Remotive is 100% remote.
+
+---
+
+## Export files in `workflows/` (NOT the source of truth)
+
+They are backups/exports, useful for re-importing. **Known trap**: the `(5)` suffix in a
+downloaded file name is NOT version 5, it is the browser's download counter. Do not
+trust the number in the name.
 
 - `WF1-BuscarTrabajo-Usuarios.json`
 - `WF2-BuscarTrabajo-v2-Groq.json`
-- `WF2-integrado-v3.json` (workflow OFF en n8n)
-- `captura-gmail-facturas-BUENA-v4.1.json` (canónico de Captura Gmail)
-- `captura-gmail-facturas-BUENA-v4.json` (anterior)
+- `WF2-integrado-v3.json` (workflow OFF in n8n)
+- `captura-gmail-facturas-BUENA-v4.1.json` (canonical for Captura Gmail)
+- `captura-gmail-facturas-BUENA-v4.json` (previous)
 
 ---
 
-**Última actualización:** 28 agosto 2026 (inventario releído por API, webhooks barridos nodo a nodo)
-**Ver también:** `../README.es.md` (flujo completo del sistema).
+**Last updated:** 28 August 2026 (inventory re-read via the API, webhooks swept node by node)
+**See also:** `../../README.md` (full flow of the system).

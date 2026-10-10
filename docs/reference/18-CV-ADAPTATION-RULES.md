@@ -1,118 +1,118 @@
-# Reglas de adaptación de CV por oferta
+# Rules for tailoring a CV to an offer
 
-**30-jul-2026.** Salieron del feedback externo sobre el CV de Personio (Senior Frontend Engineer, Payroll Domain). Valoración recibida: 9,3/10 frente al 8,5 del CV genérico.
+**30 Jul 2026.** They came out of external feedback on the Personio CV (Senior Frontend Engineer, Payroll Domain). Score received: 9.3/10 against 8.5 for the generic CV.
 
-Hermano de `16-REGLAS-CARTA-PRESENTACION.md`. Aquel manda en la carta, este en el CV.
-
----
-
-## La regla que manda
-
-> Un CV adaptado no cambia quién sos. Cambia qué parte de tu experiencia pone en primer plano.
-
-Es la frase del feedback y resume todo lo demás. Reposicionar es legítimo. Inventar no. Y la línea entre las dos cosas no es lo que escribís: es si podés defenderlo cuarenta minutos delante de un técnico.
+Sibling of `16-COVER-LETTER-RULES.md`. That one rules the cover letter, this one the CV.
 
 ---
 
-## 1. El titular se adapta a la oferta, no a tu identidad completa
+## The rule that governs
 
-El titular genérico era:
+> A tailored CV does not change who you are. It changes which part of your experience you put in the foreground.
+
+It is the sentence from the feedback and it sums up everything else. Repositioning is legitimate. Inventing is not. And the line between the two is not what you write: it is whether you can defend it for forty minutes in front of an engineer.
+
+---
+
+## 1. The headline adapts to the offer, not to your whole identity
+
+The generic headline was:
 
 ```
 Frontend Tech Lead | Full-Stack Developer | AI Engineer
 ```
 
-Para una oferta de frontend puro, `AI Engineer` resta. Ocupa el sitio más valioso del CV con algo que esa empresa no está buscando. Para Personio:
+For a pure frontend offer, `AI Engineer` subtracts. It takes the most valuable spot in the CV with something that company is not looking for. For Personio:
 
 ```
 Frontend Tech Lead | Senior Frontend Engineer | React · TypeScript · Design Systems
 ```
 
-La IA no desaparece: sigue dentro del CV, en su sección. Lo que cambia es qué se lee primero.
+AI does not disappear: it stays inside the CV, in its own section. What changes is what is read first.
 
-**Corolario.** Para una oferta donde la IA sí es requisito (eDreams la pide como `must have` y otra vez en `preferred`), el titular hace lo contrario y la sube.
-
----
-
-## 2. Aludir a un dominio sin decir que trabajaste en él
-
-El mejor hallazgo del CV de Personio. No decir "tengo experiencia en nóminas", que sería mentira. Decir que trabajaste en dominios donde un error tiene consecuencias reales: datos financieros y personales sensibles a escala, generación documental, automatización de flujos de negocio.
-
-Es cierto, es comprobable y comunica exactamente lo mismo.
+**Corollary.** For an offer where AI is a requirement (eDreams asks for it as `must have` and again under `preferred`), the headline does the opposite and moves it up.
 
 ---
 
-## 3. Cuidado con que se note el ATS
+## 2. Allude to a domain without saying you worked in it
 
-El feedback señaló esta frase:
+The best finding of the Personio CV. Not saying "I have payroll experience", which would be a lie. Saying that you worked in domains where an error has real consequences: sensitive financial and personal data at scale, document generation, business workflow automation.
+
+It is true, it is verifiable and it communicates exactly the same thing.
+
+---
+
+## 3. Be careful that the ATS does not show
+
+The feedback flagged this sentence:
 
 > Her work on **Payroll-adjacent** domains such as financial and sensitive personal data at scale...
 
-`Payroll-adjacent` no es inglés natural. Es una palabra construida para que un filtro automático encuentre "payroll". Y se nota.
+`Payroll-adjacent` is not natural English. It is a word built so that an automatic filter finds "payroll". And it shows.
 
-Versión que dice lo mismo sin delatarse:
+A version that says the same without giving itself away:
 
 > Her experience includes building systems handling financial and sensitive personal data at scale, document generation and business workflow automation, domains where correctness, consistency and maintainability are as critical as they are in payroll products.
 
-**Esto es la regla del rastro de IA aplicada al CV.** Ya la tenías para las cartas. Vale igual aquí: si una frase parece escrita para una máquina, un humano también lo ve.
+**This is the AI-trace rule applied to the CV.** You already had it for cover letters. It applies equally here: if a sentence looks written for a machine, a human sees it too.
 
 ---
 
-## 4. Las keywords SOLO si las podés defender
+## 4. Keywords ONLY if you can defend them
 
-La oferta pide literalmente `React and Redux or similar stack` y menciona `SOLID`. La tentación es añadir las dos palabras y listo. No.
+The offer literally asks for `React and Redux or similar stack` and mentions `SOLID`. The temptation is to add the two words and be done. No.
 
-**Verificado el 30-jul-2026:**
+**Verified on 30 Jul 2026:**
 
-- **Redux**: NO aparece en `CV_Master_Veronica_v2.txt` ni en ninguno de los ocho CVs de `~/Desktop/cv/_fuentes/`. El único sitio donde existe es `~/Desktop/cv/tuyos/preparacion-entrevista-xe-iwantic.md`, que es la base de estudio para entrevistas, no un registro de experiencia.
-- **SOLID**: tampoco aparece en el CV Master. Pero aquí el caso es distinto: la arquitectura Clean/Hexagonal y los patrones de diseño sí son terreno declarado de Vero, así que es defendible.
+- **Redux**: does NOT appear in `CV_Master_Veronica_v2.txt` nor in any of the eight CVs in `~/Desktop/cv/_fuentes/`. The only place where it exists is `~/Desktop/cv/tuyos/preparacion-entrevista-xe-iwantic.md`, which is the study base for interviews, not a record of experience.
+- **SOLID**: does not appear in the CV Master either. But here the case is different: Clean/Hexagonal architecture and design patterns are declared ground for Vero, so it is defensible.
 
-**El precedente que decide esto.** En osapiens la rechazaron en última fase, y parte del feedback fue que **se bloqueó cuando le preguntaron nombres de librerías**. Meter una keyword en el CV para pasar un filtro y no poder sostenerla en la entrevista técnica es reproducir ese rechazo a propósito.
+**The precedent that decides this.** At osapiens she was rejected in the final phase, and part of the feedback was that **she froze when asked for library names**. Putting a keyword in the CV to pass a filter and not being able to sustain it in the technical interview is reproducing that rejection on purpose.
 
-**La regla:**
+**The rule:**
 
-> Una tecnología entra en el CV si podés contar un caso donde la usaste y qué decidiste con ella. Si solo podés decir que la conocés, va fuera. El ATS no te contrata: te contrata el que te entrevista después.
+> A technology goes in the CV if you can tell a case where you used it and what you decided with it. If all you can say is that you know it, it stays out. The ATS does not hire you: the person who interviews you afterwards does.
 
-Si Vero puede defender Redux con un caso real, entra. Si no, se queda fuera aunque la oferta la pida.
+If Vero can defend Redux with a real case, it goes in. If not, it stays out even if the offer asks for it.
 
 ---
 
-## 5. Espejar el vocabulario de la oferta cuando el hecho ya es tuyo
+## 5. Mirror the offer's vocabulary when the fact is already yours
 
-Distinto del punto anterior. Aquí no se añade nada nuevo: se reescribe algo que ya es verdad con las palabras que usa la empresa.
+Different from the previous point. Here nothing new is added: something that is already true is rewritten with the words the company uses.
 
-Antes:
+Before:
 
 > Established code review practices and development standards...
 
-Después, para una oferta que repite `engineering standards`, `guidelines` y `coaching`:
+After, for an offer that repeats `engineering standards`, `guidelines` and `coaching`:
 
 > Established frontend engineering standards, code review practices and development guidelines that improved maintainability and onboarding across teams.
 
-Mismo hecho, mismo idioma que el lector.
+Same fact, same language as the reader.
 
 ---
 
-## 6. Herramientas literales de la oferta
+## 6. Literal tools from the offer
 
-Si la oferta nombra `Webpack`, `Vite`, `npm/yarn` o `SQL` y los has usado, tienen que aparecer escritos igual. Esto no es hacer trampa, es que el filtro busca la cadena exacta.
+If the offer names `Webpack`, `Vite`, `npm/yarn` or `SQL` and you have used them, they have to appear written the same way. This is not cheating, it is that the filter looks for the exact string.
 
-Sigue aplicando el punto 4: solo si es verdad.
-
----
-
-## Checklist antes de enviar un CV adaptado
-
-- [ ] El titular pone delante lo que esa empresa busca
-- [ ] Lo que la empresa no busca ha bajado de nivel, no desaparecido
-- [ ] Ninguna frase suena construida para un filtro automático
-- [ ] Cada tecnología nueva del CV tiene un caso real detrás que podrías contar
-- [ ] El vocabulario de los bullets se acerca al de la oferta, sin cambiar los hechos
-- [ ] Las herramientas que la oferta nombra literalmente aparecen escritas igual
+Point 4 still applies: only if it is true.
 
 ---
 
-## Relacionado
+## Checklist before sending a tailored CV
 
-- `16-REGLAS-CARTA-PRESENTACION.md`: hechos y no afirmaciones. Manda en la carta.
-- Memoria engram `buscartrabajo/osapiens-feedback`: el rechazo por bloquearse con nombres de librerías, que es el origen de la regla 4.
+- [ ] The headline puts first what that company is looking for
+- [ ] What the company is not looking for has moved down a level, not disappeared
+- [ ] No sentence sounds built for an automatic filter
+- [ ] Every new technology in the CV has a real case behind it that you could tell
+- [ ] The vocabulary of the bullets gets closer to the offer's, without changing the facts
+- [ ] The tools the offer names literally appear written the same way
+
+---
+
+## Related
+
+- `16-COVER-LETTER-RULES.md`: facts and not claims. It rules the cover letter.
+- Engram memory `buscartrabajo/osapiens-feedback`: the rejection for freezing on library names, which is the origin of rule 4.
