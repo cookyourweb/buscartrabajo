@@ -64,7 +64,7 @@ The offer literally asks for `React and Redux or similar stack` and mentions `SO
 
 **Verified on 30 Jul 2026:**
 
-- **Redux**: does NOT appear in `CV_Master_Veronica_v2.txt` nor in any of the eight CVs in `~/Desktop/cv/_fuentes/`. The only place where it exists is `~/Desktop/cv/tuyos/preparacion-entrevista-xe-iwantic.md`, which is the study base for interviews, not a record of experience.
+- **Redux**: does NOT appear in `CV_Master_Veronica_v2.txt` nor in any of the eight CVs in `<local-path>/`. The only place where it exists is `<local-path>/<interview-prep-file>.md`, which is the study base for interviews, not a record of experience.
 - **SOLID**: does not appear in the CV Master either. But here the case is different: Clean/Hexagonal architecture and design patterns are declared ground for Vero, so it is defensible.
 
 **The precedent that decides this.** In one technical conversation, naming specific libraries on the spot turned out to be hard. Putting a keyword in the CV to pass a filter and not being able to sustain it in the technical interview defeats the purpose.

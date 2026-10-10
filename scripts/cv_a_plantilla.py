@@ -3,10 +3,10 @@
 
 Nace el 28jul2026: los CVs de una fintech de Londres y de una empresa de ciberseguridad se iban a enviar como export
 plano de Google Docs (Arial 11pt, todo negro, sin jerarquia) mientras que los de
-`~/Desktop/cv/ACTIVOS/` llevan la identidad visual de Vero. En la bandeja de un
+`<cv-folder>/` llevan la identidad visual de Vero. En la bandeja de un
 recruiter esa diferencia se nota en los primeros diez segundos.
 
-El diseno sale de `~/Desktop/cv/_fuentes/<plantilla>.html`: azul
+El diseno sale de `<templates-folder>/<template>.html`: azul
 #14487f, secciones en versalitas con filete, competencias a dos columnas, 8,6pt para
 que entre en dos paginas.
 

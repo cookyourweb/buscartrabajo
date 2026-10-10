@@ -105,7 +105,7 @@ Triggering the real flow through `POST /webhook/<WEBHOOK_PATH>` with the Notion 
 
 ```
 webhook: 200 (38.1s)
-response: {"messageId": "<...@smtp-relay.mailin.fr>"}
+response: {"messageId": "<...>"}
 
 NEW OFFERS IN NOTION: 2
   Online retailer | Senior AI Engineer         | Sin confirmar

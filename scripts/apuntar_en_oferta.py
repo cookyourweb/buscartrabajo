@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Apunta una entrada fechada en el historial de una candidatura.
 
-    python3 scripts/apuntar_en_oferta.py "Acme" "Respondida por correo..."
+    python3 scripts/apuntar_en_oferta.py "Acme" "Replied by email..."
     python3 scripts/apuntar_en_oferta.py "Acme" "..." --estado Entrevista
     python3 scripts/apuntar_en_oferta.py "Acme" "..." --seguimiento 2026-08-20
 
