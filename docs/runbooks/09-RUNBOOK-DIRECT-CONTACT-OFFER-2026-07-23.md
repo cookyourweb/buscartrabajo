@@ -130,7 +130,7 @@ All four are fixed at the source, not by repeating the manual work every time.
 - [ ] Make the POSITION LEVEL rule actually hold (it exists in
       the `cv-server` prompt, module `server.py`, and was not applied)
 - [ ] Anti-echo rule in the prompt (already documented in
-      `cv-server/docs/PROMPT-ADAPTACION-CV.md`, still to be brought into the prompt)
+      `cv-server/docs/CV-ADAPTATION-PROMPT.md`, still to be brought into the prompt)
 - [ ] PDF export inside the cv-server itself, so it is not done by hand
 - [ ] Fix the 404 of `/crear-oferta` (database id versus data source id)
 

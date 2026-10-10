@@ -95,9 +95,9 @@ panel es la cara visible.
 4. **Guardrails deterministas contrastan la salida con el CV maestro, en vez de más reglas en el prompt.**
    Un modelo no falla con una excepción: devuelve algo verosímil y peor, y añadir reglas a un prompt que ya lo satura lo empeora. Ver [`cv-server`](https://github.com/cookyourweb/cv-server).
 5. **El CV lo escribe `claude-sonnet-4-6`, no Haiku.**
-   Con unas 68 reglas en el prompt, Haiku se saltaba algunas de forma no determinista, y el sobrecoste medido es de 0,94 $ al mes para 40 CVs. Ver [ADR-002 de cv-server](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-002-modelo-del-cv.md).
+   Con unas 68 reglas en el prompt, Haiku se saltaba algunas de forma no determinista, y el sobrecoste medido es de 0,94 $ al mes para 40 CVs. Ver [ADR-002 de cv-server](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-002-cv-model.md).
 6. **La cascada de modelos está escrita a mano, no con LiteLLM.**
-   Se midió LiteLLM: +146 MB de disco, +5,96 s de arranque y 207 MB de RAM frente a 9 MB, demasiado para un servidor web pequeño. Ver [ADR-004 de cv-server](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-004-backend-llm.md).
+   Se midió LiteLLM: +146 MB de disco, +5,96 s de arranque y 207 MB de RAM frente a 9 MB, demasiado para un servidor web pequeño. Ver [ADR-004 de cv-server](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-004-llm-backend.md).
 7. **Dos puertas: entrada con Google y lista de invitadas para personas, clave de máquina (`X-Clave-Maquina`) para n8n.**
    Google no añade ningún servicio, ningún plan que caduque ni contraseñas que custodiar, mientras que el plan gratuito de Auth0 borra el tenant tras 150 días sin actividad; la clave de máquina separa las llamadas de las máquinas de la identidad de las personas. Ver [ADR-003](docs/adr/ADR-003-authentication.md).
 8. **Notion hoy, Postgres en el plan gratuito de Neon después, y Notion congelado en solo lectura el día de la migración.**

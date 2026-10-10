@@ -97,9 +97,9 @@ The ADRs and docs linked below are in Spanish.
 4. **Deterministic guardrails check the output against the master CV, instead of more prompt rules.**
    A model does not fail with an exception: it returns something plausible and worse, and adding rules to a saturated prompt makes it worse. See [`cv-server`](https://github.com/cookyourweb/cv-server).
 5. **The CV is written by `claude-sonnet-4-6`, not Haiku.**
-   With about 68 rules in the prompt, Haiku skipped some of them non-deterministically, and the measured extra cost is $0.94 a month for 40 CVs. See [cv-server ADR-002](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-002-modelo-del-cv.md).
+   With about 68 rules in the prompt, Haiku skipped some of them non-deterministically, and the measured extra cost is $0.94 a month for 40 CVs. See [cv-server ADR-002](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-002-cv-model.md).
 6. **The model fallback chain is hand-written, not LiteLLM.**
-   LiteLLM was measured at +146 MB of disk, +5.96 s of startup and 207 MB of RAM versus 9 MB, too much for a small web server. See [cv-server ADR-004](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-004-backend-llm.md).
+   LiteLLM was measured at +146 MB of disk, +5.96 s of startup and 207 MB of RAM versus 9 MB, too much for a small web server. See [cv-server ADR-004](https://github.com/cookyourweb/cv-server/blob/main/docs/ADR-004-llm-backend.md).
 7. **Two doors: Google sign-in with an invitation list for people, a machine key (`X-Clave-Maquina`) for n8n.**
    Google adds no new service, no plan that expires and no passwords to store, while Auth0's free plan deletes the tenant after 150 days without activity; the machine key keeps machine calls separate from people's identity. See [ADR-003](docs/adr/ADR-003-authentication.md).
 8. **Notion today, Postgres on Neon's free plan next, and Notion frozen read-only on migration day.**

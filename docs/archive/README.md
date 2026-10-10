@@ -35,3 +35,11 @@ folders and files have since been renamed:
 | `docs/diseno/` | `docs/design/` |
 | `WORKFLOWS-N8N.md` | `docs/reference/N8N-WORKFLOWS.md` |
 | `docs/runbooks/09-RUNBOOK-OFERTA-CONTACTO-DIRECTO` | `docs/runbooks/09-RUNBOOK-DIRECT-CONTACT-OFFER-2026-07-23.md` |
+| `cv-server/docs/ADR-001-migracion-fastapi.md` | `cv-server/docs/ADR-001-fastapi-migration.md` |
+| `cv-server/docs/ADR-002-modelo-del-cv.md` | `cv-server/docs/ADR-002-cv-model.md` |
+| `cv-server/docs/ADR-003-usuario-multicuenta.md` | `cv-server/docs/ADR-003-multi-account-user.md` |
+| `cv-server/docs/ADR-004-backend-llm.md` | `cv-server/docs/ADR-004-llm-backend.md` |
+| `cv-server/docs/ADR-007-cifrado-del-cv.md` | `cv-server/docs/ADR-007-cv-encryption-at-rest.md` |
+| `cv-server/docs/GUIA-DE-USO.md` | `cv-server/docs/USAGE-GUIDE.md` |
+| `cv-server/docs/ONBOARDING-MULTIUSUARIO.md` | `cv-server/docs/MULTI-USER-ONBOARDING.md` |
+| `cv-server/docs/PROMPT-ADAPTACION-CV.md` | `cv-server/docs/CV-ADAPTATION-PROMPT.md` |
