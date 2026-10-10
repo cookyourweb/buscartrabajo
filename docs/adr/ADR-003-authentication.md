@@ -1,161 +1,161 @@
-# ADR-003. Contra quién se autentica y qué valida el backend
+# ADR-003. Who authenticates against what, and what the backend validates
 
-**Fecha:** 2 oct 2026 · **Estado:** aceptado · **Cierra:** C4 de [decisiones de arquitectura](../diseno/2026-09-05-decisiones-arquitectura.md) · **Sustituirá:** [ADR-001](ADR-001-proteccion-de-los-webhooks.md), cuando `cv-server` sea el único que llama a n8n
+**Date:** 2 Oct 2026 · **Status:** accepted · **Closes:** C4 of [architecture decisions](../design/2026-09-05-architecture-decisions.md) · **Will supersede:** [ADR-001](ADR-001-webhook-protection.md), once `cv-server` is the only caller of n8n
 
 ---
 
-## Estado a 7 de octubre de 2026
+## Status as of 7 October 2026
 
-| Punto | Estado |
+| Item | Status |
 |---|---|
-| 1. Token en memoria (Angular) | Implementado en `develop`, pendiente de despliegue |
-| 2. Interceptor solo hacia `cv-server` | Implementado en `develop`, pendiente de despliegue |
-| 3. Validación del token en `cv-server` | Implementado en `develop`, pendiente de despliegue |
-| 4. `(iss, sub)` a identificador interno | Pendiente |
-| 5. Capa de datos con dueño y 404 en recurso ajeno | Pendiente |
-| 6. Invitación | Implementada con una lista `INVITADAS` por email. El vínculo con `(iss, sub)` queda pendiente hasta que exista Neon |
-| 7. CORS sin comodín | Implementado en `develop`, pendiente de despliegue |
+| 1. In-memory token (Angular) | Implemented in `develop`, pending deployment |
+| 2. Interceptor only towards `cv-server` | Implemented in `develop`, pending deployment |
+| 3. Token validation in `cv-server` | Implemented in `develop`, pending deployment |
+| 4. `(iss, sub)` to internal identifier | Pending |
+| 5. Data layer with an owner and 404 for another user's resource | Pending |
+| 6. Invitation | Implemented with an `INVITADAS` (invited users) list by email. The link to `(iss, sub)` stays pending until Neon exists |
+| 7. CORS without a wildcard | Implemented in `develop`, pending deployment |
 
-El guard de Angular protege solo las pantallas con datos reales. La demo pública
-sigue abierta.
+The Angular guard protects only the screens with real data. The public demo remains
+open.
 
-Las rutas del formulario público se eliminaron o se cerraron en `cv-server`
-(`develop`) el 7 de octubre de 2026. La verificación en producción está pendiente
-hasta que se despliegue.
+The public form routes were removed or closed in `cv-server` (`develop`) on 7 October
+2026. Verification in production is pending until it is deployed.
 
 ---
 
-## Contexto
+## Context
 
-`cv-server` todavía no identifica a las personas que lo llaman: hasta ahora solo
-lo usaban procesos propios. El sistema se abre a otras personas, por invitación, y
-eso exige saber quién pide cada cosa y que nadie vea lo de otra.
+`cv-server` does not yet identify the people who call it: until now only our own
+processes used it. The system is opening up to other people, by invitation, and that
+requires knowing who asks for what and that nobody sees another person's data.
 
-Como paso previo, el 2 de octubre de 2026 se cerraron las dos rutas que no podían
-seguir abiertas: `/debug` se eliminó y `/usuarios` exige una clave de máquina.
+As a preliminary step, on 2 October 2026 the two routes that could not stay open were
+closed: `/debug` was removed and `/usuarios` requires a machine key.
 
-El protocolo ya estaba decidido: OIDC con OAuth2, guard e interceptor en Angular.
-Está descartado guardar contraseñas en `cv-server`. Faltaba el proveedor, y el
-criterio es que sea **gratuito y no añada servicios** ([ADR-002](ADR-002-donde-vive-postgres.md)).
+The protocol was already decided: OIDC with OAuth2, a guard and an interceptor in
+Angular. Storing passwords in `cv-server` is ruled out. What was missing was the
+provider, and the criterion is that it be **free and add no services**
+([ADR-002](ADR-002-where-postgres-lives.md)).
 
-El 2 de octubre de 2026 se comprobó en las páginas oficiales:
+On 2 October 2026 the official pages were checked:
 
-- **Google** emite un ID token estándar, verificable por JWKS, con un `sub`
-  estable. Pero **no ofrece a una aplicación de navegador el flujo de código con
-  PKCE sin secreto**: el canje se hace en un backend, y el navegador no recibe
-  token de renovación.
-- **Auth0** sí ofrece ese flujo y 25.000 usuarios gratis. Pero **borra el tenant
-  tras 150 días sin actividad**, sin posibilidad de recuperarlo.
-- **Supabase Auth** emite tokens verificables por JWKS, pero vive dentro de un
-  proyecto que se pausa a los 7 días.
+- **Google** issues a standard ID token, verifiable by JWKS, with a stable `sub`. But
+  **it does not offer a browser application the code flow with PKCE and no secret**:
+  the exchange happens in a backend, and the browser receives no refresh token.
+- **Auth0** does offer that flow and 25,000 free users. But it **deletes the tenant
+  after 150 days without activity**, with no way to recover it.
+- **Supabase Auth** issues tokens verifiable by JWKS, but lives inside a project that
+  is paused after 7 days.
 
-## Decisión
+## Decision
 
-**Google como proveedor OIDC directo. `cv-server` valida el token en cada petición.**
+**Google as a direct OIDC provider. `cv-server` validates the token on every request.**
 
-1. Angular obtiene el token de Google y lo guarda **en memoria**, nunca en
+1. Angular obtains the token from Google and keeps it **in memory**, never in
    `localStorage`.
-2. Un interceptor lo añade solo a las peticiones dirigidas a `cv-server`. El token
-   no entra nunca en un prompt ni viaja a un proveedor de modelos.
-3. `cv-server` comprueba la firma por JWKS, que `iss` esté en la lista configurada
-   (Google emite `accounts.google.com` y `https://accounts.google.com`), `aud`,
-   `exp` y `email_verified`. El algoritmo es una constante en el código (RS256) y nunca
-   se lee del token. Las claves del JWKS se guardan en caché 3600 s; un `kid`
-   desconocido provoca una nueva descarga, como máximo cada 300 s.
-4. `(iss, sub)` se traduce a un identificador interno. **El usuario sale del
-   token y de ningún otro sitio**: lo que diga el cuerpo de la petición se ignora.
-5. Toda consulta a datos con dueño pasa por una capa que exige ese identificador.
-   Un recurso ajeno responde 404. Hay un test por ruta en el que una usuaria pide
-   el recurso de otra y no lo obtiene.
-6. **Invitación.** Se invita por email. En el primer acceso, con `email_verified`,
-   ese email se vincula a `(iss, sub)`, y desde entonces solo cuenta `sub`. Un
-   token válido de alguien no invitado recibe 403.
-7. **CORS.** `cv-server` acepta solo los orígenes del panel y de desarrollo, sin
-   comodín.
+2. An interceptor adds it only to requests addressed to `cv-server`. The token never
+   enters a prompt and never travels to a model provider.
+3. `cv-server` checks the signature by JWKS, that `iss` is in the configured list
+   (Google issues `accounts.google.com` and `https://accounts.google.com`), `aud`,
+   `exp` and `email_verified`. The algorithm is a constant in the code (RS256) and is
+   never read from the token. The JWKS keys are cached for 3600 s; an unknown `kid`
+   triggers a new download, at most every 300 s.
+4. `(iss, sub)` is translated to an internal identifier. **The user comes from the
+   token and from nowhere else**: whatever the request body says is ignored.
+5. Every query on owned data goes through a layer that requires that identifier.
+   A resource belonging to someone else answers 404. There is one test per route in
+   which one user asks for another user's resource and does not get it.
+6. **Invitation.** People are invited by email. On first access, with
+   `email_verified`, that email is linked to `(iss, sub)`, and from then on only `sub`
+   counts. A valid token from someone who was not invited receives 403.
+7. **CORS.** `cv-server` accepts only the origins of the panel and of development,
+   with no wildcard.
 
-El emisor, la dirección del JWKS y la audiencia son configuración. **El código no
-nombra a Google**: cambiar de proveedor es cambiar la configuración y el adaptador
-de entrada en Angular. El algoritmo (RS256) es la excepción: es una constante.
+The issuer, the JWKS address and the audience are configuration. **The code does not
+name Google**: changing provider means changing the configuration and the input
+adapter in Angular. The algorithm (RS256) is the exception: it is a constant.
 
-`GET /yo` devuelve la identidad de quien entra. Responde 401 si el token falta o no
-es válido, 403 si es válido pero la persona no está invitada, y 503 si falla el
-proveedor o falta configuración.
+`GET /yo` returns the identity of whoever signs in. It answers 401 if the token is
+missing or invalid, 403 if it is valid but the person is not invited, and 503 if the
+provider fails or configuration is missing.
 
-## Por qué no Auth0
+## Why not Auth0
 
-Es el flujo de manual y lo más parecido a lo que usa una empresa grande. Pero
-añade un servicio, y su plan gratuito borra el tenant a los 150 días de silencio,
-que es lo que le pasa a un proyecto personal que pasa meses sin uso.
+It is the textbook flow and the closest to what a large company uses. But it adds a
+service, and its free plan deletes the tenant after 150 days of silence, which is
+what happens to a personal project that goes months without use.
 
-Vuelve a estar sobre la mesa si hace falta entrar sin cuenta de Google.
+It is back on the table if signing in without a Google account becomes necessary.
 
-## Por qué no Supabase Auth
+## Why not Supabase Auth
 
-No incumple A6 en la letra: el navegador hablaría con un proveedor de identidad,
-no con la base. Pero ata la identidad a un proyecto que se pausa.
+It does not breach A6 to the letter: the browser would talk to an identity provider,
+not to the database. But it ties identity to a project that gets paused.
 
-## Consecuencias
+## Consequences
 
-**Se acepta:**
+**Accepted:**
 
-- Solo entra quien tenga cuenta de Google.
-- Sin token de renovación en el navegador: la sesión se renueva pidiendo otro
-  token a Google, en principio sin que la usuaria lo note. Hay que medirlo.
-- El ID token se usa como credencial ante la API propia. No es lo canónico, y se
-  sabe. Es defendible porque `aud` es el identificador de cliente de las
-  aplicaciones de la marca, y el backend es suyo.
-- Con el token en memoria, cada aplicación (empleo, formación) pide su propio
-  token a Google. Entrar una vez y que sirva en todas llega con la evolución de
-  abajo.
+- Only people with a Google account can sign in.
+- No refresh token in the browser: the session is renewed by requesting another token
+  from Google, in principle without the user noticing. This has to be measured.
+- The ID token is used as a credential against our own API. That is not canonical,
+  and that is known. It is defensible because `aud` is the client identifier of the
+  brand's applications, and the backend is ours.
+- With the token in memory, each application (jobs, training) requests its own token
+  from Google. Signing in once and having it work everywhere comes with the evolution
+  described below.
 
-**Se gana:**
+**Gained:**
 
-- Ningún servicio nuevo, ningún plan que caduque, ninguna contraseña que custodiar.
-- Lo aprendido se traslada: guard, interceptor, token en memoria y validación por
-  JWKS son iguales contra cualquier proveedor.
+- No new service, no plan that expires, no password to look after.
+- What is learned carries over: guard, interceptor, in-memory token and JWKS
+  validation are the same against any provider.
 
-## Los enlaces del correo y las llamadas de n8n
+## Email links and n8n calls
 
-Hoy los enlaces de aprobar y descartar son peticiones GET con efectos, a webhooks de
-n8n protegidos solo por una ruta impredecible (ADR-001). Los filtros de correo
-abren enlaces por su cuenta.
+Today the approve and discard links are GET requests with side effects, to n8n
+webhooks protected only by an unpredictable route (ADR-001). Email filters open links
+on their own.
 
-- Pasan a llevar un **token firmado por `cv-server`**, de un solo propósito y con
-  caducidad. El enlace abre una página del panel que muestra la oferta y un botón;
-  el botón hace POST a `cv-server`, que valida el token. **Repetir el POST no
-  repite la acción.**
-- Si esa página pide iniciar sesión o si el token basta como autorización está
-  **pendiente de decidir**.
-- `cv-server` pasa a ser **el único que llama a n8n**. Ese día ADR-001 queda
-  sustituido entero.
-- Las llamadas de n8n a `cv-server` llevan una **clave de máquina** en la cabecera
-  `X-Clave-Maquina`, distinta de la identidad de las personas. ADR-001 midió que la
-  autenticación por cabecera fallaba en los webhooks que **recibe** n8n. Aquí n8n
-  **envía** la cabecera, que es otro caso, pero hay que medirlo y comprobar después
-  que la credencial de Groq del workflow sigue viva.
-- **Medido el 4 de octubre de 2026.** n8n envía `X-Clave-Maquina` con una credencial
-  Header Auth propia ("cv-server clave de maquina") en los nodos de `/generar-cv` y
-  `/generar-carta`; la credencial de Groq sigue en su nodo, sin tocar. `cv-server`
-  exige la clave en `/registro`, `/usuarios`, `/generar-cv`, `/generar-carta`,
-  `/crear-oferta` y `/buscar-ofertas-reales`: sin ella responde 401 y no llama al modelo. Importar un
-  workflow encima de uno existente no conservó la credencial: se puso a mano.
+- They will carry a **token signed by `cv-server`**, single-purpose and with an
+  expiry. The link opens a panel page that shows the offer and a button; the button
+  does a POST to `cv-server`, which validates the token. **Repeating the POST does
+  not repeat the action.**
+- Whether that page asks for sign-in, or whether the token is enough as
+  authorization, is **still to be decided**.
+- `cv-server` becomes **the only caller of n8n**. On that day ADR-001 is superseded
+  entirely.
+- Calls from n8n to `cv-server` carry a **machine key** in the `X-Clave-Maquina`
+  header, distinct from the identity of people. ADR-001 measured that header
+  authentication failed on the webhooks n8n **receives**. Here n8n **sends** the
+  header, which is a different case, but it has to be measured and then checked that
+  the workflow's Groq credential is still alive.
+- **Measured on 4 October 2026.** n8n sends `X-Clave-Maquina` with its own Header Auth
+  credential ("cv-server clave de maquina") in the `/generar-cv` and `/generar-carta`
+  nodes; the Groq credential stays in its node, untouched. `cv-server` requires the
+  key on `/registro`, `/usuarios`, `/generar-cv`, `/generar-carta`, `/crear-oferta`
+  and `/buscar-ofertas-reales`: without it, it answers 401 and does not call the
+  model. Importing a workflow over an existing one did not preserve the credential:
+  it was set by hand.
 
-## Cuándo se revisa
+## When to revisit
 
-Al publicar el panel en su subdominio ([ADR-006](ADR-006-subdominios.md)). Panel y
-API comparten dominio, y eso permite que el canje lo haga `cv-server` y la sesión
-viaje en una cookie que ningún script puede leer. Si se da ese paso, cambia el
-punto 3 (JWKS se valida solo al entrar) y aparece la protección contra CSRF: será
-un ADR nuevo que sustituya a este.
+When the panel is published on its subdomain ([ADR-006](ADR-006-subdomains.md)). Panel
+and API share a domain, and that allows `cv-server` to do the exchange and the session
+to travel in a cookie that no script can read. If that step is taken, item 3 changes
+(the JWKS is validated only on sign-in) and CSRF protection appears: it will be a new
+ADR that supersedes this one.
 
 ---
 
-**Fuentes, consultadas el 2 oct 2026:**
+**Sources, consulted on 2 Oct 2026:**
 developers.google.com/identity/openid-connect/openid-connect ·
 developers.google.com/identity/oauth2/web/guides/use-code-model ·
 developers.google.com/identity/gsi/web/guides/verify-google-id-token ·
 auth0.com/pricing · supabase.com/docs/guides/auth/jwts
 
-**Relacionado:** [ADR-001](ADR-001-proteccion-de-los-webhooks.md) ·
-[ADR-004](ADR-004-cada-usuaria-trae-su-clave-de-ia.md) ·
+**Related:** [ADR-001](ADR-001-webhook-protection.md) ·
+[ADR-004](ADR-004-each-user-brings-their-own-ai-key.md) ·
 `cv-server/tests/test_rutas_cerradas.py`

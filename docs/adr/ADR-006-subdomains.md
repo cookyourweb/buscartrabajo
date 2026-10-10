@@ -1,86 +1,88 @@
-# ADR-006. El producto vive en subdominios de cookyourwebai.es
+# ADR-006. The product lives on subdomains of cookyourwebai.es
 
-**Fecha:** 2 oct 2026 · **Estado:** aceptado. Nombre del panel decidido el 7 oct 2026
+**Date:** 2 Oct 2026 · **Status:** accepted. Panel name decided on 7 Oct 2026
 
 ---
 
-## Contexto
+## Context
 
-El sistema deja de ser una herramienta personal y pasa a ser un producto de la
-marca Cook Your Web, abierto por invitación. Tiene dos líneas:
+The system stops being a personal tool and becomes a product of the Cook Your Web
+brand, open by invitation. It has two lines:
 
-- **Empleo:** encontrar ofertas, aprobarlas o descartarlas, y preparar la
-  entrevista.
-- **Formación:** los cursos. Su relación con el panel de empleo se decidirá aparte.
+- **Jobs (`empleo`):** find offers, approve or discard them, and prepare for the
+  interview.
+- **Training (`formacion`):** the courses. Their relationship with the jobs panel will
+  be decided separately.
 
-La web de la marca existe y está hecha en React. El panel está en Angular.
+The brand website exists and is built in React. The panel is in Angular.
 
-## Decisión
+## Decision
 
-**Un dominio, cookyourwebai.es, con un subdominio por línea y otro para la API.**
+**One domain, cookyourwebai.es, with one subdomain per line and another for the API.**
 
-- Panel de empleo: `empleo.cookyourwebai.es` (decidido el 7 oct 2026 frente a
-  `carrera`, que es ambiguo: también es una carrera universitaria o deportiva).
-  Se publica en Vercel, donde ya vive la web; el DNS del dominio está en IONOS.
+- Jobs panel: `empleo.cookyourwebai.es` (decided on 7 Oct 2026 over `carrera`, which
+  is ambiguous in Spanish: it also means a university degree or a sports race). It is
+  published on Vercel, where the website already lives; the domain's DNS is at IONOS.
 - API: `api.cookyourwebai.es`.
-- Formación: su propio subdominio, por ejemplo `formacion.cookyourwebai.es`.
+- Training: its own subdomain, for example `formacion.cookyourwebai.es`.
 
-**La web en React no se reescribe en Angular.** La web, el panel y la formación se
-unen por tres cosas, no por el framework:
+**The React website is not rewritten in Angular.** The website, the panel and the
+training are tied together by three things, not by the framework:
 
-1. **Enlaces.** La web es la puerta de entrada y lleva a cada línea.
-2. **Un mismo sistema de diseño.** Los mismos tokens, copiados de `cookyourwebai`
-   con sus tests de contraste, como dice el
-   [plan del panel](../diseno/2026-09-06-plan-arranque-panel-angular.md). Si
-   mantenerlos en dos sitios duele, se extraen a un paquete.
-3. **Una misma cuenta.** Todas las líneas usan Google y el mismo identificador
-   interno ([ADR-003](ADR-003-autenticacion.md)). Compartir la sesión entre
-   subdominios llegará con la cookie de sesión que ADR-003 deja como evolución.
+1. **Links.** The website is the front door and leads to each line.
+2. **One design system.** The same tokens, copied from `cookyourwebai` with their
+   contrast tests, as the [panel plan](../design/2026-09-06-angular-panel-kickoff-plan.md)
+   says. If maintaining them in two places hurts, they are extracted into a package.
+3. **One account.** All lines use Google and the same internal identifier
+   ([ADR-003](ADR-003-authentication.md)). Sharing the session across subdomains will
+   come with the session cookie that ADR-003 leaves as an evolution.
 
-## Por qué subdominios del mismo dominio
+## Why subdomains of the same domain
 
-Para que el panel y la API sean del mismo sitio. Hoy la sesión va por token en
-memoria (ADR-003), y el dominio común deja abierta la evolución a una cookie que
-ningún script puede leer, sin cambiar de dominio. Con dominios distintos esa
-cookie sería de terceros, y Safari y Firefox la bloquean por defecto: no es fiable.
+So that the panel and the API belong to the same site. Today the session goes through
+an in-memory token (ADR-003), and the shared domain leaves open the evolution to a
+cookie that no script can read, without changing domain. With different domains that
+cookie would be third-party, and Safari and Firefox block it by default: it is not
+reliable.
 
-Además los subdominios no cuestan nada: vienen con el dominio que ya se paga.
+Subdomains also cost nothing: they come with the domain that is already paid for.
 
-## Sobre el SEO
+## On SEO
 
-El nombre del subdominio pesa poco en el posicionamiento: Google posiciona por el
-contenido. Y el panel vive detrás del inicio de sesión, así que Google no lo ve.
+The subdomain name carries little weight in rankings: Google ranks by content. And the
+panel lives behind sign-in, so Google does not see it.
 
-Lo que posiciona son las **páginas públicas** que explican cada línea. Esas páginas
-se generan como HTML en el momento de publicar (`@angular/ssr` con
-`outputMode: "static"`), sin servidor y sin coste. Esto modifica B1 del
-[tablero](../diseno/2026-09-05-decisiones-arquitectura.md) solo para las páginas
-públicas: el panel sigue siendo una aplicación de navegador.
+What ranks are the **public pages** that explain each line. Those pages are generated
+as HTML at publish time (`@angular/ssr` with `outputMode: "static"`), with no server
+and no cost. This modifies B1 of the
+[board](../design/2026-09-05-architecture-decisions.md) only for the public pages: the
+panel remains a browser application.
 
-**Pendiente:** si esas páginas públicas viven en el panel en Angular o en la web en
-React.
+**Pending:** whether those public pages live in the Angular panel or in the React
+website.
 
-## Consecuencias
+## Consequences
 
-**Se acepta:**
+**Accepted:**
 
-- Hay que configurar el DNS del dominio y publicar cada pieza en su subdominio.
-- La web, el panel y la formación tienen que respetar el mismo sistema de diseño
-  para sentirse un solo producto.
+- The domain's DNS has to be configured and each piece published on its subdomain.
+- The website, the panel and the training have to respect the same design system to
+  feel like a single product.
 
-**Se gana:**
+**Gained:**
 
-- Un producto con una sola marca y una sola cuenta.
-- Ninguna reescritura: cada pieza sigue en la tecnología en la que está.
+- One product with a single brand and a single account.
+- No rewrite: each piece stays in the technology it is in.
 
-## Cuándo se revisa
+## When to revisit
 
-Cuando se decida si la web integra el panel o solo lo enlaza. Hoy solo lo enlaza.
+When it is decided whether the website integrates the panel or only links to it. Today
+it only links to it.
 
 ---
 
-**Fuentes, consultadas el 2 oct 2026:** angular.dev/guide/ssr ·
+**Sources, consulted on 2 Oct 2026:** angular.dev/guide/ssr ·
 developer.mozilla.org/en-US/docs/Web/Privacy/Guides/Third-party_cookies
 
-**Relacionado:** [ADR-003](ADR-003-autenticacion.md) ·
-[plan del panel](../diseno/2026-09-06-plan-arranque-panel-angular.md)
+**Related:** [ADR-003](ADR-003-authentication.md) ·
+[panel plan](../design/2026-09-06-angular-panel-kickoff-plan.md)
