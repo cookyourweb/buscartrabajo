@@ -1,93 +1,97 @@
-# El workflow de n8n, en git y verificable
+# The n8n workflow, in git and verifiable
 
-## El problema que resuelve
+## The problem this solves
 
-El workflow vive en el servidor de n8n, no aquí. Se toca por la UI, y el export es un
-JSON enorme donde cada nodo de código está dentro de un string con `\n` escapados.
+The workflow lives on the n8n server, not here. It is edited through the UI, and the
+export is one enormous JSON file where every code node sits inside a string full of
+escaped `\n`.
 
-Consecuencia: **un cambio de tres líneas es invisible en `git diff`**. Por eso los
-`BACKUP-*.json` de al lado son "antes de X" en vez de un histórico — solo servían para
-restaurar entero, no para leer qué cambió.
+The consequence: **a three-line change is invisible in `git diff`**. That is why the
+neighbouring `BACKUP-*.json` files are "before X" snapshots instead of a history: they
+were only good for restoring everything, not for reading what changed.
 
-Y sin diff legible no hay revisión. El 30-ago-2026, pegando a mano, el código de
-`Formatear ofertas` acabó **también** dentro de `Code - Normalizar Modalidad`, que perdió
-sus 100 líneas propias. Se cazó por casualidad. Eso es lo que este directorio evita.
+And without a readable diff there is no review. On 30 Aug 2026, while pasting by hand,
+the code of `Formatear ofertas` ended up **also** inside `Code - Normalizar Modalidad`,
+which lost its own 100 lines. It was caught by chance. This directory exists to prevent
+that.
 
-## Qué hay aquí
+## What is here
 
 ```
-workflow.json        estructura y conexiones. Los cuerpos largos son "@@FILE:nodes/…"
-                     y los paths de webhook, "@@SECRET:<nodo>"
-nodes/*.js           un fichero por nodo de código  -> git diff legible, node --check
-nodes/*.body.txt     un fichero por cuerpo de petición (el prompt de Groq, por ejemplo)
-secrets.local.json   los paths de webhook. NO ESTÁ EN GIT (.gitignore)
+workflow.json        structure and connections. Long bodies are "@@FILE:nodes/…"
+                     and webhook paths are "@@SECRET:<node>"
+nodes/*.js           one file per code node  -> readable git diff, node --check
+nodes/*.body.txt     one file per request body (the Groq prompt, for example)
+secrets.local.json   the webhook paths. NOT IN GIT (.gitignore)
 ```
 
-## Por qué los paths de webhook no se commitean
+## Why the webhook paths are not committed
 
-Desde el 30-ago-2026 el webhook de búsqueda se protege por un **path impredecible**:
-el nombre viejo (`buscar-para-user`) estaba publicado en este repositorio y cualquiera
-podía dispararlo — comprobado con `curl`, sin credenciales, HTTP 200.
+Since 30 Aug 2026 the search webhook is protected by an **unpredictable path**: the old
+name (`buscar-para-user`) was published in this repository and anyone could trigger it.
+This was verified with `curl`, no credentials, HTTP 200.
 
-Este repositorio es **público**. Si el path nuevo acabara en `workflow.json`, el primer
-`git push` lo publicaría y la protección duraría lo que tarda un commit. Por eso
-`wf-split` lo saca a `secrets.local.json`, que está en `.gitignore`, y `wf-check`
-avisa si aparece un path sin redactar.
+This repository is **public**. If the new path ended up in `workflow.json`, the first
+`git push` would publish it and the protection would last exactly one commit. That is why
+`wf-split` moves it to `secrets.local.json`, which is in `.gitignore`, and `wf-check`
+warns if it finds a path that was not redacted.
 
-Si `secrets.local.json` se pierde, `wf-join` **para** y dice qué webhooks le faltan:
-hay que recuperar esos paths de n8n. Es la contrapartida honesta de que el secreto
-no viva en git.
+If `secrets.local.json` is lost, `wf-join` **stops** and tells you which webhooks are
+missing: you have to recover those paths from n8n. It is the honest trade-off of keeping
+the secret out of git.
 
-## El ciclo
+## The cycle
 
-**Cuando el cambio sale de n8n** (alguien tocó la UI):
+**When the change comes from n8n** (someone edited the UI):
 
 ```bash
-# 1. Exportar desde n8n:  menú "..." -> Download
-node scripts/wf-check.mjs ~/Downloads/<export>.json     # ¿está sano?
+# 1. Export from n8n:  menu "..." -> Download
+node scripts/wf-check.mjs ~/Downloads/<export>.json     # is it healthy?
 node scripts/wf-split.mjs ~/Downloads/<export>.json workflows/PROD
-git diff                                                # ahora SÍ se lee
+git diff                                                # now it IS readable
 git commit
 ```
 
-**Cuando el cambio sale de aquí** (se edita el código en el editor):
+**When the change comes from here** (the code is edited in the editor):
 
 ```bash
 node scripts/wf-join.mjs workflows/PROD workflows/PROD/_importar.json
-node scripts/wf-check.mjs workflows/PROD/_importar.json  # verificar ANTES de importar
-# importar en n8n DENTRO del workflow abierto: menú "..." -> Import from File
+node scripts/wf-check.mjs workflows/PROD/_importar.json  # verify BEFORE importing
+# import into n8n INSIDE the open workflow: menu "..." -> Import from File
 ```
 
-El viaje de ida y vuelta está comprobado: `split` + `join` devuelve un JSON **idéntico**
-al original. Si algún día deja de serlo, es un bug del script, no del workflow.
+The round trip is verified: `split` + `join` returns a JSON **identical** to the
+original. If that ever stops being true, it is a bug in the script, not in the workflow.
 
-## Importar sin romper nada
+## Importing without breaking anything
 
-**Dentro del workflow abierto**, menú `...` -> *Import from File*. Desde la lista de
-workflows crea uno NUEVO y sin credenciales.
+**Inside the open workflow**, menu `...` -> *Import from File*. From the workflow list it
+creates a NEW workflow with no credentials.
 
-## Las reglas de `wf-check.mjs`
+## The rules of `wf-check.mjs`
 
-Cada una existe porque algo se rompió de verdad. Ninguna depende de que nadie se acuerde.
+Each one exists because something actually broke. None depends on anyone remembering.
 
-| # | Regla | De dónde sale |
-|---|-------|---------------|
-| 1 | Dos nodos de código con roles distintos no pueden tener el mismo cuerpo | 30-ago: `Formatear ofertas` pisó a `Code - Normalizar Modalidad` |
-| 2 | Todo nodo de código compila (`node --check`) | un error de sintaxis solo se ve al ejecutar |
-| 3 | Todo `$('X')` apunta a un nodo que existe | renombrar un nodo deja colgadas las referencias |
-| 4 | Groq: `max_tokens` ≤ 4096 y `reasoning_effort` si el modelo es `gpt-oss` | 30-ago: la cuenta tiene **8000 TPM** y `max_tokens` cuenta dentro; sin `reasoning_effort` el modelo razona y devuelve `content` vacío |
-| 5 | Adzuna: sin `where=`, sin `app_key` en la URL, con `salary_min` | 30-ago: `where=Madrid` tiraba el 85% de España; la clave va por credencial de n8n |
-| 6 | Lo que se calcula se devuelve, y lo que se devuelve se escribe | 30-ago: `ubic` se calculaba y se tiraba, y `Notion - Crear Oferta` ni tenía el campo |
+| # | Rule | Where it comes from |
+|---|------|---------------------|
+| 1 | Two code nodes with different roles cannot have the same body | 30 Aug: `Formatear ofertas` overwrote `Code - Normalizar Modalidad` |
+| 2 | Every code node compiles (`node --check`) | a syntax error only shows up at run time |
+| 3 | Every `$('X')` points to a node that exists | renaming a node leaves dangling references |
+| 4 | Groq: `max_tokens` <= 4096 and `reasoning_effort` if the model is `gpt-oss` | 30 Aug: the account has **8000 TPM** and `max_tokens` counts toward it; without `reasoning_effort` the model reasons and returns an empty `content` |
+| 5 | Adzuna: no `where=`, no `app_key` in the URL, with `salary_min` | 30 Aug: `where=Madrid` discarded 85% of Spain; the key goes through an n8n credential |
+| 6 | What is computed is returned, and what is returned is written | 30 Aug: `ubic` was computed and thrown away, and `Notion - Crear Oferta` did not even have the field |
 
-Hermanos con el mismo cuerpo (`… Error` y `… Error1`, dos ramas que preparan el mismo
-correo) salen como AVISO, no como fallo: eso es a propósito.
+Sibling nodes with the same body (`… Error` and `… Error1`, two branches that prepare the
+same email) show up as a WARNING, not a failure: that is intentional.
 
-Cuando se arregle un bug nuevo, **la regla que lo habría cazado se añade aquí**. Es lo
-que dice el proyecto en `POR_QUE_FALLA_LA_IA §3`: un control que depende de que alguien
-se acuerde no es un control.
+When a new bug is fixed, **the rule that would have caught it is added here**. That is
+what the project says in `POR_QUE_FALLA_LA_IA §3`: a control that depends on someone
+remembering is not a control.
 
-## Lo que este sistema NO hace
+## What this system does NOT do
 
-- No baja el workflow solo: el export es manual (haría falta la API key de n8n).
-- No sabe qué hay **hoy** en producción. Solo lo que se exportó la última vez.
-- No ejecuta los nodos. `node --check` dice que compilan, no que hagan lo correcto.
+- It does not download the workflow by itself: the export is manual (it would need the
+  n8n API key).
+- It does not know what is in production **today**. Only what was exported last time.
+- It does not execute the nodes. `node --check` says they compile, not that they do the
+  right thing.
