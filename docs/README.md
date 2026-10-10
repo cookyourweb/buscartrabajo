@@ -1,31 +1,31 @@
-# Documentación
+# Documentation
 
-Esta carpeta está partida por **lo que se puede hacer con cada cosa**, no por tema.
-La distinción importa: aquí conviven documentos que describen el sistema de hoy con
-otros que son el registro de por qué llegó a ser así, y mezclarlos hace que no te
-puedas fiar de ninguno.
+This folder is split by **what you can do with each thing**, not by topic. The
+distinction matters: documents that describe today's system live here alongside others
+that are the record of why it came to be this way, and mixing them makes it impossible
+to trust either.
 
-| Carpeta | Qué es | ¿Vigente? |
+| Folder | What it is | Current? |
 |---|---|---|
-| [`adr/`](adr/) | Decisiones de arquitectura: qué se decidió, qué se descartó y por qué | Sí. Una ADR solo se sustituye por otra ADR |
-| [`runbooks/`](runbooks/) | Qué hacer cuando pasa algo. Se leen con el sistema roto | Sí |
-| [`referencia/`](referencia/) | Cómo funciona el sistema hoy y qué reglas se aplican | Sí |
-| [`diseno/`](diseno/) | Lo que se va a construir y todavía no existe: diseños, tokens y decisiones abiertas | Sí, hasta que se construye. Entonces pasa a `referencia/` |
-| [`historico/`](historico/) | Registro fechado: propuestas, auditorías y arreglos ya aplicados | **No.** Se conserva por el porqué, no por el qué |
+| [`adr/`](adr/) | Architecture decisions: what was decided, what was discarded and why | Yes. An ADR is only superseded by another ADR |
+| [`runbooks/`](runbooks/) | What to do when something happens. Read with the system broken | Yes |
+| [`reference/`](reference/) | How the system works today and which rules apply | Yes |
+| [`design/`](design/) | What is going to be built and does not exist yet: designs, tokens and open decisions | Yes, until it is built. Then it moves to `reference/` |
+| [`archive/`](archive/) | Dated record: proposals, audits and fixes already applied. Kept in their original Spanish | **No.** Kept for the why, not for the what |
 
-## Cómo leerla
+## How to read it
 
-**Si vienes a entender el sistema**, empieza por el [README](../README.md), sigue por
-[cómo entra una oferta](referencia/10-COMO-ENTRA-UNA-OFERTA-2026-07-23.md) y termina en
-[ADR-001](adr/ADR-001-proteccion-de-los-webhooks.md), que es la decisión que más
-condiciona el resto.
+**If you are here to understand the system**, start with the [README](../README.md),
+continue with [how an offer enters](reference/10-HOW-AN-OFFER-ENTERS-2026-07-23.md) and
+finish at [ADR-001](adr/ADR-001-webhook-protection.md), which is the decision that
+constrains the rest the most.
 
-**Si algo está roto**, ve directo a `runbooks/`.
+**If something is broken**, go straight to `runbooks/`.
 
-**Si te preguntas por qué algo es como es**, `historico/`. Está fechado a propósito: un
-documento de julio describe julio, y eso es exactamente lo que se le pide.
+**If you are wondering why something is the way it is**, `archive/`. It is dated on
+purpose: a document from July describes July, and that is exactly what is asked of it.
 
-## Las reglas no están aquí
+## The rules are not here
 
-Las reglas del proyecto viven en [`CONTRIBUTING.md`](../CONTRIBUTING.md), en la raíz.
-Lo que está en `docs/` hay que ir a buscarlo, y por eso se olvida.
+The project rules live in [`CONTRIBUTING.md`](../CONTRIBUTING.md), at the root. What is
+in `docs/` has to be looked up, and that is why it gets forgotten.
