@@ -161,7 +161,7 @@ soporte de Claude como fallback; habría que promoverlo a primario para esos dos
 **Cuando el flujo esté pulido:**
 6. [I4] Adjuntar el DOCX en el 2º mail.
 7. Botones de envío: "Enviar ahora" vs "Voy a modificar" (tomar la última versión guardada).
-8. 4ª etapa: preparación de entrevista (modelada en osapiens-prep).
+8. 4ª etapa: preparación de entrevista (modelada en una carpeta de prep).
 
 ---
 

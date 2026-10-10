@@ -40,10 +40,10 @@ Indeed genera un link distinto para la misma oferta en cada ejecución
 
 **Duplicados confirmados** (misma Empresa + mismo Puesto, links distintos):
 
-- `Senior Frontend Engineer - 100% Remote - EMEA` @ **Hostaway**: 2 veces el 22-jul
+- `Senior Frontend Engineer - 100% Remote - EMEA` @ **una plataforma de alquiler vacacional**: 2 veces el 22-jul
   (06:08 y 07:27 UTC), links `aaxy4j2k2jm7` y `aa4rcyq6xcvk`
-- `AI-Native TypeScript Engineer` @ **MarsBased**: 21 y 22 jul
-- También repetidos entre días: **Trivelta**, **Luxoft**, **Trimble**
+- `AI-Native TypeScript Engineer` @ **una consultora de producto**: 21 y 22 jul
+- También repetidos entre días: otras tres ofertas de empresas distintas
 
 **Causa raíz:** el link NO identifica la oferta. La clave correcta es **Empresa +
 Puesto**, que es justo por lo que dedupea el workflow n8n.
@@ -119,7 +119,7 @@ devolviendo cero, no merece la pena mantener la parte local.
 >
 > **Qué cambió y por qué.** El aviso `SIN VERIFICAR` se escribía solo dentro del campo
 > `Notas`, que en la vista de tabla de Notion no se ve. Vero aprobó dos ofertas
-> caducadas seguidas (Personio y Cactus) porque el sistema la avisó en un sitio donde
+> caducadas seguidas (dos ofertas) porque el sistema la avisó en un sitio donde
 > no iba a mirar. Se añadió a la base de datos una casilla **`Verificada`**
 > (checkbox, sin marcar por defecto) y el prompt ahora la rellena:
 >
@@ -146,12 +146,12 @@ devolviendo cero, no merece la pena mantener la parte local.
 > se lee el RANGO COMPLETO y solo entra si el SUELO del rango es senior o superior.
 >
 > **Cuarto cambio: el anti-duplicados no comparaba las candidatas entre sí.** La
-> ejecución del 30-jul creó ~20 ofertas y seis venían por duplicado: Builder.io,
-> Trivelta, CapsLock, Luxoft, Workato, Trimble e Iristrace.
+> ejecución del 30-jul creó ~20 ofertas y seis venían por duplicado, de
+> empresas distintas.
 >
 > La regla del paso 3 comparaba cada candidata contra **lo que ya estaba en Notion**,
-> nunca contra las otras candidatas de la misma tanda. Builder.io, Trivelta, CapsLock
-> y Luxoft se crearon las dos copias en la misma ejecución: al consultar Notion no
+> nunca contra las otras candidatas de la misma tanda. Cuatro de ellas
+> se crearon las dos copias en la misma ejecución: al consultar Notion no
 > existía ninguna de las dos, así que pasaron las dos. La regla hizo exactamente lo
 > que decía y aun así fallaron.
 >
@@ -159,7 +159,7 @@ devolviendo cero, no merece la pena mantener la parte local.
 > una sola por grupo, y una verificación obligatoria de que la consulta a Notion se
 > ejecutó de verdad antes de crear nada.
 no >
-> **SIN RESOLVER:** Workato, Trimble e Iristrace ya existían desde el 23-jul con
+> **SIN RESOLVER:** Tres ya existían desde el 23-jul con
 > Empresa y Puesto idénticos. Esas SÍ las tenía que haber cazado la regla vieja. O la
 > consulta no llegó a ejecutarse, o volvió truncada. No se puede diagnosticar sin ver
 > la ejecución.
@@ -334,7 +334,7 @@ sola, a favor de la más concreta. Dos consecuencias prácticas:
 - [ ] Pegar el prompt v2 en la tarea y ejecutarla a mano
 - [ ] Probar el paso 6: responder "aprueba 1, descarta 2" y comprobar en Notion que el
       `Estado` queda en `Aprobado` / `Descartado` y que NINGÚN otro campo cambió
-- [ ] Verificar en Notion que NO se recrean Hostaway / Trivelta / Luxoft / Trimble / MarsBased
+- [ ] Verificar en Notion que NO se recrean las ofertas repetidas ya listadas
 - [ ] Alinear con el schema real de `Estado` (las nueve opciones de la sección 4) los tres
       documentos que lo declaran mal: `buscartrabajo/README.md:122`, `docs/01:145` y
       `cv-server/README.md:111-117`

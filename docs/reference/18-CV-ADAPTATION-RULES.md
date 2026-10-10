@@ -1,6 +1,6 @@
 # Rules for tailoring a CV to an offer
 
-**30 Jul 2026.** They came out of external feedback on the Personio CV (Senior Frontend Engineer, Payroll Domain). Score received: 9.3/10 against 8.5 for the generic CV.
+**30 Jul 2026.** They came out of external feedback on a CV for a German HR-software company (Senior Frontend Engineer, Payroll Domain). Score received: 9.3/10 against 8.5 for the generic CV.
 
 Sibling of `16-COVER-LETTER-RULES.md`. That one rules the cover letter, this one the CV.
 
@@ -22,7 +22,7 @@ The generic headline was:
 Frontend Tech Lead | Full-Stack Developer | AI Engineer
 ```
 
-For a pure frontend offer, `AI Engineer` subtracts. It takes the most valuable spot in the CV with something that company is not looking for. For Personio:
+For a pure frontend offer, `AI Engineer` subtracts. It takes the most valuable spot in the CV with something that company is not looking for. For that company:
 
 ```
 Frontend Tech Lead | Senior Frontend Engineer | React · TypeScript · Design Systems
@@ -30,13 +30,13 @@ Frontend Tech Lead | Senior Frontend Engineer | React · TypeScript · Design Sy
 
 AI does not disappear: it stays inside the CV, in its own section. What changes is what is read first.
 
-**Corollary.** For an offer where AI is a requirement (eDreams asks for it as `must have` and again under `preferred`), the headline does the opposite and moves it up.
+**Corollary.** For an offer where AI is a requirement (a travel-tech offer asks for it as `must have` and again under `preferred`), the headline does the opposite and moves it up.
 
 ---
 
 ## 2. Allude to a domain without saying you worked in it
 
-The best finding of the Personio CV. Not saying "I have payroll experience", which would be a lie. Saying that you worked in domains where an error has real consequences: sensitive financial and personal data at scale, document generation, business workflow automation.
+The best finding of that CV. Not saying "I have payroll experience", which would be a lie. Saying that you worked in domains where an error has real consequences: sensitive financial and personal data at scale, document generation, business workflow automation.
 
 It is true, it is verifiable and it communicates exactly the same thing.
 
@@ -67,7 +67,7 @@ The offer literally asks for `React and Redux or similar stack` and mentions `SO
 - **Redux**: does NOT appear in `CV_Master_Veronica_v2.txt` nor in any of the eight CVs in `~/Desktop/cv/_fuentes/`. The only place where it exists is `~/Desktop/cv/tuyos/preparacion-entrevista-xe-iwantic.md`, which is the study base for interviews, not a record of experience.
 - **SOLID**: does not appear in the CV Master either. But here the case is different: Clean/Hexagonal architecture and design patterns are declared ground for Vero, so it is defensible.
 
-**The precedent that decides this.** At osapiens she was rejected in the final phase, and part of the feedback was that **she froze when asked for library names**. Putting a keyword in the CV to pass a filter and not being able to sustain it in the technical interview is reproducing that rejection on purpose.
+**The precedent that decides this.** In one technical conversation, naming specific libraries on the spot turned out to be hard. Putting a keyword in the CV to pass a filter and not being able to sustain it in the technical interview defeats the purpose.
 
 **The rule:**
 
@@ -115,4 +115,4 @@ Point 4 still applies: only if it is true.
 ## Related
 
 - `16-COVER-LETTER-RULES.md`: facts and not claims. It rules the cover letter.
-- Engram memory `buscartrabajo/osapiens-feedback`: the rejection for freezing on library names, which is the origin of rule 4.
+- Internal engram note on naming libraries in technical conversations, which is the origin of rule 4.

@@ -1,7 +1,7 @@
 # Fix del idioma de la carta y el CV
 
 > Escrito el 23 de julio de 2026, después de que la carta de una oferta en inglés
-> (Revolut) saliera en español. El CV acertaba y la carta no, para la misma oferta.
+> (una fintech de Londres) saliera en español. El CV acertaba y la carta no, para la misma oferta.
 
 ## Qué pasaba
 
@@ -20,7 +20,7 @@ aunque la oferta fuera inglesa.
 Nueva función `idioma_de_oferta(puesto, descripcion, empresa)`: **el título del puesto
 manda**. Viene tal cual del anuncio, en su idioma. La descripción, reescrita en español,
 ya no puede ahogar la señal del título. Solo si el título no da señal se mira la
-descripción. Con tests, incluido el caso Revolut.
+descripción. Con tests, incluido el caso de la fintech de Londres.
 
 Esto es la RED DE SEGURIDAD. No arregla la causa: solo hace que, cuando el idioma se tenga
 que adivinar, se adivine bien.
@@ -57,7 +57,7 @@ Un `idioma` vacío no rompe nada: el cv-server cae a su red de seguridad (Frente
 
 ## Cómo comprobar que quedó bien
 
-Genera el CV y la carta de una oferta claramente en inglés (por ejemplo Revolut, "Applied
+Genera el CV y la carta de una oferta claramente en inglés (por ejemplo una fintech, "Applied
 AI Engineer"). Los dos deben salir en inglés. Antes, la carta salía en español.
 
 ## Antes de tocar n8n

@@ -144,7 +144,7 @@ ofertas devueltas: 5, JSON válido
 `reasoning_effort: "low"` importa tanto como el número: `gpt-oss-120b` es un modelo de
 razonamiento y sin esa brida gasta el presupuesto pensando y devuelve `content` **vacío**.
 
-Body completo listo para pegar: `~/Desktop/groq-body-nuevo.txt`.
+Body completo listo para pegar: `<local-file>`.
 
 Modelos vivos hoy en esa cuenta de Groq (comprobado contra `/v1/models`): `openai/gpt-oss-120b`,
 `openai/gpt-oss-20b`, `openai/gpt-oss-safeguard-20b`, `qwen/qwen3.6-27b`, `qwen/qwen3.8-27b`,
@@ -156,7 +156,7 @@ rojo el siguiente eslabón, que ya estaba roto y nadie podía verlo.
 ## Pendiente después de este cambio
 
 - **El link vacío y el dedup son el mismo bug.** `Formatear ofertas` llena `yaEnviadas` con
-  `properties['Link oferta'].url` (línea 94). Mindera y knowmad mood tienen `Link oferta`
+  `properties['Link oferta'].url` (línea 94). Dos ofertas tienen `Link oferta`
   VACÍO en Notion, así que el dedup queda ciego. Guardar siempre el link arregla los dos.
 - La ordenación de `Formatear ofertas` (línea 183) sigue siendo por señal de IA, no por salario.
 - `MAX_OFERTAS = 12` sigue recortando a 12 antes de Groq.

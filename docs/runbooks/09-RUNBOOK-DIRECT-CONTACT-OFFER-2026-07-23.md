@@ -1,6 +1,6 @@
 # Runbook: an offer that arrives by direct contact
 
-> Written on 23 Jul 2026 after taking more than an hour to get the Tenth Revolution CV
+> Written on 23 Jul 2026 after taking more than an hour to get the recruitment-agency CV
 > out. The goal of this document is that next time it takes fifteen minutes.
 
 ## When it applies
@@ -46,7 +46,7 @@ Notion expects the database id). See the bug in the project memory.
 
 > **The CV is written by the prompt. Never by Claude by hand in the chat.**
 >
-> On 23 July the Tenth Revolution CV was produced by correcting by hand each flaw as it
+> On 23 July the recruitment-agency CV was produced by correcting by hand each flaw as it
 > appeared. A good CV came out and the system stayed just as broken: the prompt learned
 > nothing. When the generated CV fails, the fix goes in **the cv-server prompt**, not in
 > the CV. Correcting the result hides the problem and guarantees it will repeat on the
@@ -136,4 +136,4 @@ All four are fixed at the source, not by repeating the manual work every time.
 
 ---
 
-**Generated:** 23 July 2026, after the Tenth Revolution Group process.
+**Generated:** 23 July 2026, after a recruitment-agency process.

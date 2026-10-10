@@ -1,6 +1,6 @@
 # Rules for the open questions in application forms
 
-**31 Aug 2026** · They came out of correcting the answer to the Lodgify form eleven times.
+**31 Aug 2026** · They came out of correcting the answer to a vacation-rental software form eleven times.
 It is not theory: every rule comes from a draft that did not work.
 
 **Related:** `16-COVER-LETTER-RULES.md` (the cover letter), `18-CV-ADAPTATION-RULES.md` (the CV).
@@ -131,7 +131,7 @@ users since August 2025. cv-server is a tool of her own; tuvueltalsol is a produ
 For an application that weighs far more. cv-server serves as an auditable public code link.
 
 Real repo (long and not at all obvious, which is why it gets lost):
-`~/familiasEsteleares/react/agenda-tu-vuelta-al-sol/proyectoAgendaAstrologica/next-build-estable/tu-vuelta-al-sol`
+`<local-repo-path>`
 
 The copies in `Documents/`, `Downloads/`, `n8nClaude/` and `lovable/` are **dead**.
 
@@ -241,7 +241,7 @@ confirm which repo has the commit history.
 
 **Bringing in outside contrast works, but it is not accepted without checking.** When outside advice
 said "don't sell yourself as a Data Scientist", it was checked against the PPS: it was already written there.
-When it said "depersonalize the baseline", it was rejected with an argument.
+When it said "depersonalize the baseline", it was not adopted, and the reason was written down.
 
 ---
 
@@ -258,4 +258,4 @@ When it said "depersonalize the baseline", it was rejected with an argument.
 
 ---
 
-*Origin: session of 31 August 2026, application to Lodgify (Senior AI Engineer, via Lever).*
+*Origin: session of 31 August 2026, application to a vacation-rental software company (via Lever).*

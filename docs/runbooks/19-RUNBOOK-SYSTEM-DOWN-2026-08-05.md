@@ -108,8 +108,8 @@ webhook: 200 (38.1s)
 response: {"messageId": "<...@smtp-relay.mailin.fr>"}
 
 NEW OFFERS IN NOTION: 2
-  zooplus SE | Senior AI Engineer         | Sin confirmar
-  Swiss Re   | Senior Full Stack Engineer | Sin confirmar
+  Online retailer | Senior AI Engineer         | Sin confirmar
+  Reinsurer     | Senior Full Stack Engineer | Sin confirmar
 ```
 
 The two are exactly the ones Groq had selected on 4 August and the filter discarded.
@@ -124,7 +124,7 @@ Each of these wasted time in some earlier diagnosis. Read them before investigat
 
 ### Deception 1: "the emails are not reaching me"
 
-The emails **do** arrive. They are unread in the destination inbox, sender `veronica@cookyourwebai.es` (Brevo). On 5 August the Arelance offer of 2 Aug and the three error notices of 29, 30 and 31 July were unread.
+The emails **do** arrive. They are unread in the destination inbox, sender `veronica@cookyourwebai.es` (Brevo). On 5 August an offer of 2 Aug and the three error notices of 29, 30 and 31 July were unread.
 
 The email is sent **once for each new offer created in Notion**. With no new offer there is no email. So "no emails arrive" almost always means "no offers are being created", which is a different problem and further upstream.
 
