@@ -1,153 +1,159 @@
-# Panel de empleo en Angular: plan de arranque
+# Jobs panel in Angular: kickoff plan
 
-Fecha: 2026-09-06
-Estado: preparado, sin arrancar
-Continúa a: `2026-09-05-panel-empleo-angular-design.md`
+Date: 2026-09-06
+Status: prepared, not started
+Continues: `2026-09-05-panel-empleo-angular-design.md`
 
-## El mapa: qué hay y cómo convive
+## The map: what exists and how it coexists
 
-Son cuatro piezas que ya existen y una que se añade. Ninguna se reescribe.
+There are four pieces that already exist and one that is added. None is rewritten.
 
-| Pieza | Repositorio | Qué es | Papel |
+| Piece | Repository | What it is | Role |
 |---|---|---|---|
-| Captación | `buscartrabajo` (`workflows/`) | Workflows de n8n | Capta ofertas y las escribe en Notion |
-| Sistema | `buscartrabajo` | Python y scripts | Filtros, reglas y documentación de decisiones |
-| Motor | `cv-server` | FastAPI en Render | Genera el CV y la carta adaptados |
-| Marca | `cookyourwebai` | React, sitio de la agencia | Cantera del design system |
-| **Cara** | **`panel-empleo`** | **Angular 22** | **Lo que se añade** |
+| Intake | `buscartrabajo` (`workflows/`) | n8n workflows | Gathers offers and writes them to Notion |
+| System | `buscartrabajo` | Python and scripts | Filters, rules and documentation of decisions |
+| Engine | `cv-server` | FastAPI on Render | Generates the tailored CV and cover letter |
+| Brand | `cookyourwebai` | React, the agency's site | Source for the design system |
+| **Face** | **`panel-empleo`** | **Angular 22** | **What is being added** |
 
-Los tres papeles que no hay que confundir:
+The three roles that must not be confused:
 
-- **`cv-server` es el motor.** El panel le habla a él. No se reescribe ni se duplica.
-- **`cookyourwebai` es la cantera del diseño.** De ahí salen las rampas y los tokens
-  medidos. El panel los hereda; la web de la agencia no depende del panel.
-- **Angular es lo que se viene a practicar.** Es el hueco declarado del currículum, y
-  por eso el panel va en repositorio propio: para que se vea.
+- **`cv-server` is the engine.** The panel talks to it. It is not rewritten or
+  duplicated.
+- **`cookyourwebai` is the design quarry.** The ramps and the measured tokens come
+  from there. The panel inherits them; the agency's website does not depend on the
+  panel.
+- **Angular is what is being practiced here.** It is the declared gap in the CV,
+  and that is why the panel goes in its own repository: so that it can be seen.
 
-En una frase: el panel es la cara en Angular de un motor que ya funciona, vestido con
-la marca de CookYourWeb.
+In one sentence: the panel is the Angular face of an engine that already works,
+dressed in the CookYourWeb brand.
 
-### Cómo conviven
+### How they coexist
 
 ```
 n8n ---- Notion
               \
                +---- cv-server (FastAPI) ---- panel-empleo (Angular)
                           |
-                          +---- Postgres, Drive, modelos
+                          +---- Postgres, Drive, models
 
-cookyourwebai: no participa en tiempo de ejecución.
-               Aporta los tokens, que se copian.
+cookyourwebai: does not take part at runtime.
+               It provides the tokens, which are copied.
 ```
 
-Reglas de convivencia:
+Coexistence rules:
 
-- **El panel solo habla con `cv-server`.** Nunca con Notion, ni con Drive, ni con un
-  modelo de lenguaje. El navegador no ve jamás un token de terceros.
-- **`buscartrabajo` no depende del panel.** Sigue funcionando por línea de comandos
-  aunque el panel no exista. El panel sustituye la interfaz, no el sistema.
-- **`cookyourwebai` y el panel comparten tokens, no código.** Se copian, con sus tests.
-  Si un día duele mantenerlos en dos sitios, se extraen a un paquete.
-- **En cada momento se escribe en un solo sitio.** La regla del diseño del 5 de
-  septiembre sigue vigente: en la rebanada 1 Notion es la verdad y el panel solo lee.
+- **The panel talks only to `cv-server`.** Never to Notion, nor Drive, nor a language
+  model. The browser never sees a third-party token.
+- **`buscartrabajo` does not depend on the panel.** It keeps working from the command
+  line even if the panel does not exist. The panel replaces the interface, not the
+  system.
+- **`cookyourwebai` and the panel share tokens, not code.** They are copied, along with
+  their tests. If one day maintaining them in two places hurts, they are extracted into
+  a package.
+- **At any moment, writes go to a single place.** The rule from the 5 September design
+  still holds: in slice 1 Notion is the source of truth and the panel only reads.
 
-## Qué cambió desde el diseño del 5 de septiembre
+## What changed since the 5 September design
 
-El diseño mandaba llevar los colores a Figma, medir contrastes y después bajarlos al
-código. **Los dos primeros pasos ya están hechos, y en código.**
+The design said to take the colors to Figma, measure contrasts and then bring them down
+into code. **The first two steps are already done, and in code.**
 
-El 6 de septiembre se implantó el design system en `cookyourwebai`: las cuatro rampas
-completas, los tokens semánticos apuntando a ellas y veinticuatro tests que calculan
-el contraste con la fórmula de WCAG y fallan si un par baja del mínimo. Está en
-producción.
+On 6 September the design system was implemented in `cookyourwebai`: the four complete
+ramps, the semantic tokens pointing to them and twenty-four tests that calculate
+contrast with the WCAG formula and fail if a pair drops below the minimum. It is in
+production.
 
-Los tokens dejaron de ser una propuesta. Meterlos ahora en Figma para volver a bajarlos
-crearía una segunda fuente de verdad, que es justamente lo que ese trabajo corrigió.
+The tokens stopped being a proposal. Putting them into Figma now just to bring them
+down again would create a second source of truth, which is exactly what that work
+fixed.
 
-**Figma entra después, para las pantallas**: layout, componentes y variantes. Ahí sí
-aporta. Para los colores ya no.
+**Figma comes in later, for the screens**: layout, components and variants. There it
+does add value. For colors, no longer.
 
-## Decisiones tomadas
+## Decisions made
 
-| Decisión | Elección | Motivo |
+| Decision | Choice | Reason |
 |---|---|---|
-| Dónde vive | Repositorio propio, `panel-empleo` | Ver más abajo |
-| Framework | Angular 22, standalone y signals | Hueco declarado en el CV |
-| Runner de tests | Vitest | Soportado oficialmente por Angular 22; Karma está en las últimas |
-| Tokens | Se copian de `cookyourwebai` con sus tests | Ya están medidos y protegidos |
-| Figma | Después, y solo para pantallas | Los colores ya están decididos |
+| Where it lives | Its own repository, `panel-empleo` | See below |
+| Framework | Angular 22, standalone and signals | Declared gap in the CV |
+| Test runner | Vitest | Officially supported by Angular 22; Karma is on its way out |
+| Tokens | Copied from `cookyourwebai` with their tests | They are already measured and protected |
+| Figma | Later, and only for screens | The colors are already decided |
 
-### Por qué repositorio aparte
+### Why a separate repository
 
-Medido el 6 de septiembre: GitHub etiqueta `buscartrabajo` como **Python** (79.130
-bytes de Python contra 72.143 de JavaScript). De los veinte repositorios de la cuenta,
-**ninguno es Angular**: los que aparecen como TypeScript son React.
+Measured on 6 September: GitHub labels `buscartrabajo` as **Python** (79,130 bytes of
+Python against 72,143 of JavaScript). Of the twenty repositories in the account,
+**none is Angular**: the ones that show up as TypeScript are React.
 
-Un panel Angular enterrado en una subcarpeta de un repositorio que GitHub muestra como
-Python deja la única evidencia de Angular donde nadie la mira. Quien revisa un perfil
-abre y mira; no bucea.
+An Angular panel buried in a subfolder of a repository that GitHub shows as Python
+leaves the only Angular evidence where nobody looks. Whoever reviews a profile opens
+and looks; they do not dive.
 
-Con repositorio propio hay README propio, TypeScript como lenguaje dominante,
-integración continua con una sola suite y despliegue independiente. Y desaparece el
-`package.json` anidado, que obligaría a ejecutar dos suites distintas en el mismo
-flujo.
+With its own repository there is its own README, TypeScript as the dominant language,
+continuous integration with a single suite and independent deployment. And the nested
+`package.json` disappears, which would force two different suites to run in the same
+workflow.
 
-No va dentro de `cookyourwebai`: ese es el sitio de la agencia y el panel es otro
-producto.
+It does not go inside `cookyourwebai`: that is the agency's site and the panel is a
+different product.
 
-### Qué pasa con el design system compartido
+### What happens with the shared design system
 
-Los tokens se copian al panel. Si algún día duele mantenerlos en dos sitios, se
-extraen a un paquete.
+The tokens are copied into the panel. If one day maintaining them in two places hurts,
+they are extracted into a package.
 
-Copiar dos veces está bien. Abstraer antes de la tercera es prematuro, y crea una
-dependencia que hay que versionar y publicar para dos consumidores.
+Copying twice is fine. Abstracting before the third time is premature, and creates a
+dependency that has to be versioned and published for two consumers.
 
-## Bloqueante antes de empezar
+## Blocker before starting
 
-**Angular 22 no arranca con el Node instalado.**
+**Angular 22 does not start with the installed Node.**
 
-- Exige `^22.22.3 || ^24.15.0 || >=26.0.0`
-- Instalado hoy: `v20.19.3`, y es la única versión en `nvm`
+- It requires `^22.22.3 || ^24.15.0 || >=26.0.0`
+- Installed today: `v20.19.3`, and it is the only version in `nvm`
 
-Se resuelve con `nvm install 22`. No afecta al Node global: `nvm` cambia la versión por
-terminal, así que el resto de proyectos siguen igual.
+It is solved with `nvm install 22`. It does not affect the global Node: `nvm` changes
+the version per terminal, so the other projects stay the same.
 
-## Pasos, en orden
+## Steps, in order
 
-1. **Node 22.** `nvm install 22`. Sin esto no hay nada.
-2. **Crear el repositorio** `panel-empleo`, público, y el andamiaje con `ng new`:
-   standalone, signals, sin renderizado en servidor, Vitest como runner.
-3. **Portar el design system.** Las cuatro rampas y los tokens semánticos como custom
-   properties, y con ellos `contrast.ts`, `tokens.ts` y sus veinticuatro tests. La
-   primera suite queda en verde el primer día y el sistema nace protegido.
-4. **Integración continua desde el primer commit.** El mismo flujo que ya funciona en
-   `buscartrabajo` y en `cookyourwebai`: instalar con `npm ci`, ejecutar los tests y
-   compilar, en cada push y en cada pull request.
-5. **Rebanada 1, con test primero.** Empezando por la interfaz de datos, que es lo que
-   permite que la demo pública no dependa de ningún backend vivo.
+1. **Node 22.** `nvm install 22`. Without this there is nothing.
+2. **Create the repository** `panel-empleo`, public, and the scaffolding with `ng new`:
+   standalone, signals, no server-side rendering, Vitest as the runner.
+3. **Port the design system.** The four ramps and the semantic tokens as custom
+   properties, and with them `contrast.ts`, `tokens.ts` and their twenty-four tests.
+   The first suite is green on day one and the system is born protected.
+4. **Continuous integration from the first commit.** The same workflow that already
+   works in `buscartrabajo` and in `cookyourwebai`: install with `npm ci`, run the
+   tests and build, on every push and every pull request.
+5. **Slice 1, test first.** Starting with the data interface, which is what lets the
+   public demo not depend on any live backend.
 
-## Cómo se trabaja
+## How the work is done
 
-- Un test que falla, la pieza mínima que lo pone en verde, y commit. Sin excepciones.
-- Commits pequeños, cada uno con una decisión explicada. Nada de un commit gigante.
-- Una pull request por rebanada, no una al final. Con la suite en verde y el preview
-  desplegado antes de mezclar.
-- Arquitectura, nombres de dominio y prioridades se preguntan. El detalle de
-  implementación se resuelve y se cuenta.
+- One failing test, the minimum piece that turns it green, and a commit. No
+  exceptions.
+- Small commits, each with one decision explained. No giant commit.
+- One pull request per slice, not one at the end. With the suite green and the preview
+  deployed before merging.
+- Architecture, domain names and priorities are asked about. Implementation detail is
+  resolved and reported.
 
-## Qué no entra en el arranque
+## What is out of scope at kickoff
 
-- Tocar `cv-server`. Su falta de autenticación es trabajo aparte y está documentada.
-- Migrar nada de Notion. En la rebanada 1 Notion sigue siendo la verdad.
+- Touching `cv-server`. Its lack of authentication is separate work and is documented.
+- Migrating anything from Notion. In slice 1 Notion remains the source of truth.
 - Figma.
-- Postular automáticamente, que ya quedó fuera en el diseño.
+- Applying automatically, which was already left out in the design.
 
-## Pendiente de decidir al arrancar
+## Still to decide at kickoff
 
-Si el trabajo pasa antes por el flujo de desarrollo dirigido por especificación
-(propuesta, especificaciones, diseño y tareas escritas antes del código) o se va
-directo a las rebanadas con test primero.
+Whether the work first goes through the spec-driven development flow (proposal,
+specifications, design and tasks written before the code) or goes straight to the
+slices with test first.
 
-Lo primero es más lento al principio y deja un rastro de decisiones en el repositorio.
-Lo segundo es más rápido y ya demostró funcionar el 6 de septiembre.
+The first is slower at the start and leaves a trail of decisions in the repository.
+The second is faster and already proved to work on 6 September.

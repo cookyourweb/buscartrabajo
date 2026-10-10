@@ -1,239 +1,241 @@
-# Panel de empleo en Angular: diseño
+# Jobs panel in Angular: design
 
-Fecha: 2026-09-05
-Estado: propuesta, pendiente de aprobación
-Autora de las decisiones: Verónica Serna
+Date: 2026-09-05
+Status: proposal, pending approval
+Decisions by: Verónica Serna
 
-## 1. Qué es esto
+## 1. What this is
 
-La cara de un sistema que ya funciona.
+The face of a system that already works.
 
-Hoy el sistema existe y está en producción, pero repartido: un workflow de n8n capta
-ofertas, `cv-server` genera el CV adaptado, diecinueve scripts de Python hacen el
-resto y Notion sirve a la vez de almacén y de interfaz. Se maneja por línea de
-comandos.
+Today the system exists and is in production, but scattered: an n8n workflow gathers
+offers, `cv-server` generates the tailored CV, nineteen Python scripts do the rest and
+Notion serves as both storage and interface. It is operated from the command line.
 
-Este proyecto construye la interfaz web de ese sistema. No inventa producto nuevo:
-unifica el que ya hay.
+This project builds the web interface for that system. It does not invent a new
+product: it unifies the one that already exists.
 
-## 2. Alcance: multiusuario desde el diseño, una usuaria hoy
+## 2. Scope: multi-user by design, one user today
 
-El sistema **es multiusuario desde el primer día**. Lo que ocurre hoy es que solo hay
-una fila en la tabla de usuarios.
+The system **is multi-user from day one**. What happens today is that there is only
+one row in the users table.
 
-Esto no es un matiz de redacción. Significa que no existe un «cuando abramos el
-multiusuario»: no hay dos modos, no hay migración pendiente y no hay condicionales
-repartidos por el código. Hay un sistema multiusuario con un usuario.
+This is not a wording nuance. It means there is no "when we open up multi-user": there
+are no two modes, no pending migration and no conditionals scattered through the code.
+There is a multi-user system with one user.
 
-Entra en el diseño desde ahora:
+Entering the design from now:
 
-| Entra desde el día uno | Por qué |
+| Included from day one | Why |
 |---|---|
-| `user_id` en todas las tablas | Añadirlo después obliga a migrar datos y a tocar todas las consultas |
-| Toda consulta filtra por usuario | El aislamiento no se retro-encaja. Se olvida una consulta y se filtran datos ajenos |
-| Autenticación real, con la identidad saliendo de un token | Es el agujero que ya existe en `cv-server` y en `tu-vuelta-al-sol`. Nace bien o nace mal |
-| Control de gasto por usuario | Las llamadas al modelo son el único coste variable. Sin límite por usuario no se puede abrir a nadie |
-| La capa de datos detrás de una interfaz | Permite la demo pública y permite testear sin red |
+| `user_id` on every table | Adding it later forces a data migration and touching every query |
+| Every query filters by user | Isolation cannot be retrofitted. Forget one query and someone else's data leaks |
+| Real authentication, with identity coming from a token | It is the hole that already exists in `cv-server` and in `tu-vuelta-al-sol`. It is born right or born wrong |
+| Per-user spending control | Model calls are the only variable cost. Without a per-user limit it cannot be opened to anyone |
+| The data layer behind an interface | Enables the public demo and enables testing without a network |
 
-Queda fuera solo lo que es producto y se añade sin tocar la arquitectura: pantallas
-de alta e invitaciones, roles y permisos finos, panel de administración y facturación.
+Only what is product, and can be added without touching the architecture, stays out:
+sign-up and invitation screens, fine-grained roles and permissions, an admin panel and
+billing.
 
-## 3. Objetivos
+## 3. Goals
 
-- Sustituir la línea de comandos y Notion como interfaz de trabajo diaria.
-- Ser código público defendible: un tech lead abre el repo y ve criterio.
-- Convertir Angular y Figma, hoy huecos declarados, en experiencia real bajo la regla
-  del CV: una tecnología entra solo si se tiene de verdad.
+- Replace the command line and Notion as the daily working interface.
+- Be defensible public code: a tech lead opens the repo and sees judgment.
+- Turn Angular and Figma, today declared gaps, into real experience under the CV
+  rule: a technology goes in only if it is genuinely held.
 
-## 4. Dos despliegues
+## 4. Two deployments
 
-| | Datos | Dónde | Para quién |
+| | Data | Where | For whom |
 |---|---|---|---|
-| **Real** | Los de Verónica | Local o privado | Ella, a diario |
-| **Demo** | De ejemplo, incluidos en el propio front | Público, estático | Quien abra el enlace |
+| **Real** | Verónica's own | Local or private | Her, daily |
+| **Demo** | Sample data, bundled in the front end itself | Public, static | Whoever opens the link |
 
-La demo no toca backend ni base de datos. No es un parche a ningún plan gratuito: un
-escaparate debe cargar al instante y no puede depender de que un servicio esté vivo.
+The demo touches neither backend nor database. It is not a patch for any free plan: a
+showcase must load instantly and cannot depend on a service being alive.
 
-Esto no se resuelve con un `if`. La aplicación depende de una interfaz de datos y se
-inyecta una implementación u otra.
+This is not solved with an `if`. The application depends on a data interface and one
+implementation or another is injected.
 
-## 5. Decisiones tomadas
+## 5. Decisions made
 
-| Decisión | Elección | Motivo |
+| Decision | Choice | Reason |
 |---|---|---|
-| Framework | Angular última versión, standalone y signals | Hueco a cubrir; decisión del 22-jul-2026 |
-| Base de datos | Postgres | Los datos son relacionales y hacen falta constraints |
-| Quién habla con la base | Solo el backend | El navegador nunca toca la base ni ve un token de terceros |
-| Backend | `cv-server`, que ya existe | Ya funciona, con guardrails y tests. No se añaden servicios |
-| Autenticación | OIDC, con `cv-server` validando el token en cada petición | Lo transferible es el protocolo, no el proveedor |
-| Captación | n8n, sin cambios | Está en producción |
-| Notion | Solo como entrada de n8n | Deja de ser almacén y deja de ser interfaz |
-| Diseño | Figma con Variables, antes del código | Es evidencia pública, igual que Angular |
+| Framework | Angular latest version, standalone and signals | A gap to cover; decision of 22 Jul 2026 |
+| Database | Postgres | The data is relational and constraints are needed |
+| Who talks to the database | Only the backend | The browser never touches the database or sees a third-party token |
+| Backend | `cv-server`, which already exists | It already works, with guardrails and tests. No services are added |
+| Authentication | OIDC, with `cv-server` validating the token on every request | The transferable part is the protocol, not the provider |
+| Intake | n8n, unchanged | It is in production |
+| Notion | Only as an n8n input | It stops being storage and stops being an interface |
+| Design | Figma with Variables, before the code | It is public evidence, just like Angular |
 
-### Por qué Notion deja de ser la base de datos
+### Why Notion stops being the database
 
-Notion es una herramienta de trabajo humano con una API encima. No tiene constraints,
-ni integridad referencial, ni transacciones, y su API va a unas tres peticiones por
-segundo.
+Notion is a tool for human work with an API on top. It has no constraints, no
+referential integrity and no transactions, and its API runs at about three requests
+per second.
 
-Ya falló por esto, y está documentado en el propio repositorio. De la cabecera de
-`cv-server/tests/test_usuario_multicuenta.py`: al no poder declarar que un usuario es
-único, hubo que crear dos registros para la misma persona, los dos derivaron y el CV
-salió con la cabecera equivocada. Un `UNIQUE` lo habría impedido.
+It has already failed because of this, and it is documented in the repository itself.
+From the header of `cv-server/tests/test_usuario_multicuenta.py`: since it was not
+possible to declare that a user is unique, two records had to be created for the same
+person, both drifted and the CV came out with the wrong header. A `UNIQUE` would have
+prevented it.
 
-## 6. Arquitectura
+## 6. Architecture
 
 ```
-Angular (navegador)
+Angular (browser)
   |
   '-- cv-server (FastAPI)
         |
         |-- Postgres
-        '-- Drive, modelos de lenguaje, plantillas
+        '-- Drive, language models, templates
 
-n8n, fuera de la aplicación: capta ofertas.
-  En la rebanada 1 sigue escribiendo en Notion y una sincronización las lleva
-  a la base. Que escriba directo en Postgres es trabajo aparte.
+n8n, outside the application: gathers offers.
+  In slice 1 it keeps writing to Notion and a sync carries them
+  to the database. Having it write straight to Postgres is separate work.
 ```
 
-Reglas que sostienen esto:
+Rules that hold this up:
 
-- El navegador no ve nunca un token de Notion, de Drive ni de un modelo.
-- La aplicación no habla con Notion. Nunca.
-- `cv-server` deja de fiarse del email que llegue en el cuerpo de la petición.
+- The browser never sees a Notion, Drive or model token.
+- The application does not talk to Notion. Ever.
+- `cv-server` stops trusting the email that arrives in the request body.
 
-## 7. Modelo de datos
+## 7. Data model
 
-Cinco tablas. Todas con `user_id`, aunque hoy solo haya un valor.
+Five tables. All with `user_id`, even though today there is only one value.
 
-- `profiles`: una fila por persona.
-- `profile_emails`: los buzones de una persona. Resuelve el caso de los dos correos
-  sin duplicar la persona. `UNIQUE(email)`.
-- `offers`: ofertas captadas. Empresa, puesto, descripción, origen, fecha.
-- `applications`: relación entre persona y oferta. Estado, fecha de envío, vía. Aquí
-  vive el seguimiento.
-- `documents`: CVs y cartas generados. Apuntan a una `application` y guardan el
-  enlace de Drive y los avisos de los guardrails.
+- `profiles`: one row per person.
+- `profile_emails`: a person's mailboxes. It solves the case of the two emails without
+  duplicating the person. `UNIQUE(email)`.
+- `offers`: offers gathered. Company, job title, description, source, date.
+- `applications`: the relationship between a person and an offer. Status, sent date,
+  channel. Tracking lives here.
+- `documents`: generated CVs and cover letters. They point to an `application` and
+  store the Drive link and the guardrail warnings.
 
-## 8. Generación de documentos: en segundo plano
+## 8. Document generation: in the background
 
-Generar un CV llama a un modelo de lenguaje y puede tardar bastantes segundos. Una
-petición síncrona deja el navegador esperando y cualquier proxy puede cortarla.
+Generating a CV calls a language model and can take quite a few seconds. A synchronous
+request leaves the browser waiting and any proxy can cut it off.
 
-La generación se encola y el front consulta el estado hasta que termina. Se construye
-así desde el principio: es lo que aguanta cuando haya más de una usuaria, y cambiarlo
-después obliga a rehacer la pantalla entera.
+Generation is queued and the front end polls the status until it finishes. It is built
+this way from the start: it is what holds up once there is more than one user, and
+changing it later forces the whole screen to be redone.
 
 ## 9. Design system
 
-Nace de la marca de CookYourWeb, que existe pero está desconectada del código.
+It is born from the CookYourWeb brand, which exists but is disconnected from the code.
 
-Punto de partida verificado en `cookyourwebai`: cuatro colores de marca en
-`tailwind.config.ts` (`#32e2ec`, `#ec32c7`, `#8f32ec`, `#3fec71`), mientras los tokens
-semánticos de `index.css` siguen con los grises del template. Los neones se repiten a
-mano hasta ocho veces y hay un `#BB60D1` que no está declarado en ninguna paleta.
+Starting point verified in `cookyourwebai`: four brand colors in `tailwind.config.ts`
+(`#32e2ec`, `#ec32c7`, `#8f32ec`, `#3fec71`), while the semantic tokens in `index.css`
+still use the template's grays. The neons are repeated by hand up to eight times and
+there is a `#BB60D1` that is not declared in any palette.
 
-El camino, en orden:
+The path, in order:
 
-1. Los cuatro colores entran en Figma como Variables, con escala completa. Un color de
-   marca es una rampa, no un valor.
-2. Se miden los contrastes. Los neones están pensados para fondo oscuro; el cian y el
-   verde no alcanzan 4.5:1 sobre blanco. Cada token declara sobre qué fondo vive.
-3. Las Variables se conectan a los tokens semánticos conservando los nombres que ya
-   existen: `primary`, `muted`, `destructive`, `border`, `ring`. No se inventan nombres.
-4. Los tokens bajan a Angular como CSS custom properties. Ese es el puente. No se
-   exporta código desde Figma.
-5. Cada componente de Figma, con sus variantes, se corresponde con un componente
-   standalone de Angular donde cada variante es un `input` tipado.
+1. The four colors enter Figma as Variables, with a full scale. A brand color is a
+   ramp, not a value.
+2. Contrasts are measured. The neons are designed for a dark background; the cyan and
+   the green do not reach 4.5:1 on white. Each token declares which background it
+   lives on.
+3. The Variables are connected to the semantic tokens, keeping the names that already
+   exist: `primary`, `muted`, `destructive`, `border`, `ring`. No names are invented.
+4. The tokens come down to Angular as CSS custom properties. That is the bridge. No
+   code is exported from Figma.
+5. Each Figma component, with its variants, corresponds to a standalone Angular
+   component where each variant is a typed `input`.
 
-El design system se construye para el panel. `cookyourweb.es` se migra después, y por
-eso se conservan los nombres de token.
+The design system is built for the panel. `cookyourweb.es` is migrated afterwards,
+which is why the token names are kept.
 
-## 10. Qué pasa con Notion
+## 10. What happens to Notion
 
-Notion se usa hoy como CRM visual y contiene tres dominios distintos: **ofertas de
-empleo**, **leads de CookYourWeb** y **facturas**. Solo migra el primero.
+Notion is used today as a visual CRM and contains three distinct domains: **job
+offers**, **CookYourWeb leads** and **invoices**. Only the first one migrates.
 
-Los otros dos pertenecen a otra actividad y se quedan donde están. No se mezclan dos
-negocios en una base de datos porque casualmente compartan herramienta.
+The other two belong to another activity and stay where they are. Two businesses are
+not mixed in one database just because they happen to share a tool.
 
-Y se quedan porque ahí Notion es la herramienta correcta: pocos registros, edición
-humana, sin concurrencia y sin integridad crítica. El problema nunca fue Notion, fue
-pedirle que hiciera de base de datos de un sistema automatizado.
+And they stay because there Notion is the right tool: few records, human editing, no
+concurrency and no critical integrity. The problem was never Notion; it was asking it
+to act as the database of an automated system.
 
-Notion no desaparece. Deja de ser el CRM de ofertas.
+Notion does not disappear. It stops being the offers CRM.
 
-### La regla que no se rompe
+### The rule that is not broken
 
-**En cada momento se escribe en un solo sitio.** Nunca en dos. El día que n8n escriba
-en Notion y el panel escriba en Postgres, los datos derivan.
+**At any moment, writes go to a single place.** Never two. The day n8n writes to
+Notion and the panel writes to Postgres, the data drifts.
 
-No es una precaución teórica: ya ocurrió. Dos registros para la misma persona
-acabaron distintos y el CV salió con la cabecera equivocada.
+This is not a theoretical precaution: it has already happened. Two records for the
+same person ended up different and the CV came out with the wrong header.
 
-### Transición en dos fases
+### Transition in two phases
 
-**Fase 1, mientras se construye la rebanada 1.**
-Notion sigue siendo la verdad. n8n escribe ahí. Una sincronización en una sola
-dirección vuelca a Postgres y el panel solo lee. Si el panel falla, no se pierde nada
-y no hay que dejar de trabajar.
+**Phase 1, while slice 1 is being built.**
+Notion remains the source of truth. n8n writes there. A one-way sync dumps into
+Postgres and the panel only reads. If the panel fails, nothing is lost and there is no
+need to stop working.
 
-**Fase 2, con las pantallas de estado de la rebanada 2.**
-Se invierte. n8n pasa a escribir contra la API, Postgres es la verdad y la base de
-ofertas de Notion se congela en solo lectura. Pasa a ser histórico, no herramienta.
+**Phase 2, with the status screens of slice 2.**
+It is reversed. n8n starts writing against the API, Postgres is the source of truth
+and the Notion offers database is frozen as read-only. It becomes history, not a tool.
 
-### Migración del histórico
+### Migrating the history
 
-Se migra entero: ofertas y candidaturas, con fechas, estados y enlaces a los
-documentos generados. Es el registro real de la búsqueda y no se tira.
+It is migrated in full: offers and applications, with dates, statuses and links to the
+generated documents. It is the real record of the search and it is not thrown away.
 
-La migración es además el momento de corregir lo que ya se sabe sucio, como las
-ofertas descartadas cuyo estado nunca llegó a actualizarse.
+The migration is also the moment to fix what is already known to be dirty, such as
+discarded offers whose status was never updated.
 
-### Dónde vive el design system
+### Where the design system lives
 
-Ni en Notion ni en el CRM. Cada pieza en el sitio que le corresponde:
+Neither in Notion nor in the CRM. Each piece in the place that suits it:
 
-| Pieza | Dónde | Por qué |
+| Piece | Where | Why |
 |---|---|---|
-| Los tokens | Figma, como Variables | Tienen tipos, escalas y modos, y se pueden extraer por API |
-| El porqué de cada decisión | El repositorio | Las reglas del proyecto no viven en una herramienta de proveedor, y un repositorio público sí se abre |
-| Los valores que consume la aplicación | El código, como custom properties | |
+| The tokens | Figma, as Variables | They have types, scales and modes, and can be extracted by API |
+| The why behind each decision | The repository | Project rules do not live in a vendor's tool, and a public repository does get opened |
+| The values the application consumes | The code, as custom properties | |
 
-Si los tokens viven en un documento, alguien los copia a mano y vuelve a aparecer un
-color que nadie sabe de dónde salió. Que es el problema que este trabajo corrige.
+If the tokens live in a document, someone copies them by hand and a color nobody knows
+the origin of appears again. Which is the problem this work fixes.
 
-## 11. Entrega por rebanadas
+## 11. Delivery by slices
 
-Rebanadas verticales completas, no capas.
+Complete vertical slices, not layers.
 
-**Rebanada 1.** Ver mis ofertas, abrir una, generar CV y carta, descargar. Toca la
-capa de datos, el design system y `cv-server`. Es el escaparate.
+**Slice 1.** See my offers, open one, generate CV and cover letter, download. It
+touches the data layer, the design system and `cv-server`. It is the showcase.
 
-**Rebanada 2.** Marcar como aplicada, estados y seguimiento. Sustituye a Notion como
-interfaz.
+**Slice 2.** Mark as applied, statuses and tracking. It replaces Notion as the
+interface.
 
-**Rebanada 3.** Preparación de entrevista. Es lo único sin nada construido detrás.
+**Slice 3.** Interview preparation. It is the only one with nothing built behind it.
 
-## 12. Qué no entra
+## 12. What is out of scope
 
-- **Postular automáticamente.** Cada portal es distinto, LinkedIn no ofrece API para
-  ello y automatizarlo lleva a scraping frágil que arriesga la cuenta. El panel abre
-  la oferta y la persona registra que aplicó en un clic.
-- Pantallas de alta e invitaciones, roles finos, panel de administración y
-  facturación. Es producto, y se añade sin tocar la arquitectura.
-- Migrar `cookyourweb.es` al design system nuevo.
-- Sustituir n8n.
-- Microservicios, contenedores orquestados y multi-región. Un monolito bien separado
-  por dentro aguanta mucho más de lo que se cree.
+- **Applying automatically.** Every portal is different, LinkedIn offers no API for it
+  and automating it leads to fragile scraping that puts the account at risk. The panel
+  opens the offer and the person records in one click that they applied.
+- Sign-up and invitation screens, fine-grained roles, an admin panel and billing. It
+  is product, and it is added without touching the architecture.
+- Migrating `cookyourweb.es` to the new design system.
+- Replacing n8n.
+- Microservices, orchestrated containers and multi-region. A monolith that is well
+  separated internally holds up much more than people think.
 
-## 13. Riesgos
+## 13. Risks
 
-| Riesgo | Mitigación |
+| Risk | Mitigation |
 |---|---|
-| El alcance completo son seis subsistemas | Se entrega por rebanadas; la 1 vale por sí sola |
-| Migrar de Notion a Postgres puede desalinear a n8n | n8n sigue escribiendo en Notion en la rebanada 1 |
-| Los neones no pasan contraste | Se mide antes de diseñar y se documenta |
-| Aprender Angular y Figma a la vez retrasa la búsqueda de empleo | La rebanada 1 es pequeña y publicable |
-| «Ya lo cambiaremos» sobre el esquema | Por eso `user_id` y el filtrado por usuario van desde el día uno |
+| The full scope is six subsystems | It is delivered by slices; slice 1 is worth it on its own |
+| Migrating from Notion to Postgres can misalign n8n | n8n keeps writing to Notion in slice 1 |
+| The neons fail contrast | It is measured before designing and documented |
+| Learning Angular and Figma at the same time delays the job search | Slice 1 is small and publishable |
+| "We will change it later" on the schema | That is why `user_id` and per-user filtering go in from day one |

@@ -1,46 +1,50 @@
-# Tokens del design system: punto de partida medido
+# Design system tokens: a measured starting point
 
-Fecha: 2026-09-05
-Origen: `~/cookyourweb/cookyourwebai`
-Estado: propuesta lista para llevar a Figma como Variables
+Date: 2026-09-05
+Origin: `~/cookyourweb/cookyourwebai`
+Status: proposal ready to take to Figma as Variables
 
-## De dónde sale cada cosa
+Note on names: the color keys in `tokens-color.json` and in the code keep their
+Spanish identifiers (`cian`, `magenta`, `violeta`, `verde`). In this document they
+are called cyan, magenta, violet and green.
 
-**Se toma** de la web actual: los cuatro colores de marca, la pareja tipográfica y los
-nombres de los tokens semánticos, que están bien elegidos.
+## Where each thing comes from
 
-**No se toma**: los valores grises de fábrica de la plantilla, los hexadecimales
-repetidos a mano ni el `#BB60D1`, que no está declarado en ninguna paleta.
+**Taken** from the current website: the four brand colors, the typeface pairing and
+the names of the semantic tokens, which are well chosen.
 
-## El hallazgo: es una marca de fondo oscuro
+**Not taken**: the template's factory gray values, the hexadecimal values repeated by
+hand and `#BB60D1`, which is not declared in any palette.
 
-Contraste medido de los colores tal como están hoy. El mínimo de WCAG AA para texto
-normal es 4.5:1, y 3:1 para texto grande.
+## The finding: it is a dark-background brand
 
-| Color | Hex | Sobre blanco | Sobre `#0a0a0a` |
+Measured contrast of the colors as they are today. The WCAG AA minimum for normal text
+is 4.5:1, and 3:1 for large text.
+
+| Color | Hex | On white | On `#0a0a0a` |
 |---|---|---|---|
-| cian | `#32e2ec` | **1.59:1**, no vale para texto | 12.47:1 |
-| verde | `#3fec71` | **1.56:1**, no vale para texto | 12.68:1 |
-| magenta | `#ec32c7` | 3.59:1, solo texto grande | 5.51:1 |
-| violeta | `#8f32ec` | 5.48:1 | 3.62:1, solo texto grande |
+| cyan | `#32e2ec` | **1.59:1**, not usable for text | 12.47:1 |
+| green | `#3fec71` | **1.56:1**, not usable for text | 12.68:1 |
+| magenta | `#ec32c7` | 3.59:1, large text only | 5.51:1 |
+| violet | `#8f32ec` | 5.48:1 | 3.62:1, large text only |
 
-Tres de los cuatro colores son inservibles para texto sobre blanco, y los mismos tres
-dan más de 5:1 sobre negro. El cian y el verde llegan a 12,5:1, que es excelente.
+Three of the four colors are unusable for text on white, and the same three give more
+than 5:1 on black. Cyan and green reach 12.5:1, which is excellent.
 
-**Decisión que se deriva: el tema oscuro es el principal.** No es una preferencia
-estética. Es donde la marca ya está pensada y donde funciona.
+**Decision that follows: the dark theme is the primary one.** It is not an aesthetic
+preference. It is where the brand is already designed for and where it works.
 
-El tema claro existe igualmente, y usa los pasos profundos de cada rampa.
+The light theme exists all the same, and uses the deep steps of each ramp.
 
-## Escalas
+## Scales
 
-Generadas en OKLCh, que es perceptualmente uniforme: los saltos se ven regulares, cosa
-que no ocurre interpolando en HSL. El croma se reduce automáticamente cuando un paso se
-sale del espacio de color representable.
+Generated in OKLCh, which is perceptually uniform: the steps look regular, which does
+not happen when interpolating in HSL. Chroma is reduced automatically when a step
+falls outside the representable color space.
 
-Los valores están también en `tokens-color.json`, listos para importar.
+The values are also in `tokens-color.json`, ready to import.
 
-### cian
+### cyan (`cian`)
 ```
 50 #dafdff   100 #a2f9ff   200 #45eef8   300 #0ad3dd   400 #06b7c0
 500 #039ca4  600 #018188   700 #01656a   800 #00494d   900 #002d30
@@ -52,106 +56,108 @@ Los valores están también en `tokens-color.json`, listos para importar.
 500 #e224be  600 #c001a1   700 #97007e   800 #70015c   900 #47003a
 ```
 
-### violeta
+### violet (`violeta`)
 ```
 50 #f7f3ff   100 #ece2ff   200 #dccaff   300 #c8a7ff   400 #b583ff
 500 #a457ff  600 #8e30eb   700 #7301c7   800 #540194   900 #34005f
 ```
 
-### verde
+### green (`verde`)
 ```
 50 #dfffe3   100 #adffb9   200 #51f97e   300 #28de64   400 #01c251
 500 #00a544  600 #038937   700 #006b29   800 #004e1c   900 #00300f
 ```
 
-En las cuatro rampas, **los pasos 600 a 900 pasan AA sobre blanco**. Del 50 al 500 son
-para fondo oscuro, para fondos suaves o para elementos que no son texto.
+In all four ramps, **steps 600 to 900 pass AA on white**. Steps 50 to 500 are for dark
+backgrounds, for soft backgrounds or for elements that are not text.
 
-Los neones originales no desaparecen: viven alrededor del paso 200 y son los que
-brillan sobre oscuro. Y el `#BB60D1` huérfano queda cubierto por la rampa violeta, así
-que deja de ser un color sin origen.
+The original neons do not disappear: they live around step 200 and are the ones that
+glow on dark. And the orphan `#BB60D1` is covered by the violet ramp, so it stops
+being a color with no origin.
 
-## Regla de uso
+## Usage rule
 
-| Uso | Tema oscuro | Tema claro |
+| Use | Dark theme | Light theme |
 |---|---|---|
-| Texto de marca | 200 a 300 | 700 a 800 |
-| Fondo de acento | 800 a 900 | 50 a 100 |
-| Bordes | 600 | 600 |
-| Foco y estados | 300 | 600 |
+| Brand text | 200 to 300 | 700 to 800 |
+| Accent background | 800 to 900 | 50 to 100 |
+| Borders | 600 | 600 |
+| Focus and states | 300 | 600 |
 
-Ningún componente elige un color. Elige un token semántico, y el tema decide el valor.
+No component picks a color. It picks a semantic token, and the theme decides the
+value.
 
-### Corrección del 6 de septiembre: los bordes
+### Correction of 6 September: borders
 
-La fila de bordes decía «700 en oscuro, 200 en claro». **Estaba mal**, y no se vio
-hasta escribir un test que calculara el contraste de los tokens ya implantados.
+The borders row used to say "700 in dark, 200 in light". **That was wrong**, and it
+was not noticed until a test was written that calculated the contrast of the tokens
+already in place.
 
-WCAG 1.4.11 pide 3:1 para los elementos que no son texto pero hacen falta para
-identificar un control: el borde de un campo, el anillo de foco. Un borde que no se
-distingue del fondo deja la navegación por teclado a ciegas.
+WCAG 1.4.11 requires 3:1 for elements that are not text but are needed to identify a
+control: a field's border, the focus ring. A border that cannot be told apart from the
+background leaves keyboard navigation blind.
 
-Contraste real de la rampa cian contra los dos fondos:
+Actual contrast of the cyan ramp against the two backgrounds:
 
-| paso | sobre `#0a0a0a` | sobre blanco |
+| step | on `#0a0a0a` | on white |
 |---|---|---|
-| 200 `#45eef8` | 13,99:1 | **1,42:1** |
-| 300 `#0ad3dd` | 10,72:1 | **1,85:1** |
-| 400 `#06b7c0` | 8,05:1 | **2,46:1** |
-| 500 `#039ca4` | 5,94:1 | 3,34:1 |
-| **600 `#018188`** | **4,24:1** | **4,67:1** |
-| 700 `#01656a` | **2,90:1** | 6,84:1 |
+| 200 `#45eef8` | 13.99:1 | **1.42:1** |
+| 300 `#0ad3dd` | 10.72:1 | **1.85:1** |
+| 400 `#06b7c0` | 8.05:1 | **2.46:1** |
+| 500 `#039ca4` | 5.94:1 | 3.34:1 |
+| **600 `#018188`** | **4.24:1** | **4.67:1** |
+| 700 `#01656a` | **2.90:1** | 6.84:1 |
 
-Los dos valores que proponía la regla original fallan: el 700 da 2,90:1 sobre oscuro
-y el 200 da 1,42:1 sobre blanco. **El paso 600 es el único que sirve para los dos
-temas**, y además es el que ya usa `primary` en claro, así que el borde y el color
-principal comparten valor en vez de contradecirse.
+Both values proposed by the original rule fail: 700 gives 2.90:1 on dark and 200 gives
+1.42:1 on white. **Step 600 is the only one that works for both themes**, and it is
+also the one `primary` already uses in light, so the border and the main color share a
+value instead of contradicting each other.
 
-Que un documento de tokens con datos medidos tuviera una fila equivocada es
-justamente el argumento para tener el test: el ojo no lo iba a cazar nunca.
+That a token document with measured data had a wrong row is exactly the argument for
+having the test: the eye would never have caught it.
 
-## Tipografía
+## Typography
 
-De la web actual:
+From the current website:
 
-- **Playfair Display**, serif de alto contraste, para títulos. Hoy solo con peso 700.
-- **Inter**, sans neutra, para cuerpo e interfaz. Hoy solo con pesos 400 y 700.
+- **Playfair Display**, a high-contrast serif, for headings. Today only at weight 700.
+- **Inter**, a neutral sans, for body and interface. Today only at weights 400 and 700.
 
-Dos cosas a resolver:
+Two things to resolve:
 
-1. **Faltan pesos intermedios.** Un panel necesita 500 o 600 para botones, etiquetas y
-   encabezados de tabla. Con solo 400 y 700 la jerarquía se rompe.
-2. **Las fuentes se cargan desde un tercero.** Hay que alojarlas con la aplicación:
-   evita una conexión externa y el salto de texto al cargar.
+1. **Intermediate weights are missing.** A panel needs 500 or 600 for buttons, labels
+   and table headers. With only 400 and 700 the hierarchy breaks.
+2. **The fonts are loaded from a third party.** They have to be hosted with the
+   application: it avoids an external connection and the text jump on load.
 
-No hay escala de tamaños declarada en ningún sitio. Hay que definirla, y va a Figma
-como Text Styles.
+There is no size scale declared anywhere. One has to be defined, and it goes to Figma
+as Text Styles.
 
-## Espaciado, radios y sombras
+## Spacing, radii and shadows
 
-Lo que existe hoy: `--radius: 0.5rem`, un contenedor con 2rem de relleno y un punto de
-ruptura mayor en 1400px. La escala de espaciado es la que trae Tailwind por defecto, es
-decir, no es una decisión propia.
+What exists today: `--radius: 0.5rem`, a container with 2rem of padding and a larger
+breakpoint at 1400px. The spacing scale is the one Tailwind brings by default, that is,
+it is not a decision of our own.
 
-Hace falta declarar escala de espaciado, de radios y de sombras. Las sombras merecen
-atención: hoy el efecto de marca es un resplandor de color, no una sombra gris, y eso
-sí es identidad y conviene conservarlo como token.
+A spacing scale, a radius scale and a shadow scale need to be declared. Shadows deserve
+attention: today the brand effect is a colored glow, not a gray shadow, and that is
+identity and should be kept as a token.
 
-## Cómo entra en Figma
+## How it enters Figma
 
-1. Una colección de Variables con las cuatro rampas completas, en `color/cian/500` y
-   así con todas.
-2. Una segunda colección de tokens semánticos con **dos modos**, oscuro y claro, que
-   apuntan a la primera. Los componentes solo usan esta.
-3. Los nombres semánticos se conservan de la web actual: `primary`, `secondary`,
-   `muted`, `accent`, `destructive`, `border`, `input`, `ring`, con sus pares de
-   contenido.
-4. Text Styles a partir de la escala tipográfica.
+1. A Variables collection with the four complete ramps, as `color/cian/500` and so on
+   for all of them.
+2. A second collection of semantic tokens with **two modes**, dark and light, that
+   point to the first. Components use only this one.
+3. The semantic names are kept from the current website: `primary`, `secondary`,
+   `muted`, `accent`, `destructive`, `border`, `input`, `ring`, with their content
+   pairs.
+4. Text Styles built from the typographic scale.
 
-## Cómo baja a Angular
+## How it comes down to Angular
 
-Solo custom properties. Sin variables de preprocesador: se resuelven al compilar, no
-existen en el navegador y dejarían el cambio de tema fuera de alcance.
+Custom properties only. No preprocessor variables: they are resolved at compile time,
+do not exist in the browser and would leave theme switching out of reach.
 
 ```css
 :root {
@@ -166,4 +172,4 @@ existen en el navegador y dejarían el cambio de tema fuera de alcance.
 }
 ```
 
-Un solo sitio por token, y el tema cambia en caliente.
+One place per token, and the theme changes live.

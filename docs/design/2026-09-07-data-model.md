@@ -1,140 +1,147 @@
-# Modelo de datos del panel
+# Panel data model
 
-Fecha: 2026-09-07
-Continúa a: `2026-09-05-panel-empleo-angular-design.md`, que preveía tres tablas
-Verificado contra tres fuentes: el esquema de Notion por API, un export completo de la
-base, y el workflow de n8n en producción
+Date: 2026-09-07
+Continues: `2026-09-05-panel-empleo-angular-design.md`, which foresaw three tables
+Verified against three sources: the Notion schema through the API, a complete export of
+the database, and the n8n workflow in production
 
-## Qué cambia respecto al diseño del 5 de septiembre
+## What changes with respect to the 5 September design
 
-Aquel documento preveía `offers`, `applications` y `documents`. Al mirar los datos reales
-aparecen **dos entidades más**, y las dos estaban escondidas en el mismo sitio: el cuerpo
-de la página de Notion, escritas en prosa.
+That document foresaw `offers`, `applications` and `documents`. Looking at the real
+data, **two more entities** appear, and both were hidden in the same place: the body
+of the Notion page, written in prose.
 
-## Las cinco entidades
+## The five entities
 
-### `offers`, la oferta
+### `offers`, the offer
 
-Lo que describe el puesto y no depende de quién lo mire. Trece campos: empresa, puesto,
-descripción, enlace, ubicación, modalidad, salario, tipo de contrato, modo de
-contratación, idioma, palabras clave, fecha de publicación y si está verificada.
+What describes the job and does not depend on who is looking at it. Thirteen fields:
+company, job title, description, link, location, work mode, salary, contract type,
+hiring mode, language, keywords, publication date and whether it is verified.
 
-### `applications`, la candidatura
+### `applications`, the application
 
-La relación entre una persona y una oferta. Catorce campos: usuario, estado, fase, vía de
-envío, cuatro fechas, formato técnico, los tres campos de contacto, el correo enviado y
-las notas.
+The relationship between a person and an offer. Fourteen fields: user, status, phase,
+submission channel, four dates, technical test format, the three contact fields, the
+email sent and the notes.
 
-### `documents`, lo generado
+### `documents`, what is generated
 
-Cinco campos: currículum usado, enlace de Drive, carta enviada, enlace de preparación y
-el aviso de autónoma en la carta.
+Five fields: CV used, Drive link, cover letter sent, preparation link and the
+freelancer notice in the cover letter.
 
-### `events`, el historial
+### `events`, the history
 
-**No existe hoy como dato.** Vive en prosa, dentro del cuerpo de la página:
-
-```
-15 de julio: responde interesada e indica su referencia salarial.
-21 de julio: el recruiter vuelve de vacaciones y propone llamada.
-22 de julio: llamada mantenida. Encaje bueno.
-```
-
-Eso es un registro de eventos fechados. En prosa no se puede ordenar, ni consultar, ni
-sacar en una pantalla. Y es justo lo que hace falta para saber a quién insistir: no el
-estado, sino qué pasó y cuándo.
-
-### `encaje`, lo que sobra y lo que falta
-
-Tampoco existe hoy como dato. También en prosa:
+**It does not exist today as data.** It lives in prose, inside the body of the page:
 
 ```
-Fuerte:      React, Vue, TypeScript, Core Web Vitals, FastAPI
-Gap:         PHP/Symfony. No está en su experiencia y no se inventa en el CV.
-A negociar:  el rango de la oferta queda por debajo de la referencia
+15 July: replies interested and states her salary reference.
+21 July: the recruiter is back from vacation and proposes a call.
+22 July: call held. Good fit.
 ```
 
-Es la regla de no mentir, aplicada oferta por oferta. Y es el dato que alimenta la
-promesa de ayudar a aprender lo que falta, en lugar de inflar el currículum.
+That is a log of dated events. In prose it cannot be sorted, queried or shown on a
+screen. And it is exactly what is needed to know whom to follow up with: not the
+status, but what happened and when.
 
-`Tags` no migra: cero valores en toda la base.
+### `encaje` (fit), what is strong and what is missing
 
-## La dimensión que faltaba: quién rellena cada campo, y cuándo
+It does not exist today as data either. Also in prose:
 
-Los campos no se distinguen solo por a qué entidad pertenecen. También por su origen.
+```
+Strong:      React, Vue, TypeScript, Core Web Vitals, FastAPI
+Gap:         PHP/Symfony. Not in her experience and not invented in the CV.
+To negotiate: the offer's range is below the reference
+```
 
-| | Quién lo pone | Cuándo |
+It is the rule of not lying, applied offer by offer. And it is the data that feeds the
+promise of helping to learn what is missing, instead of inflating the CV.
+
+`Tags` does not migrate: zero values in the whole database.
+
+## The missing dimension: who fills each field, and when
+
+Fields are not distinguished only by which entity they belong to. Also by their
+origin.
+
+| | Who fills it | When |
 |---|---|---|
-| ① | El sistema | Al captar la oferta |
-| ② | El sistema | Al generar el currículum o la carta |
-| ③ | La persona | Al avanzar, tras cada contacto |
+| ① | The system | When the offer is gathered |
+| ② | The system | When the CV or cover letter is generated |
+| ③ | The person | When moving forward, after each contact |
 
-Y el relleno medido lo confirma:
+And the measured fill rate confirms it:
 
-| Origen | Relleno |
+| Origin | Fill rate |
 |---|---|
-| ① captación | por encima del ochenta por ciento de las filas |
-| ③ a mano | por debajo del quince por ciento |
+| ① intake | above eighty percent of the rows |
+| ③ by hand | below fifteen percent |
 
-Los peores son precisamente los que más dicen de un proceso: la fase en la que está, el
-formato de la prueba técnica, la fecha de la entrevista y el nombre de la persona con la
-que se habla.
+The worst ones are precisely those that say the most about a process: the phase it is
+in, the format of the technical test, the interview date and the name of the person
+being talked to.
 
-**No están vacíos porque no importen. Están vacíos porque rellenarlos obliga a volver a
-Notion y editar una fila a mano.** Esos números son la medida del problema, no un
-descuido.
+**They are not empty because they do not matter. They are empty because filling them
+means going back to Notion and editing a row by hand.** Those numbers are the measure
+of the problem, not an oversight.
 
-Consecuencias para la pantalla:
+Consequences for the screen:
 
-- Los campos de ① se muestran, no se editan. Si están mal, lo que falló es la extracción.
-- Los de ② los escribe el sistema.
-- Los de ③ son los que tienen que costar un clic. **Ahí es donde el panel gana o pierde.**
+- The ① fields are shown, not edited. If they are wrong, what failed is the extraction.
+- The ② fields are written by the system.
+- The ③ fields are the ones that must cost one click. **That is where the panel wins
+  or loses.**
 
-### Por qué esto obliga a dar forma a lo que hoy es prosa
+### Why this forces shaping what is prose today
 
-Está previsto que más adelante se pueda dictar lo que ha pasado y que un agente rellene
-los campos. Eso no se construye ahora, pero condiciona el modelo de hoy: un agente
-rellena sin equivocarse un campo con valores cerrados, y no rellena bien un cajón de
-texto libre.
+It is planned that later one will be able to dictate what has happened and have an
+agent fill in the fields. That is not built now, but it conditions today's model: an
+agent fills a closed-value field without mistakes, and does not fill a free-text box
+well.
 
-Hoy `Notas` está relleno en casi todas las filas y contiene de todo: pruebas técnicas,
-avisos de los guardrails y trozos de historial. Ese cajón es donde la información deja de
-ser consultable.
+Today `Notas` (notes) is filled in almost every row and contains everything: technical
+tests, guardrail warnings and pieces of history. That box is where information stops
+being queryable.
 
-## Lo que ya estaba decidido y aquí se respeta
+## What was already decided and is respected here
 
-Del documento de julio sobre cómo entra una oferta:
+From the July document on how an offer enters:
 
-- **El origen no es un estado.** El estado cambia constantemente; el origen no cambia
-  nunca. Si el origen vive dentro del estado, se pierde en cuanto la candidatura avanza.
-- **`Aprobado` no es un estado: es una orden.** Ponerlo dispara la generación del
-  currículum y la carta, venga del botón del correo o de la mano de la persona. Por eso
-  no tiene filas: es una cola, no un sitio donde se está.
-- **`Estado` mezcla dos ciclos de vida** en una sola propiedad, el del automatismo y el de
-  la candidatura real. La separación en `applications` y `events` es lo que los desmezcla.
+- **The origin is not a status.** The status changes constantly; the origin never
+  changes. If the origin lives inside the status, it is lost as soon as the
+  application moves forward.
+- **`Aprobado` (approved) is not a status: it is an order.** Setting it triggers the
+  generation of the CV and the cover letter, whether it comes from the email button
+  or from the person's hand. That is why it has no rows: it is a queue, not a place
+  where one is.
+- **`Estado` (status) mixes two life cycles** in a single property, that of the
+  automation and that of the real application. The split into `applications` and
+  `events` is what unmixes them.
 
-## Lo que los datos dejan a la vista
+## What the data brings into view
 
-**Ofertas duplicadas.** Misma empresa, mismo puesto y el mismo enlace. Es la misma
-oferta capturada dos veces. Un `UNIQUE` sobre el enlace lo impediría, y es el mismo fallo
-que ya ocurrió con las personas: dos registros para la misma acabaron distintos y salió un
-currículum con la cabecera equivocada.
+**Duplicate offers.** Same company, same job title and the same link. It is the same
+offer captured twice. A `UNIQUE` on the link would prevent it, and it is the same
+failure that already happened with people: two records for the same one ended up
+different and a CV came out with the wrong header.
 
-**Una oferta sin usuario.** Con `user_id` obligatorio no podría existir.
+**An offer without a user.** With a mandatory `user_id` it could not exist.
 
-**El salario es texto libre.** Una cadena que mezcla el rango que ofrece la empresa con la
-referencia de quien busca lleva tres datos dentro: mínimo, máximo y expectativa. El
-sistema promete buscar por sueldo, y eso exige que el sueldo sea un número.
+**Salary is free text.** A string that mixes the range the company offers with the
+reference of the person searching carries three data points inside: minimum, maximum
+and expectation. The system promises to search by salary, and that requires salary to
+be a number.
 
-**Hay una segunda base de candidaturas, abandonada.** Unas pocas filas, todas de tres días
-de julio, con un vocabulario de estados que no coincide. Y parte de lo que hay ahí no
-existe en la base principal. La pregunta no es si alinear los dos vocabularios: es
-rescatar lo que solo vive ahí, congelar esa base y no volver a escribir en dos sitios.
+**There is a second applications database, abandoned.** A few rows, all from three days
+in July, with a status vocabulary that does not match. And part of what is there does
+not exist in the main database. The question is not whether to align the two
+vocabularies: it is to rescue what lives only there, freeze that database and not
+write in two places again.
 
-## Lo que el panel resuelve de verdad
+## What the panel really solves
 
-Hoy una candidatura vive repartida en cuatro sitios sin ningún enlace entre ellos: la
-oferta y su estado en Notion, el currículum en Drive, la preparación de la entrevista en
-una carpeta dentro de git, y el seguimiento en la cabeza de quien busca.
+Today an application is spread across four places with no link between them: the offer
+and its status in Notion, the CV in Drive, the interview preparation in a folder
+inside git, and the follow-up in the head of the person searching.
 
-**No existe un sitio común.** El panel es ese sitio.
+**There is no common place.** The panel is that place.

@@ -1,123 +1,124 @@
-# Decisiones de arquitectura: tablero inicial
+# Architecture decisions: initial board
 
-Fecha: 2026-09-05
-Estado: listado para decidir. C2 y C4 cerradas el 2026-10-02 en
-[ADR-002](../adr/ADR-002-donde-vive-postgres.md) y [ADR-003](../adr/ADR-003-autenticacion.md).
+Date: 2026-09-05
+Status: listed for decision. C2 and C4 closed on 2026-10-02 in
+[ADR-002](../adr/ADR-002-where-postgres-lives.md) and [ADR-003](../adr/ADR-003-authentication.md).
 
-Criterios que mandan, en este orden:
+The criteria that rule, in this order:
 
-1. **El destino manda, no el plan gratuito de hoy.** Se diseña el sistema al que se
-   quiere llegar y se elige hoy lo que no obligue a reescribir para llegar. Lo que sí
-   sea de usar y tirar, se marca como tal.
-2. **Coste cercano a cero mientras haya una sola usuaria.**
-3. **Carga rápida.** Quien abra el enlace lo juzga en tres segundos.
-4. **Que lo aprendido sea transferible** a una empresa con equipo grande.
+1. **The destination rules, not today's free plan.** The system is designed for where
+   we want to end up, and today we pick what does not force a rewrite to get there.
+   Anything that is disposable is marked as such.
+2. **Cost close to zero while there is a single user.**
+3. **Fast load.** Whoever opens the link judges it within three seconds.
+4. **What is learned must be transferable** to a company with a large team.
 
-Orden revisado el 2026-10-02: el coste cero pasa a ser el primer criterio. Ver
-[ADR-002](../adr/ADR-002-donde-vive-postgres.md).
+Order revised on 2026-10-02: zero cost becomes the first criterion. See
+[ADR-002](../adr/ADR-002-where-postgres-lives.md).
 
-Alcance: **el sistema se diseña multiusuario desde el primer día**, aunque hoy lo use
-una sola persona. No hay un «cuando abramos el multiusuario»: hay un sistema
-multiusuario con un usuario.
+Scope: **the system is designed as multi-user from day one**, even though a single
+person uses it today. There is no "when we open up multi-user": there is a multi-user
+system with one user.
 
-Los tres grupos de abajo separan lo que ya está cerrado, lo que se decide por
-defecto sin discusión, y lo que hay que hablar de verdad.
+The three groups below separate what is already closed, what is decided by default
+without discussion, and what really has to be talked through.
 
 ---
 
-## A. Ya cerrado
+## A. Already closed
 
-| # | Decisión | Elección |
+| # | Decision | Choice |
 |---|---|---|
-| A1 | Framework de front | Angular última versión, standalone |
-| A2 | Modelo de datos | Relacional, Postgres |
-| A3 | Generación de CV y carta | `cv-server`, que ya existe |
-| A4 | Captación de ofertas | n8n, sin cambios |
-| A5 | Diseño previo | Figma con Variables, y design system propio |
-| A6 | El navegador no habla con la base | Angular llama a `cv-server`; solo el backend toca Postgres |
+| A1 | Front-end framework | Angular latest version, standalone |
+| A2 | Data model | Relational, Postgres |
+| A3 | CV and cover letter generation | `cv-server`, which already exists |
+| A4 | Offer intake | n8n, unchanged |
+| A5 | Prior design | Figma with Variables, and our own design system |
+| A6 | The browser does not talk to the database | Angular calls `cv-server`; only the backend touches Postgres |
 
-A6 es el cambio de hoy. Elimina el patrón Backend-as-a-Service, que no se usa en
-equipos grandes, y convierte al proveedor de base de datos en un detalle sustituible.
+A6 is today's change. It removes the Backend-as-a-Service pattern, which is not used
+in large teams, and turns the database provider into a replaceable detail.
 
 ---
 
-## B. Se deciden por defecto
+## B. Decided by default
 
-Sin debate salvo que alguien objete. Todas van en la misma dirección: menos
-JavaScript, menos servidores, menos factura.
+No debate unless someone objects. All of them go in the same direction: less
+JavaScript, fewer servers, a smaller bill.
 
-| # | Decisión | Elección | Motivo |
+| # | Decision | Choice | Reason |
 |---|---|---|---|
-| B1 | Renderizado | SPA cliente, sin SSR | El panel vive detrás de login. SSR no aporta y obliga a pagar un servidor Node |
-| B2 | Alojamiento del front | Estático en CDN | Coste cero y primera carga desde el borde. Un front estático no tiene servidor que mantener |
-| B3 | Estado | Signals nativos | NgRx sobra para este tamaño y añade peso y ceremonia |
-| B4 | Detección de cambios | Sin zone.js | Menos JavaScript de arranque y menos trabajo por interacción |
-| B5 | Carga de código | Lazy loading por ruta y bloques diferidos | Solo se descarga lo que se ve |
-| B6 | Librería de componentes | Ninguna. Componentes propios sobre los tokens | Una librería pesa y además impone su estética, que es justo lo que queremos demostrar que sabemos construir |
-| B7 | Estilos | CSS con custom properties | Los tokens son el contrato. Sin dependencia de build |
-| B8 | Contrato de API | REST | GraphQL añade servidor, caché y complejidad que aquí no se pagan solos |
-| B9 | Formularios | Reactive forms tipados | |
-| B10 | Migraciones de base de datos | Alembic | El backend ya es Python |
-| B11 | Fuentes | Alojadas con la app | Evita una conexión extra a un tercero y el salto de texto al cargar |
-| B12 | Tests | Unitarios en el front, Playwright en el flujo principal | |
+| B1 | Rendering | Client SPA, no SSR | The panel lives behind login. SSR adds nothing and forces paying for a Node server |
+| B2 | Front-end hosting | Static on a CDN | Zero cost and first load from the edge. A static front end has no server to maintain |
+| B3 | State | Native signals | NgRx is overkill at this size and adds weight and ceremony |
+| B4 | Change detection | No zone.js | Less startup JavaScript and less work per interaction |
+| B5 | Code loading | Lazy loading per route and deferred blocks | Only what is visible is downloaded |
+| B6 | Component library | None. Own components on top of the tokens | A library has weight and also imposes its aesthetic, which is exactly what we want to show we can build |
+| B7 | Styles | CSS with custom properties | The tokens are the contract. No build dependency |
+| B8 | API contract | REST | GraphQL adds a server, cache and complexity that do not pay for themselves here |
+| B9 | Forms | Typed reactive forms | |
+| B10 | Database migrations | Alembic | The backend is already Python |
+| B11 | Fonts | Hosted with the app | Avoids an extra connection to a third party and the text jump on load |
+| B12 | Tests | Unit tests in the front end, Playwright on the main flow | |
 
 ---
 
-## C. Hay que hablarlo
+## C. To be talked through
 
-Estas cuatro cambian el resultado. El resto son detalles.
+These four change the outcome. The rest are details.
 
-### C1. Disponibilidad del backend (decidido)
+### C1. Backend availability (decided)
 
-En la arquitectura objetivo el backend está siempre disponible. Es un requisito y no
-se negocia con el plan de alojamiento.
+In the target architecture the backend is always available. That is a requirement and
+it is not negotiated with the hosting plan.
 
-**Decidido, por sus propios méritos**: la demo pública no depende del backend. Un
-escaparate debe cargar al instante y no puede caerse porque un servicio no responda.
+**Decided, on its own merits**: the public demo does not depend on the backend. A
+showcase must load instantly and cannot go down because a service does not respond.
 
-Que hoy `cv-server` corra en un plan gratuito que se duerme es un asunto operativo
-del momento, no una restricción de diseño. Se resuelve cambiando de plan el día que
-haga falta.
+That `cv-server` runs today on a free plan that goes to sleep is an operational matter
+of the moment, not a design constraint. It is solved by changing plan the day it is
+needed.
 
-### C2. Dónde vive Postgres
+### C2. Where Postgres lives
 
-Con A6, el proveedor es sustituible. Pero el plan gratuito importa: algunos pausan
-los proyectos que pasan días sin actividad, y un escaparate pasa semanas sin visitas.
+With A6, the provider is replaceable. But the free plan matters: some pause projects
+that go days without activity, and a showcase goes weeks without visits.
 
-Hay que comprobar, plan por plan y no de memoria, qué hace cada uno tras la
-inactividad y cuánto tarda en volver. Candidatos: Supabase, Neon, Render.
+What each plan does after inactivity, and how long it takes to come back, has to be
+checked plan by plan and not from memory. Candidates: Supabase, Neon, Render.
 
-Si la demo pública no toca la base (ver C1), este riesgo baja mucho.
+If the public demo does not touch the database (see C1), this risk drops a lot.
 
-### C3. La generación del CV tarda, porque llama a un modelo (decidido)
+### C3. CV generation is slow, because it calls a model (decided)
 
-Una llamada a un LLM puede tardar bastantes segundos. Si la petición es síncrona, el
-navegador se queda esperando y cualquier proxy puede cortarla.
+An LLM call can take quite a few seconds. If the request is synchronous, the browser
+sits waiting and any proxy can cut it off.
 
-**Decidido**: trabajo en segundo plano que el front consulta hasta que termina. Es lo
-que aguanta cuando haya más de una usuaria, y cambiarlo después obliga a rehacer la
-pantalla entera.
+**Decided**: background work that the front end polls until it finishes. It is what
+holds up once there is more than one user, and changing it later forces the whole
+screen to be redone.
 
-### C4. Autenticación: qué proveedor y qué protocolo
+### C4. Authentication: which provider and which protocol
 
-El protocolo es lo transferible: OIDC con OAuth2, guard e interceptor en Angular.
-Eso funciona igual contra cualquier proveedor de identidad, incluido el de una
-empresa grande.
+The protocol is the transferable part: OIDC with OAuth2, a guard and an interceptor in
+Angular. That works the same against any identity provider, including a large
+company's.
 
-Lo que falta decidir es contra quién se autentica y, sobre todo, que `cv-server`
-valide el token en cada petición y deje de fiarse del email que llegue en el cuerpo.
+What remains to be decided is who to authenticate against and, above all, that
+`cv-server` validates the token on every request and stops trusting the email that
+arrives in the body.
 
 ---
 
-## D. Coste, que es el criterio uno
+## D. Cost, which is criterion one
 
-| Partida | Cómo queda en cero |
+| Item | How it ends up at zero |
 |---|---|
-| Front | Estático en CDN |
-| Backend | Un solo servicio, el que ya existe. No se añaden más |
-| Base de datos | Plan gratuito, pendiente de C2 |
-| Llamadas al modelo | Es el único coste variable real. Hay que limitar cuántas puede lanzar un usuario y no repetir una generación ya hecha. Desde el 2026-10-02 cada usuaria paga con su propia clave: [ADR-004](../adr/ADR-004-cada-usuaria-trae-su-clave-de-ia.md) |
-| Demo pública | Sin backend y sin base, si se resuelve C1 así |
+| Front end | Static on a CDN |
+| Backend | A single service, the one that already exists. No more are added |
+| Database | Free plan, pending C2 |
+| Model calls | The only real variable cost. The number a user can trigger has to be limited, and a generation already done must not be repeated. Since 2026-10-02 each user pays with their own key: [ADR-004](../adr/ADR-004-each-user-brings-their-own-ai-key.md) |
+| Public demo | No backend and no database, if C1 is resolved that way |
 
-La regla: **cada servicio nuevo que se añade hay que justificarlo.** Un servicio de
-más es una factura de más y una cosa más que se puede caer durante una entrevista.
+The rule: **every new service added has to be justified.** One service more is one
+bill more and one more thing that can go down during an interview.
