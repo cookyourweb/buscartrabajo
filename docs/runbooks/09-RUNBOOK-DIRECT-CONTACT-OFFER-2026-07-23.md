@@ -1,57 +1,59 @@
-# Runbook: oferta que llega por contacto directo
+# Runbook: an offer that arrives by direct contact
 
-> Escrito el 23-jul-2026 después de tardar más de una hora en sacar el CV de Tenth
-> Revolution. El objetivo de este documento es que la próxima vez sean quince minutos.
+> Written on 23 Jul 2026 after taking more than an hour to get the Tenth Revolution CV
+> out. The goal of this document is that next time it takes fifteen minutes.
 
-## Cuándo aplica
+## When it applies
 
-Un recruiter escribe por LinkedIn, por email o llama. La oferta NO viene del workflow n8n
-ni de la tarea programada, así que no está en Notion y el sistema no sabe que existe.
+A recruiter writes on LinkedIn, by email or calls. The offer does NOT come from the n8n
+workflow or from the scheduled task, so it is not in Notion and the system does not
+know it exists.
 
 ---
 
-## Los cinco pasos
+## The five steps
 
-### 1. Meter la oferta en Notion
+### 1. Put the offer into Notion
 
-**Cómo:** contándosela a Claude en la conversación y pegando el mensaje del recruiter.
-Claude crea la página. No hay formulario ni endpoint que usar.
+**How:** by telling Claude about it in the conversation and pasting the recruiter's
+message. Claude creates the page. There is no form or endpoint to use.
 
-La página va en la data source `collection://<id>`
-con estos campos como mínimo: `Empresa`, `Puesto`, `Descripción`, `Salario`, `Modalidad`,
-`Ubicación`, `Estado`, `Idioma`, `Usuario`.
+The page goes in the data source `collection://<id>`
+with these fields as a minimum: `Empresa`, `Puesto`, `Descripción`, `Salario`,
+`Modalidad`, `Ubicación`, `Estado`, `Idioma`, `Usuario`.
 
-- `Estado`: **`Aprobado`**. Una oferta de contacto directo entra por el final del
-  recorrido, no por el principio: la decisión de que interesa ya está tomada cuando el
-  recruiter escribe, y `Aprobado` es lo que dispara la generación de CV y carta. No hace
-  falta un estado nuevo del tipo "Me han contactado". El porqué está en
-  `10-COMO-ENTRA-UNA-OFERTA-2026-07-23.md`.
-- Las nueve opciones válidas y quién pone cada una están en
-  `10-COMO-ENTRA-UNA-OFERTA-2026-07-23.md`.
-- **Siempre en `Ofertas de Trabajo`, nunca en `Candidaturas`**: esta última no tiene
-  `Descripción` ni `Idioma`, y sin ellos no se puede generar un CV adaptado.
+- `Estado`: **`Aprobado`**. A direct-contact offer enters at the end of the route, not
+  at the start: the decision that it is of interest has already been made when the
+  recruiter writes, and `Aprobado` is what triggers the generation of CV and cover
+  letter. No new status of the "They contacted me" type is needed. The reason is in
+  `10-HOW-AN-OFFER-ENTERS-2026-07-23.md`.
+- The nine valid options and who sets each one are in
+  `10-HOW-AN-OFFER-ENTERS-2026-07-23.md`.
+- **Always in `Ofertas de Trabajo`, never in `Candidaturas`**: the latter has neither
+  `Descripción` nor `Idioma`, and without them a tailored CV cannot be generated.
 - `Usuario`: `["https://app.notion.com/p/<id>"]`
-- `Notas`: aquí van el estado de la conversación, lo que ha pedido el recruiter y **los
-  gaps conocidos**. Es lo que evita repetir el análisis dentro de dos semanas.
-- El cuerpo de la página: pegar el mensaje original completo y el histórico de respuestas.
+- `Notas`: this is where the state of the conversation, what the recruiter asked for
+  and **the known gaps** go. It is what avoids repeating the analysis two weeks later.
+- The page body: paste the complete original message and the history of replies.
 
-**Ojo:** el multi_select `Tags` no tiene opciones definidas. Mandar cualquier valor da
-`validation_error`. O se dejan vacías o se añaden antes las opciones al schema.
+**Watch out:** the `Tags` multi_select has no options defined. Sending any value gives
+`validation_error`. Either leave them empty or add the options to the schema first.
 
-**No usar `POST /crear-oferta`**: devuelve 404 (usa el id del data source donde Notion
-espera el id de la database). Ver el bug en la memoria del proyecto.
+**Do not use `POST /crear-oferta`**: it returns 404 (it uses the data source id where
+Notion expects the database id). See the bug in the project memory.
 
-### 2. Generar el CV
+### 2. Generate the CV
 
-> **El CV lo escribe el prompt. Nunca Claude a mano en el chat.**
+> **The CV is written by the prompt. Never by Claude by hand in the chat.**
 >
-> El 23 de julio se sacó el CV de Tenth Revolution corrigiendo a mano cada fallo según
-> aparecía. Salió un buen CV y el sistema quedó igual de roto: el prompt no aprendió nada.
-> Cuando el CV generado falla, se arregla **el prompt del cv-server**, no el CV. Corregir
-> el resultado esconde el problema y garantiza repetirlo en la siguiente oferta.
+> On 23 July the Tenth Revolution CV was produced by correcting by hand each flaw as it
+> appeared. A good CV came out and the system stayed just as broken: the prompt learned
+> nothing. When the generated CV fails, the fix goes in **the cv-server prompt**, not in
+> the CV. Correcting the result hides the problem and guarantees it will repeat on the
+> next offer.
 
 ```bash
-# Desde el 4-oct-2026 exige la clave de máquina. En el Mac prestado está en el llavero:
+# Since 4 Oct 2026 it requires the machine key. On the borrowed Mac it is in the keychain:
 CLAVE_MAQUINA="$(security find-generic-password -s 'CLAVE_MAQUINA cv-server' -w)"
 curl -s -X POST https://cv-server-ggd8.onrender.com/generar-cv \
   -H 'Content-Type: application/json' \
@@ -59,80 +61,79 @@ curl -s -X POST https://cv-server-ggd8.onrender.com/generar-cv \
   -d '{"email":"persona@example.com","empresa":"...","puesto":"...","idioma":"es","descripcion":"..."}'
 ```
 
-Notion NO hace falta para esto: el endpoint acepta empresa, puesto y descripción sueltos.
-Notion es para el seguimiento.
+Notion is NOT needed for this: the endpoint accepts company, job title and description
+on their own. Notion is for the follow-up.
 
-En la `descripcion` va el anuncio **más lo que haya pedido el recruiter en la llamada**.
-Eso último es oro y no está en ningún anuncio.
+In `descripcion` goes the ad **plus whatever the recruiter asked for on the call**.
+That last part is gold and it is in no ad.
 
-### 3. LEER el CV generado. Siempre.
+### 3. READ the generated CV. Always.
 
-El endpoint devuelve un link de Drive. Hay que abrirlo y leerlo. No vale con que la
-respuesta diga `ok: true`.
+The endpoint returns a Drive link. It has to be opened and read. It is not enough that
+the response says `ok: true`.
 
-Lista de comprobación, que son los fallos reales que se han dado. **Cada casilla que salga
-marcada es un arreglo en el prompt, no una corrección a mano del documento:**
+Checklist, which are the real failures that have occurred. **Every box that comes out
+ticked is a fix in the prompt, not a manual correction of the document:**
 
-- [ ] ¿Hay alguna **tecnología que la oferta pide y Vero no tiene**? (coló PHP/Symfony
-      con la fórmula ambigua "contexto de integración con arquitecturas PHP/Symfony")
-- [ ] ¿Aparece lo que el recruiter pidió expresamente?
-- [ ] ¿El titular es una **identidad real** (`Frontend Tech Lead` / `Full-Stack Developer`
-      / `UX Engineer`) y no el título de la vacante?
-- [ ] ¿Hay **verbos de liderazgo** en el cuerpo si el puesto no pide lead/manager?
+- [ ] Is there any **technology that the offer asks for and Vero does not have**? (PHP/Symfony
+      slipped in with the ambiguous phrase "integration context with PHP/Symfony architectures")
+- [ ] Does what the recruiter expressly asked for appear?
+- [ ] Is the headline a **real identity** (`Frontend Tech Lead` / `Full-Stack Developer`
+      / `UX Engineer`) and not the vacancy title?
+- [ ] Are there **leadership verbs** in the body if the position does not ask for lead/manager?
       (`rg -i 'lider|responsable|coordinando|a cargo|dirig'`)
-- [ ] ¿Alguna frase se puede rastrear **casi literal hasta el anuncio**? Eso se borra.
-- [ ] ¿Alguna cifra que no esté en el Master? (el guardrail lo comprueba y devuelve
-      `cifras_no_respaldadas`, pero conviene mirarlo)
+- [ ] Can any sentence be traced **almost verbatim to the ad**? That gets deleted.
+- [ ] Any figure that is not in the Master? (the guardrail checks it and returns
+      `cifras_no_respaldadas`, but it is worth looking)
 
-Nota sobre Drive: `read_file_content` puede devolver vacío en la primera llamada sobre un
-`.docx`. Reintentar antes de dar por hecho que no se puede leer.
+Note on Drive: `read_file_content` may return empty on the first call on a `.docx`.
+Retry before assuming it cannot be read.
 
-### 4. Pasarlo a PDF
+### 4. Turn it into a PDF
 
-El cv-server entrega `.docx`. A las empresas se manda PDF.
+The cv-server delivers `.docx`. PDFs are what get sent to companies.
 
 ```bash
 python3 -m venv venv-pdf && ./venv-pdf/bin/pip install reportlab
 ./venv-pdf/bin/python buscartrabajo/tools/cv_md_a_pdf.py CV.md CV.pdf
 ```
 
-En macOS hace falta el venv: PEP 668 bloquea `pip install` sobre el Python del sistema.
+On macOS the venv is needed: PEP 668 blocks `pip install` on the system Python.
 
-Nombre del archivo con el puesto dentro, que en la bandeja de un recruiter un archivo que
-solo lleve el nombre se pierde: `CV-Veronica-Serna-Perez-Frontend-Tech-Lead.pdf`.
+File name with the job title inside, because in a recruiter's inbox a file that only
+carries the name gets lost: `CV-Veronica-Serna-Perez-Frontend-Tech-Lead.pdf`.
 
-### 5. Cerrar el círculo en Notion
+### 5. Close the loop in Notion
 
-Rellenar `Link CV Drive` y `CV usado`, y dejar el `Estado` que corresponda.
-
----
-
-## Por qué la vez anterior tardó más de una hora
-
-No fue el CV. Fueron las correcciones que se podían haber evitado:
-
-1. `/crear-oferta` devolvió 404 y hubo que diagnosticarlo en caliente.
-2. El CV generado incumplió DOS reglas que ya estaban escritas en el prompt (nivel del
-   puesto y regla de evidencia sobre tecnologías), y hubo que arreglarlo a mano.
-3. El perfil hacía eco del anuncio y hubo que limpiarlo.
-4. Varias vueltas de redacción del párrafo de IA por no tener escrito cómo se quiere
-   contar esto.
-
-Las cuatro se arreglan en el origen, no repitiendo el trabajo manual cada vez.
-
-## Pendiente para que este runbook sobre
-
-- [x] ~~Guardrail de tecnologías en el prompt del cv-server (regla de evidencia: la
-      tecnología entra solo si el Master la respalda)~~ **HECHO 23-jul**, commit `b3c98d2`
-      en `cv-server`. `/generar-cv` devuelve `tecnologias_no_respaldadas`. Falta desplegar
-      a PROD.
-- [ ] Que la regla de NIVEL DEL PUESTO se cumpla de verdad (existe en
-      el prompt de `cv-server`, módulo `server.py`, y no se aplicó)
-- [ ] Regla anti-eco en el prompt (ya documentada en
-      `cv-server/docs/PROMPT-ADAPTACION-CV.md`, falta llevarla al prompt)
-- [ ] Export a PDF dentro del propio cv-server, para no hacerlo a mano
-- [ ] Arreglar el 404 de `/crear-oferta` (id database contra id data source)
+Fill in `Link CV Drive` and `CV usado`, and set the `Estado` that applies.
 
 ---
 
-**Generado:** 23 julio 2026, tras el proceso de Tenth Revolution Group.
+## Why the previous time took more than an hour
+
+It was not the CV. It was the corrections that could have been avoided:
+
+1. `/crear-oferta` returned 404 and it had to be diagnosed on the fly.
+2. The generated CV broke TWO rules that were already written in the prompt (position
+   level and the evidence rule on technologies), and it had to be fixed by hand.
+3. The profile echoed the ad and had to be cleaned up.
+4. Several rounds of rewriting the AI paragraph because there was nothing written down
+   about how this should be told.
+
+All four are fixed at the source, not by repeating the manual work every time.
+
+## Pending so that this runbook becomes unnecessary
+
+- [x] ~~Technology guardrail in the cv-server prompt (evidence rule: a technology goes in
+      only if the Master backs it)~~ **DONE 23 Jul**, commit `b3c98d2` in `cv-server`.
+      `/generar-cv` returns `tecnologias_no_respaldadas`. Still to be deployed to PROD.
+- [ ] Make the POSITION LEVEL rule actually hold (it exists in
+      the `cv-server` prompt, module `server.py`, and was not applied)
+- [ ] Anti-echo rule in the prompt (already documented in
+      `cv-server/docs/PROMPT-ADAPTACION-CV.md`, still to be brought into the prompt)
+- [ ] PDF export inside the cv-server itself, so it is not done by hand
+- [ ] Fix the 404 of `/crear-oferta` (database id versus data source id)
+
+---
+
+**Generated:** 23 July 2026, after the Tenth Revolution Group process.

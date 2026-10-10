@@ -1,132 +1,129 @@
-# Runbook. Cerrar la rotación de los webhooks
+# Runbook. Closing out the webhook rotation
 
-**Fecha:** 1 sep 2026 · **Issue:** #1 · **Relacionado:** [ADR-001](../adr/ADR-001-proteccion-de-los-webhooks.md)
+**Date:** 1 Sep 2026 · **Issue:** #1 · **Related:** [ADR-001](../adr/ADR-001-webhook-protection.md)
 
-Este documento cierra lo que ADR-001 dejó a medias. No decide nada nuevo: aplica
-la decisión que ya está tomada.
-
----
-
-## Qué pasaba, en una frase
-
-Las rutas de los cuatro webhooks se rotaron y salieron del repositorio, pero
-**los tres ficheros que arman los enlaces de los correos seguían con la ruta
-vieja escrita a mano**, y `wf-join` los mete tal cual en el workflow que se
-importa a n8n. El siguiente import habría devuelto a producción unos enlaces que
-apuntan a rutas muertas.
-
-ADR-001 avisó de la mitad del problema:
-
-> Dos nodos de producción todavía construyen la URL con la ruta escrita a mano.
-> Al rotar hay que sustituirla por una expresión, o la ruta nueva vuelve al repo
-> en el siguiente `wf-split`.
-
-La otra mitad, que no estaba anotada, es peor: **la ruta vieja vuelve a
-producción**, y los correos de aprobar, descartar y enviar a empresa dejan de
-funcionar. Nada avisaba, porque `check-secretos` solo buscaba las rutas VIVAS y
-una ruta muerta no filtra nada.
+This document closes what ADR-001 left half done. It decides nothing new: it applies
+the decision that has already been made.
 
 ---
 
-## Lo que ya está arreglado en el repositorio
+## What was happening, in one sentence
 
-| Qué | Dónde |
+The routes of the four webhooks were rotated and removed from the repository, but
+**the three files that build the links in the emails still had the old route written
+by hand**, and `wf-join` puts them as they are into the workflow that is imported into
+n8n. The next import would have put back into production links that point to dead
+routes.
+
+ADR-001 warned about half of the problem:
+
+> Two production nodes still build the URL with the route written by hand.
+> When rotating, it must be replaced with an expression, or the new route goes back to
+> the repo on the next `wf-split`.
+
+The other half, which was not noted down, is worse: **the old route goes back to
+production**, and the approve, discard and send-to-company emails stop working. Nothing
+warned about it, because `check-secretos` only looked for LIVE routes and a dead route
+leaks nothing.
+
+---
+
+## What is already fixed in the repository
+
+| What | Where |
 |---|---|
-| Los tres enlaces de correo usan `@@SECRET:<nodo>` en vez de la ruta | `workflows/PROD/nodes/code-preparar-email-notificacion.js`, `code-preparar-email-carta-cv.js` |
-| `wf-join` resuelve los marcadores **dentro** del código de los nodos, no solo en `path` | `scripts/wf-join.mjs` |
-| `wf-join` para con error si encuentra una ruta muerta o un marcador huérfano | `scripts/wf-join.mjs` |
-| Comprobación 3: prohibida **cualquier** ruta literal, viva o muerta | `scripts/check-secretos.mjs` |
-| Los dos documentos vivos usan el hueco `<RUTA>` | `docs/01-...`, `docs/19-...` |
-| `npm test` vuelve a correr en Node 23 | `package.json` |
+| The three email links use `@@SECRET:<node>` instead of the route | `workflows/PROD/nodes/code-preparar-email-notificacion.js`, `code-preparar-email-carta-cv.js` |
+| `wf-join` resolves the markers **inside** the node code, not only in `path` | `scripts/wf-join.mjs` |
+| `wf-join` stops with an error if it finds a dead route or an orphan marker | `scripts/wf-join.mjs` |
+| Check 3: **any** literal route is forbidden, live or dead | `scripts/check-secretos.mjs` |
+| The two living documents use a route placeholder instead of a route | `docs/01-...` (now `docs/archive/01-...`), `docs/19-...` (now `docs/runbooks/19-...`) |
+| `npm test` runs again on Node 23 | `package.json` |
 
-Los archivos congelados (`.archivo-historico-*`, `_archivo-exports-*`) quedan
-fuera de la comprobación 3 a propósito: son un registro de lo que hubo y nadie
-los importa a n8n. Sus rutas vivas las siguen mirando las comprobaciones 1 y 2.
+The frozen files (`.archivo-historico-*`, `_archivo-exports-*`) are left out of check 3
+on purpose: they are a record of what existed and nobody imports them into n8n. Their
+live routes are still watched by checks 1 and 2.
 
-Verificado de punta a punta: `wf-join` reconstruye los 50 nodos con **0
-marcadores sin resolver, 0 rutas viejas**, y los tres enlaces de correo apuntando
-a la ruta viva de su webhook.
+Verified end to end: `wf-join` rebuilds the 50 nodes with **0 unresolved markers, 0 old
+routes**, and the three email links pointing to the live route of their webhook.
 
 ---
 
-## Lo que tienes que hacer tú, en este orden
+## What you have to do, in this order
 
-### 1. Confirmar que n8n tiene las rutas nuevas
+### 1. Confirm that n8n has the new routes
 
-`workflows/PROD/secrets.local.json` tiene rutas de 25, 32, 39 y 34 caracteres, y
-ninguna coincide con las publicadas. Todo apunta a que la rotación se hizo el
-30 y 31 de agosto. **Confírmalo antes de seguir**: abre los cuatro nodos webhook
-en n8n y compara su campo `path` con el fichero.
+`workflows/PROD/secrets.local.json` has routes of 25, 32, 39 and 34 characters, and
+none matches the published ones. Everything points to the rotation having been done on
+30 and 31 August. **Confirm it before going on**: open the four webhook nodes in n8n
+and compare their `path` field with the file.
 
-- Si coinciden: la rotación está hecha, sigue en el paso 2.
-- Si no coinciden: las rutas del fichero son las nuevas y **no se han aplicado**.
-  Aplícalas en n8n primero, y vuelve aquí.
+- If they match: the rotation is done, go on to step 2.
+- If they do not match: the routes in the file are the new ones and **have not been
+  applied**. Apply them in n8n first, and come back here.
 
-### 2. Reimportar el workflow
+### 2. Re-import the workflow
 
 ```
 npm run wf:join
 ```
 
-Genera `workflows/PROD/_importar.json`, que está en `.gitignore`. Impórtalo en
-n8n. Sin este paso, los correos que salgan siguen llevando la ruta vieja.
+It generates `workflows/PROD/_importar.json`, which is in `.gitignore`. Import it into
+n8n. Without this step, the emails that go out still carry the old route.
 
-Si algo está mal, el comando para y lo dice: sale con código 3 si encuentra una
-ruta muerta escrita a mano, y con 4 si hay un marcador cuyo nombre no está en el
-fichero de secretos.
+If something is wrong, the command stops and says so: it exits with code 3 if it finds
+a dead route written by hand, and with 4 if there is a marker whose name is not in the
+secrets file.
 
-### 3. Actualizar los botones de Notion
+### 3. Update the Notion buttons
 
-Los tres webhooks que se invocan desde un botón de Notion abren una URL fija. Al
-rotar, esa URL cambió. Revisa los botones de la base de ofertas y pon la ruta que
-esté en `secrets.local.json`.
+The three webhooks invoked from a Notion button open a fixed URL. When rotating, that
+URL changed. Review the buttons in the offers database and put in the route that is in
+`secrets.local.json`.
 
-### 4. Avisar de los correos que ya salieron
+### 4. Warn about the emails that already went out
 
-**Este es el efecto que hay que tener en cuenta.** Los correos enviados antes de
-la rotación llevan enlaces de aprobar y descartar que ya no responden. No hay
-forma de arreglarlos: el enlace vive en un correo que ya está en una bandeja.
+**This is the effect to keep in mind.** The emails sent before the rotation carry
+approve and discard links that no longer respond. There is no way to fix them: the link
+lives in an email that is already in an inbox.
 
-Las ofertas que estén esperando aprobación de uno de esos correos **se aprueban o
-descartan desde Notion**, no desde el correo. Los correos nuevos, una vez hecho
-el paso 2, funcionan.
+The offers waiting for approval from one of those emails **are approved or discarded
+from Notion**, not from the email. The new emails, once step 2 is done, work.
 
-### 5. Mergear la rama
+### 5. Merge the branch
 
-`seguridad/webhooks-sin-auth` lleva fuera de `main` desde el 31 de agosto.
-Cuando los pasos anteriores estén hechos, mergea.
+`seguridad/webhooks-sin-auth` has been out of `main` since 31 August.
+When the previous steps are done, merge.
 
-Ojo con el tamaño: son 121 ficheros y unas 67.500 líneas, y casi todo son copias
-de seguridad de workflows del verano que entraron en el mismo saco que el arreglo
-de seguridad. Si el repositorio va a enseñarse, merece la pena separar las copias
-en su propio commit antes de mergear.
-
----
-
-## Cómo se rota la próxima vez
-
-El orden de ADR-001 sigue siendo el bueno: **rotar, limpiar, publicar.**
-
-1. Genera rutas nuevas, largas e impredecibles, y cámbialas en los cuatro nodos
-   de n8n.
-2. Exporta el workflow y pásalo por `npm run wf:split`. Las rutas salen solas a
-   `secrets.local.json` y el código de los nodos queda con marcadores.
-3. `npm run check:secretos`. Tiene que dar verde.
-4. Actualiza los botones de Notion.
-5. `npm run wf:join` y reimporta, para que los correos nuevos lleven la ruta viva.
-
-Nunca escribas una ruta a mano en un fichero del repositorio. Ni siquiera una que
-creas muerta: la comprobación 3 la rechaza, y tiene razón.
+Mind the size: it is 121 files and about 67,500 lines, and almost all of it is backup
+copies of summer workflows that came in the same bag as the security fix. If the
+repository is going to be shown, it is worth separating the copies into their own
+commit before merging.
 
 ---
 
-## Cuándo sobra todo esto
+## How to rotate next time
 
-Cuando exista el frontend en Angular, según ADR-001. Una aplicación en el
-navegador enseña la ruta en la pestaña de red, y la ruta impredecible deja de
-proteger nada. En ese momento hace falta autenticación de verdad: un backend que
-guarde el secreto y hable con n8n, o tokens por petición.
+The order of ADR-001 is still the right one: **rotate, clean, publish.**
 
-Es decir: **el frontend y la seguridad de estos webhooks son la misma tarea, no
-dos.** Empezar el Angular sin resolver la autenticación empeora esto, no lo
-arregla.
+1. Generate new, long and unpredictable routes, and change them in the four n8n nodes.
+2. Export the workflow and run it through `npm run wf:split`. The routes go out by
+   themselves to `secrets.local.json` and the node code is left with markers.
+3. `npm run check:secretos`. It has to come out green.
+4. Update the Notion buttons.
+5. `npm run wf:join` and re-import, so that new emails carry the live route.
+
+Never write a route by hand in a repository file. Not even one you believe is dead:
+check 3 rejects it, and it is right to.
+
+---
+
+## When all of this becomes unnecessary
+
+When the Angular frontend exists, according to ADR-001. A browser application shows
+the route in the network tab, and the unpredictable route stops protecting anything. At
+that point real authentication is needed: a backend that holds the secret and talks to
+n8n, or per-request tokens.
+
+In other words: **the frontend and the security of these webhooks are the same task,
+not two.** Starting the Angular work without resolving authentication makes this worse,
+it does not fix it.

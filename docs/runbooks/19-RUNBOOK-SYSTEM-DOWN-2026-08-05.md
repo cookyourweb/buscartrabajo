@@ -1,163 +1,163 @@
-# 19. Runbook: "el sistema no me manda ofertas"
+# 19. Runbook: "the system is not sending me offers"
 
-**Fecha:** 5 de agosto de 2026
-**Estado:** causa raíz encontrada y arreglada
-**Aplica a:** workflow `BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)`, id `CsvmtPcLVmGIZg6C`
+**Date:** 5 August 2026
+**Status:** root cause found and fixed
+**Applies to:** workflow `BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)`, id `CsvmtPcLVmGIZg6C`
 
-Este documento existe porque el mismo síntoma se ha diagnosticado **cinco veces** (24-jun, 8-jul, 13-jul, 30-jul, 5-ago) y cuatro de ellas se empezó desde cero. La quinta encontró la causa real. Aquí queda escrita para no volver a pagar ese peaje.
+This document exists because the same symptom has been diagnosed **five times** (24 Jun, 8 Jul, 13 Jul, 30 Jul, 5 Aug) and four of them started from scratch. The fifth found the real cause. It is written down here so that we do not pay that toll again.
 
 ---
 
-## 1. La causa raíz del 5 de agosto
+## 1. The root cause of 5 August
 
-El workflow tiene **cuatro triggers**, no uno:
+The workflow has **four triggers**, not one:
 
-| Trigger | Cron | Para qué |
+| Trigger | Cron | What for |
 |---|---|---|
-| `Schedule Trigger (9am)` | `0 9 * * *` | la búsqueda diaria de ofertas |
-| `Cron - Revisar Aprobadas` | `* * * * *` **(el culpable)** | revisar ofertas aprobadas en Notion |
-| `Manual Trigger` | manual | pruebas |
-| `Error Trigger` | evento | avisos de error |
+| `Schedule Trigger (9am)` | `0 9 * * *` | the daily offer search |
+| `Cron - Revisar Aprobadas` | `* * * * *` **(the culprit)** | review approved offers in Notion |
+| `Manual Trigger` | manual | tests |
+| `Error Trigger` | event | error notifications |
 
-`Cron - Revisar Aprobadas` disparaba **cada minuto**: 1.440 ejecuciones diarias de 400 a 650 ms, todas con estado `success` y sin producir nada. Sumadas al resto de workflows activos, la instancia acumuló **11.240 ejecuciones de producción**.
+`Cron - Revisar Aprobadas` fired **every minute**: 1,440 executions a day of 400 to 650 ms, all with `success` status and producing nothing. Added to the rest of the active workflows, the instance accumulated **11,240 production executions**.
 
-La cadena completa:
+The full chain:
 
-1. El cron del minuto satura la instancia de n8n en Render todo el día.
-2. La instancia se queda sin memoria y se reinicia sola.
-3. Cuando llega el disparo de las 9:00, no hay memoria disponible: `WorkflowCrashedError: Workflow did not finish, possible out-of-memory issue`, muriendo en el propio `Schedule Trigger (9am)`. Ocurrió el 29, 30 y 31 de julio.
-4. Del 3 de agosto en adelante la instancia ni siquiera llegaba viva a las 9:00, así que no había ejecución **ni mail de error**. Silencio total, que es el síntoma más engañoso de todos.
+1. The every-minute cron saturates the n8n instance on Render all day.
+2. The instance runs out of memory and restarts by itself.
+3. When the 9:00 trigger arrives, there is no memory available: `WorkflowCrashedError: Workflow did not finish, possible out-of-memory issue`, dying right at the `Schedule Trigger (9am)`. It happened on 29, 30 and 31 July.
+4. From 3 August onwards the instance did not even get to 9:00 alive, so there was no execution **and no error email**. Total silence, which is the most misleading symptom of all.
 
-### El arreglo aplicado
+### The fix applied
 
-`Cron - Revisar Aprobadas` pasa de `* * * * *` a `*/15 * * * *`. De 1.440 ejecuciones diarias a 96.
+`Cron - Revisar Aprobadas` goes from `* * * * *` to `*/15 * * * *`. From 1,440 executions a day to 96.
 
-Verificado releyendo el workflow del servidor y observando 6 minutos sin ningún disparo. Backup previo en el historial: `git show 1a868f3:workflows/BACKUP-CsvmtPcLVmGIZg6C-2026-08-05-0832-antes-fix-cron.json`.
+Verified by re-reading the workflow from the server and watching 6 minutes with no trigger firing. Previous backup in the history: `git show 1a868f3:workflows/BACKUP-CsvmtPcLVmGIZg6C-2026-08-05-0832-antes-fix-cron.json`.
 
 ---
 
-## 1 bis. Los otros dos fallos, que eran los que de verdad vaciaban Notion
+## 1 bis. The other two failures, which were the ones that really emptied Notion
 
-Arreglar el cron dejó de tirar la instancia, pero **seguían sin llegar ofertas**. Había otros dos fallos encadenados, los dos medidos sobre el feed real, no supuestos.
+Fixing the cron stopped the instance from going down, but **offers still did not arrive**. There were two other chained failures, both measured on the real feed, not assumed.
 
-### Fallo A: el filtro de modalidad asumía Presencial y tiraba el 39% de las ofertas
+### Failure A: the work-mode filter assumed On-site and threw away 39% of the offers
 
-En `Code - Normalizar Modalidad`:
+In `Code - Normalizar Modalidad`:
 
 ```js
-let modalidad = 'Presencial';                  // valor por defecto
+let modalidad = 'Presencial';                  // default value
 if (mod.includes('remoto'))  modalidad = 'Remoto';
 else if (mod.includes('híbrido')) modalidad = 'Hibrido';
-if (modalidad === 'Presencial') return null;   // descartada
+if (modalidad === 'Presencial') return null;   // discarded
 ```
 
-Si la oferta no declaraba modalidad, el valor se quedaba en `Presencial` y la línea siguiente la descartaba. El workflow acababa en `success` con cero items y nadie se enteraba.
+If the offer did not declare a work mode, the value stayed at `Presencial` and the next line discarded it. The workflow ended as `success` with zero items and nobody found out.
 
-**Y contradecía al propio prompt de Groq**, que dice literalmente *"NUNCA asumas la modalidad: si la oferta no dice remoto/hibrido, deja el campo vacio"*. Groq obedecía y devolvía `"modalidad": ""`. El código de después asumía. Dos reglas contrarias en el mismo workflow.
+**And it contradicted Groq's own prompt**, which literally says *"NUNCA asumas la modalidad: si la oferta no dice remoto/hibrido, deja el campo vacio"* (NEVER assume the work mode: if the offer does not say remote/hybrid, leave the field empty). Groq obeyed and returned `"modalidad": ""`. The code after it assumed. Two opposite rules in the same workflow.
 
-**Medido sobre el RSS real (80 ofertas):**
+**Measured on the real RSS (80 offers):**
 
-| | ofertas |
+| | offers |
 |---|---|
-| con modalidad en algún punto del texto | 49 |
-| **sin modalidad en ninguna parte** | **31 (39%)** |
-| con modalidad visible en los primeros 60 chars | 31 |
-| con modalidad visible en los primeros 500 chars | 31 |
+| with a work mode somewhere in the text | 49 |
+| **without a work mode anywhere** | **31 (39%)** |
+| with the work mode visible in the first 60 chars | 31 |
+| with the work mode visible in the first 500 chars | 31 |
 
-Dato útil: **Tecnoempleo mete la modalidad en el campo `Provincia`**. En 23 ofertas pone `hibrido` y en 3 `100% en remoto` en vez de una provincia. Por eso ya son visibles en los primeros 60 caracteres.
+Useful fact: **Tecnoempleo puts the work mode in the `Provincia` field**. In 23 offers it says `hibrido` and in 3 `100% en remoto` instead of a province. That is why they are already visible in the first 60 characters.
 
-Hipótesis descartada por el camino: se pensó que el problema era que a Groq solo se le mandan 60 caracteres de descripción (`descFull.slice(0, 60)`). Subirlo a 500 gana **2 ofertas de 80**. No era eso, y medirlo antes de tocarlo ahorró un cambio inútil.
+Hypothesis discarded along the way: it was thought that the problem was that only 60 characters of description are sent to Groq (`descFull.slice(0, 60)`). Raising it to 500 gains **2 offers out of 80**. That was not it, and measuring before touching it saved a useless change.
 
-**Arreglo aplicado:** la modalidad ya no se asume. Si no se puede determinar, queda `Sin confirmar` (opción nueva añadida al select de Notion) y la oferta **entra igual**, con `[VERIFICAR MODALIDAD]` al principio de las Notas. Se descarta solo con dato explícito: Presencial, o Híbrido fuera de Madrid. La modalidad se busca además en la descripción de 1800 caracteres que el nodo ya tenía guardada al lado, sin tocar el prompt ni el nodo de formateo.
+**Fix applied:** the work mode is no longer assumed. If it cannot be determined, it stays `Sin confirmar` (Unconfirmed; a new option added to the Notion select) and the offer **goes in anyway**, with `[VERIFICAR MODALIDAD]` (verify work mode) at the start of the Notes. It is discarded only with explicit data: On-site, or Hybrid outside Madrid. The work mode is also looked for in the 1800-character description that the node already had stored alongside, without touching the prompt or the formatting node.
 
-### Fallo B: solo se leían las 30 primeras ofertas del RSS, de 80
+### Failure B: only the first 30 offers of the RSS were read, out of 80
 
-En `Formatear ofertas`:
+In `Formatear ofertas`:
 
 ```js
-for (let k = 1; k < parts.length && k <= 30; k++) {   // el feed trae 80
+for (let k = 1; k < parts.length && k <= 30; k++) {   // the feed brings 80
 ```
 
-**Medido sobre el feed del 5 de agosto:**
+**Measured on the 5 August feed:**
 
-| | ofertas del perfil de Vero |
+| | offers matching Vero's profile |
 |---|---|
-| en las 30 primeras | **0** |
-| en las 80 totales | **5** |
+| in the first 30 | **0** |
+| in all 80 | **5** |
 
-Las cinco que encajaban estaban por debajo de la posición 30. El tope las tiraba todas sin mirarlas. El feed de Tecnoempleo **no viene ordenado por relevancia**: las 30 primeras de ese día eran Técnico Automatista, Operario Electrónico, SAP MDG, ABAP y Consultor ERP.
+The five that fit were below position 30. The cap threw them all away without looking at them. The Tecnoempleo feed is **not ordered by relevance**: the first 30 that day were Automation Technician, Electronics Operator, SAP MDG, ABAP and ERP Consultant.
 
-Esto explica el goteo de "una oferta en doce días" mejor que ninguna otra cosa.
+This explains the trickle of "one offer in twelve days" better than anything else.
 
-**Arreglo aplicado:** tope subido de 30 a 100.
+**Fix applied:** cap raised from 30 to 100.
 
-### Fallo C: el `Wait` de 30 segundos perdía la ejecución entera
+### Failure C: the 30-second `Wait` lost the whole execution
 
-`Wait - Rate Limit Groq` estaba en 30 segundos. La ejecución de las 9:00 del 5 de agosto (id 34056) murió exactamente ahí: recorrió los tres portales sin un solo fallo, formateó las ofertas, llegó al `Wait` y quedó huérfana con `WorkflowCrashedError`.
+`Wait - Rate Limit Groq` was set to 30 seconds. The 9:00 execution of 5 August (id 34056) died exactly there: it went through the three portals without a single failure, formatted the offers, reached the `Wait` and was left orphaned with `WorkflowCrashedError`.
 
-En n8n **una espera corta vive en la memoria del proceso, no en base de datos**. Si el proceso se reinicia durante esos 30 segundos, la ejecución se pierde y el mensaje que sale es el genérico de *"possible out-of-memory"*, que manda el diagnóstico en la dirección equivocada. No era memoria: era una espera que nadie reanudó.
+In n8n **a short wait lives in process memory, not in the database**. If the process restarts during those 30 seconds, the execution is lost and the message that appears is the generic *"possible out-of-memory"* one, which sends the diagnosis in the wrong direction. It was not memory: it was a wait that nobody resumed.
 
-Con **un solo usuario** se hace una única llamada a Groq, así que no hay rate limit del que protegerse. **Arreglo aplicado:** bajado a 2 segundos. El flujo completo pasó de 38 a **6,7 segundos**, con lo que la ventana en la que un reinicio puede matar la ejecución es quince veces más pequeña.
+With **a single user** only one call to Groq is made, so there is no rate limit to protect against. **Fix applied:** lowered to 2 seconds. The complete flow went from 38 to **6.7 seconds**, so the window in which a restart can kill the execution is fifteen times smaller.
 
-### Verificación end-to-end
+### End-to-end verification
 
-Disparando el flujo real por `POST /webhook/<RUTA>` con el perfil de Notion:
+Triggering the real flow through `POST /webhook/<WEBHOOK_PATH>` with the Notion profile:
 
 ```
-webhook: 200 (38,1s)
-respuesta: {"messageId": "<...@smtp-relay.mailin.fr>"}
+webhook: 200 (38.1s)
+response: {"messageId": "<...@smtp-relay.mailin.fr>"}
 
-OFERTAS NUEVAS EN NOTION: 2
+NEW OFFERS IN NOTION: 2
   zooplus SE | Senior AI Engineer         | Sin confirmar
   Swiss Re   | Senior Full Stack Engineer | Sin confirmar
 ```
 
-Las dos son exactamente las que Groq había seleccionado el 4 de agosto y el filtro descartaba.
+The two are exactly the ones Groq had selected on 4 August and the filter discarded.
 
-**Cómo relanzar el flujo sin esperar a las 9:00:** `POST $N8N_HOST/webhook/<RUTA>` con el body que espera `Code — Normalizar (interno)`: `nombre`, `email`, `perfil`, `rol`, `stack[]`, `salario`, `modalidad[]`, `ciudad`, `user_id`. El `user_id` es el id de la página de Vero en la base Users. Script listo en el scratchpad de la sesión (`probar_flujo_real.py`).
-
----
-
-## 2. Los cuatro engaños que cuestan horas
-
-Cada uno de estos hizo perder tiempo en algún diagnóstico anterior. Leerlos antes de investigar.
-
-### Engaño 1: "no me llegan los mails"
-
-Los mails **sí llegan**. Están sin abrir en el buzón de destino, remitente `veronica@cookyourwebai.es` (Brevo). El 5 de agosto había sin leer la oferta de Arelance del 2-ago y los tres avisos de error del 29, 30 y 31 de julio.
-
-El mail se manda **una vez por cada oferta nueva creada en Notion**. Sin oferta nueva no hay mail. Así que "no llegan mails" casi siempre significa "no se están creando ofertas", que es un problema distinto y aguas arriba.
-
-### Engaño 2: "me llegan avisos a Telegram, luego el sistema va"
-
-Falso. Son **workflows distintos**:
-
-- Telegram: `Búsqueda Empleo Diaria`, id `LODaOAsNrmU7NnJ4`, 9 nodos.
-- Notion y mail: `BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)`, id `CsvmtPcLVmGIZg6C`, 50 nodos.
-
-Que uno funcione no dice nada del otro.
-
-### Engaño 3: "healthz responde 200, la instancia está bien"
-
-Una sola llamada no vale. El 5 de agosto `/healthz` respondió 200 en 0,24s, y diez minutos después estuvo **seis sondeos seguidos en 502** antes de volver. Una instancia que se reinicia en bucle responde 200 la mitad del tiempo.
-
-**Hay que sondear varias veces espaciadas**, nunca una sola.
-
-### Engaño 4: "el ID del workflow es el que pone la documentación"
-
-El ID cambia cada vez que se importa un export. Histórico conocido: `3zFJWSkPPHDi4yMp`, `5pTwriXcc6aYHO1Y`, `OVoFiXTQwXmiyMfW` y ahora `CsvmtPcLVmGIZg6C`. Los cuatro siguen existiendo en la instancia, tres apagados.
-
-**Nunca confiar en un ID escrito en un documento.** Listar los workflows y quedarse con el que esté `active`.
+**How to relaunch the flow without waiting for 9:00:** `POST $N8N_HOST/webhook/<WEBHOOK_PATH>` with the body that `Code — Normalizar (interno)` expects: `nombre`, `email`, `perfil`, `rol`, `stack[]`, `salario`, `modalidad[]`, `ciudad`, `user_id`. The `user_id` is the id of Vero's page in the Users database. Script ready in the session scratchpad (`probar_flujo_real.py`).
 
 ---
 
-## 3. Orden de diagnóstico (seguir tal cual)
+## 2. The four deceptions that cost hours
 
-Cuando Vero diga "no me llega nada", hacer esto **en este orden**. Los tres primeros pasos cuestan un minuto y suelen bastar.
+Each of these wasted time in some earlier diagnosis. Read them before investigating.
 
-### Paso 1: ¿cuándo entró la última oferta de verdad?
+### Deception 1: "the emails are not reaching me"
 
-Consultar Notion, data source `collection://<id>`:
+The emails **do** arrive. They are unread in the destination inbox, sender `veronica@cookyourwebai.es` (Brevo). On 5 August the Arelance offer of 2 Aug and the three error notices of 29, 30 and 31 July were unread.
+
+The email is sent **once for each new offer created in Notion**. With no new offer there is no email. So "no emails arrive" almost always means "no offers are being created", which is a different problem and further upstream.
+
+### Deception 2: "I get Telegram alerts, so the system works"
+
+False. They are **different workflows**:
+
+- Telegram: `Búsqueda Empleo Diaria`, id `LODaOAsNrmU7NnJ4`, 9 nodes.
+- Notion and email: `BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)`, id `CsvmtPcLVmGIZg6C`, 50 nodes.
+
+That one works says nothing about the other.
+
+### Deception 3: "healthz answers 200, the instance is fine"
+
+A single call is not enough. On 5 August `/healthz` answered 200 in 0.24 s, and ten minutes later it was **six probes in a row at 502** before coming back. An instance that restarts in a loop answers 200 half of the time.
+
+**You have to probe several times, spaced out**, never just once.
+
+### Deception 4: "the workflow ID is the one the documentation says"
+
+The ID changes every time an export is imported. Known history: `3zFJWSkPPHDi4yMp`, `5pTwriXcc6aYHO1Y`, `OVoFiXTQwXmiyMfW` and now `CsvmtPcLVmGIZg6C`. All four still exist on the instance, three switched off.
+
+**Never trust an ID written in a document.** List the workflows and keep the one that is `active`.
+
+---
+
+## 3. Diagnostic order (follow as written)
+
+When Vero says "nothing is reaching me", do this **in this order**. The first three steps take a minute and are usually enough.
+
+### Step 1: when did the last real offer come in?
+
+Query Notion, data source `collection://<id>`:
 
 ```sql
 SELECT createdTime, "Empresa", "Puesto", "Estado"
@@ -165,134 +165,134 @@ FROM "collection://<id>"
 ORDER BY datetime(createdTime) DESC LIMIT 20
 ```
 
-La columna es `createdTime`, **no** `"Created time"`. Fijarse en la **hora**: las creadas hacia las 07:00 UTC son del cron; las de media tarde son cargas manuales y no prueban que el sistema funcione.
+The column is `createdTime`, **not** `"Created time"`. Look at the **time**: the ones created around 07:00 UTC are from the cron; the mid-afternoon ones are manual loads and do not prove that the system works.
 
-### Paso 2: ¿qué dicen los mails de error?
+### Step 2: what do the error emails say?
 
-Buscar en el Gmail de destino:
+Search the destination Gmail:
 
 ```
 newer_than:14d subject:"❌ ERROR"
 ```
 
-Abrir el **cuerpo** del mail, no solo el asunto. El asunto siempre dice `Nodo: Unknown` y no sirve. El cuerpo trae el JSON con `error.message`, `lastNodeExecuted` y el id de ejecución.
+Open the **body** of the email, not just the subject. The subject always says `Nodo: Unknown` and is useless. The body carries the JSON with `error.message`, `lastNodeExecuted` and the execution id.
 
-Contar cuántos hay: dos errores en dos días seguidos no es un incidente puntual, es un fallo diario. Y **la ausencia de mails de error no es buena señal**: puede significar que la instancia ni arranca.
+Count how many there are: two errors on two consecutive days is not an isolated incident, it is a daily failure. And **the absence of error emails is not a good sign**: it can mean that the instance does not even start.
 
-### Paso 3: ¿cada cuánto se está ejecutando?
+### Step 3: how often is it running?
 
-En la UI de n8n, pestaña **Executions**, mirar la columna `Started`. Si hay una fila por minuto, ya está el problema encontrado.
+In the n8n UI, **Executions** tab, look at the `Started` column. If there is a row per minute, the problem is found.
 
-Por API, restar dos ids de ejecución separados por 24 horas exactas: el 30 de julio dieron 1.625 ejecuciones al día. Lo normal debería ser menos de 300.
+By API, subtract two execution ids exactly 24 hours apart: on 30 July they gave 1,625 executions a day. The normal figure should be under 300.
 
-### Paso 4: ¿la instancia aguanta viva?
+### Step 4: does the instance stay alive?
 
-Sondear `$N8N_HOST/healthz` **diez veces con 20 segundos entre medias**. Si aparecen 502, la instancia se está reiniciando y ese es el problema real.
+Probe `$N8N_HOST/healthz` **ten times with 20 seconds in between**. If 502s appear, the instance is restarting and that is the real problem.
 
-### Paso 5: revisar los triggers de todos los workflows activos
+### Step 5: review the triggers of all active workflows
 
-Listar por API y mirar cron a cron. El 5 de agosto había 6 workflows activos, y entre todos generaban unas 2.300 ejecuciones diarias:
+List by API and look cron by cron. On 5 August there were 6 active workflows, and between them they generated about 2,300 executions a day:
 
-| Workflow | Trigger | Frecuencia |
+| Workflow | Trigger | Frequency |
 |---|---|---|
-| `BuscarTrabajo - Ofertas Diarias` | Cron - Revisar Aprobadas | cada minuto (arreglado a 15 min) |
-| `Captura Gmail - v4.1` | 7 triggers de Gmail | cada 15 min **cada uno** |
-| `Asistente Correo Outlook` | Outlook Trigger | cada 15 min |
-| `Keep-Warm CV Server` | Cada 10 minutos | cada 10 min |
-| `Digest Diario Correo` | Schedule | diario 8:00 |
-| `Búsqueda Empleo Diaria` | Cada día 9:00 | diario |
+| `BuscarTrabajo - Ofertas Diarias` | Cron - Revisar Aprobadas | every minute (fixed to 15 min) |
+| `Captura Gmail - v4.1` | 7 Gmail triggers | every 15 min **each** |
+| `Asistente Correo Outlook` | Outlook Trigger | every 15 min |
+| `Keep-Warm CV Server` | Every 10 minutes | every 10 min |
+| `Digest Diario Correo` | Schedule | daily 8:00 |
+| `Búsqueda Empleo Diaria` | Every day 9:00 | daily |
 
-Los 7 triggers de Gmail del workflow de captura son el siguiente candidato si el problema vuelve.
+The 7 Gmail triggers of the capture workflow are the next candidate if the problem returns.
 
 ---
 
-## 4. La API de n8n
+## 4. The n8n API
 
-**Host real:** el de la variable `N8N_HOST` (no el host antiguo que sale en documentación vieja).
+**Real host:** the one in the `N8N_HOST` variable (not the old host that appears in old documentation).
 
-**Key:** en `buscartrabajo/.env`, variable `N8N_API_KEY`. Cabecera `X-N8N-API-KEY`.
+**Key:** in `buscartrabajo/.env`, variable `N8N_API_KEY`. Header `X-N8N-API-KEY`.
 
-**Se genera en:** `$N8N_HOST/settings/api`
+**Generated at:** `$N8N_HOST/settings/api`
 
-### Gotcha que costó media sesión
+### Gotcha that cost half a session
 
-La key del `.env` devolvía **401** y parecía revocada. No lo estaba: tenía **un carácter `<` pegado al final**, que rompía la firma del JWT. La key son 267 caracteres y en el fichero había 268.
+The key in the `.env` returned **401** and seemed revoked. It was not: it had **a `<` character stuck on the end**, which broke the JWT signature. The key is 267 characters and the file had 268.
 
-Antes de dar una key por muerta, comprobar que es un JWT limpio:
+Before declaring a key dead, check that it is a clean JWT:
 
 ```python
 re.match(r"[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+", valor)
 ```
 
-Si el match no cubre la cadena entera, sobra basura al final.
+If the match does not cover the whole string, there is junk at the end.
 
-Ese mismo `<` es el que rompe la shell. **Nunca hacer `source .env` ni `. .env`**: zsh intenta interpretarlo, falla, y en el mensaje de error **imprime el valor de la línea anterior**. Así se quemó el `NOTION_TOKEN` el 5 de agosto. Para leer un valor del `.env`, parsearlo con Python línea a línea y no imprimirlo nunca.
+That same `<` is what breaks the shell. **Never do `source .env` or `. .env`**: zsh tries to interpret it, fails, and in the error message **prints the value of the previous line**. That is how the `NOTION_TOKEN` was burned on 5 August. To read a value from the `.env`, parse it with Python line by line and never print it.
 
-### Gotcha del PUT
+### PUT gotcha
 
-`PUT /api/v1/workflows/{id}` solo acepta `name`, `nodes`, `connections` y `settings`. Cualquier otro campo devuelve 400. Y dentro de `settings` solo admite esta lista:
+`PUT /api/v1/workflows/{id}` only accepts `name`, `nodes`, `connections` and `settings`. Any other field returns 400. And inside `settings` it only admits this list:
 
 ```
 saveExecutionProgress, saveManualExecutions, saveDataErrorExecution,
 saveDataSuccessExecution, executionTimeout, errorWorkflow, timezone, executionOrder
 ```
 
-`binaryMode` hay que quitarlo del body. No se pierde: n8n lo conserva en el servidor.
+`binaryMode` has to be removed from the body. It is not lost: n8n keeps it on the server.
 
 ---
 
-## 4 bis. Adzuna lleva días caída, y falla en silencio
+## 4 bis. Adzuna has been down for days, and fails silently
 
-Encontrado el 6 de agosto, con el sistema ya arreglado y funcionando. El nodo `Buscar en Adzuna` **no hace la llamada HTTP**. Devuelve:
+Found on 6 August, with the system already fixed and working. The `Buscar en Adzuna` node **does not make the HTTP call**. It returns:
 
 ```json
 {"error": "access to env vars denied"}
 ```
 
-La URL del nodo usa `{{ $env.ADZUNA_APP_KEY }}` y la instancia tiene bloqueado leer variables de entorno desde expresiones. El nodo devuelve el error como si fuera un resultado, el workflow continúa y acaba en `success`.
+The node URL uses `{{ $env.ADZUNA_APP_KEY }}` and the instance has reading environment variables from expressions blocked. The node returns the error as if it were a result, the workflow continues and ends as `success`.
 
-**Verificado el mismo error en tres ejecuciones de días distintos:** 4 de agosto (id 32459), 5 de agosto (id 34085) y 6 de agosto (id 34340). No se puede mirar más atrás porque n8n ya no conserva esas ejecuciones.
+**The same error verified in three executions on different days:** 4 August (id 32459), 5 August (id 34085) and 6 August (id 34340). It is not possible to look further back because n8n no longer keeps those executions.
 
-**De las tres fuentes solo funcionan dos.** Y Adzuna es la única que trae salario estructurado (`salary_min`, `salary_max`), así que además se pierde esa señal.
+**Of the three sources only two work.** And Adzuna is the only one that brings structured salary (`salary_min`, `salary_max`), so that signal is lost too.
 
-### La pista que lo delata: la duración
+### The clue that gives it away: the duration
 
 ```
 Buscar en Remotive     698 ms
 Buscar en Tecnoempleo  414 ms
-Buscar en Adzuna         3 ms     <- no ha llamado a nadie
+Buscar en Adzuna         3 ms     (no call was made)
 ```
 
-**Cualquier nodo de red que tarde menos de 10 ms no ha hecho ninguna petición.** El estado dice `success` y la duración dice la verdad. Mirar la columna de duración antes que la de estado.
+**Any network node that takes less than 10 ms has made no request.** The status says `success` and the duration tells the truth. Look at the duration column before the status one.
 
-### Arreglos posibles
+### Possible fixes
 
-1. **El recomendado.** En Render, servicio n8n, añadir la variable de entorno `N8N_BLOCK_ENV_ACCESS_IN_NODE=false` y reiniciar. Desbloquea `$env` en las expresiones sin exponer la clave en el workflow, y de paso arregla cualquier otro nodo que la use.
-2. Poner la clave literal en la URL del nodo. Funciona de inmediato, pero queda escrita en el JSON del workflow y en todos los backups.
-3. Crear una credencial de n8n de tipo Query Auth y referenciarla. Más limpio que la 2 y más trabajo.
+1. **The recommended one.** On Render, n8n service, add the environment variable `N8N_BLOCK_ENV_ACCESS_IN_NODE=false` and restart. It unblocks `$env` in expressions without exposing the key in the workflow, and also fixes any other node that uses it.
+2. Put the literal key in the node URL. It works immediately, but it ends up written in the workflow JSON and in every backup.
+3. Create an n8n credential of type Query Auth and reference it. Cleaner than 2 and more work.
 
-El `app_id` ya va en claro en la URL. Lo único que falta es `ADZUNA_APP_KEY`.
-
----
-
-## 5. Lo que sigue pendiente
-
-1. **Purgar el histórico de ejecuciones.** Hay 11.240 registros ocupando disco y memoria. En Render, variables de entorno del servicio n8n: `EXECUTIONS_DATA_PRUNE=true` y `EXECUTIONS_DATA_MAX_AGE=168` (7 días).
-
-2. **Publicar la pantalla de consentimiento OAuth a Production.** El proyecto de Google `n8n-asistente-correo` está en modo **Testing**, y Google mata los refresh tokens **cada 7 días**. Es la causa de los `invalid_grant` del 21 de julio y del token de Drive caducado el 31 de julio. Mientras siga en Testing, va a volver a pasar cada semana.
-
-3. **Rotar el `NOTION_TOKEN`**, expuesto el 5 de agosto por el `source .env`.
-
-4. **Revisar los 7 triggers de Gmail** del workflow de captura. Siete pollings de 15 minutos sobre siete buzones es mucho para una instancia gratuita.
-
-5. **La rama de LinkedIn lleva muerta desde el 23 de julio.** Necesita Claude in Chrome con sesión iniciada, y eso no existe en las rutinas de la nube. Ver documento 07.
+The `app_id` is already in the clear in the URL. The only thing missing is `ADZUNA_APP_KEY`.
 
 ---
 
-## 6. Resumen en cinco líneas
+## 5. What is still pending
 
-- El síntoma "no llegan mails" casi nunca es de correo. Es de ofertas que no se crean.
-- Telegram y Notion son workflows distintos: uno no informa del otro.
-- Un `healthz` que responde 200 una vez no prueba nada. Sondear diez veces.
-- Los IDs de workflow cambian con cada import. Listar y filtrar por `active`.
-- Antes de tocar nada: mirar cada cuánto se ejecuta. Un cron cada minuto tira la instancia entera.
+1. **Purge the execution history.** There are 11,240 records taking up disk and memory. On Render, environment variables of the n8n service: `EXECUTIONS_DATA_PRUNE=true` and `EXECUTIONS_DATA_MAX_AGE=168` (7 days).
+
+2. **Publish the OAuth consent screen to Production.** The Google project `n8n-asistente-correo` is in **Testing** mode, and Google kills refresh tokens **every 7 days**. It is the cause of the `invalid_grant` errors of 21 July and of the Drive token that expired on 31 July. As long as it stays in Testing, it will happen again every week.
+
+3. **Rotate the `NOTION_TOKEN`**, exposed on 5 August by the `source .env`.
+
+4. **Review the 7 Gmail triggers** of the capture workflow. Seven 15-minute pollings on seven mailboxes is a lot for a free instance.
+
+5. **The LinkedIn branch has been dead since 23 July.** It needs Claude in Chrome with a signed-in session, and that does not exist in cloud routines. See document 07.
+
+---
+
+## 6. Summary in five lines
+
+- The symptom "no emails arrive" is almost never about email. It is about offers not being created.
+- Telegram and Notion are different workflows: one does not report on the other.
+- A `healthz` that answers 200 once proves nothing. Probe ten times.
+- Workflow IDs change with every import. List and filter by `active`.
+- Before touching anything: look at how often it runs. A cron every minute takes down the whole instance.
