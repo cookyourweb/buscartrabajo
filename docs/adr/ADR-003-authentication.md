@@ -148,6 +148,27 @@ to travel in a cookie that no script can read. If that step is taken, item 3 cha
 (the JWKS is validated only on sign-in) and CSRF protection appears: it will be a new
 ADR that supersedes this one.
 
+## Amendment 2026-10: invitations move to the database
+
+Invitations move from the `INVITADAS` environment variable to the `invitaciones` table.
+`email_verified` stays required (and is tested). `INVITADAS` is kept only as a bootstrap
+fallback while no `DATABASE_URL` is configured.
+
+- **Identity.** A user is the verified Google `(iss, sub)` pair, mapped to an internal
+  `usuarios.id`. The email is only the key of an invitation and a label in
+  `usuario_emails`. One user can own several mailboxes; a mailbox belongs to one user.
+- **Linking.** On first sign-in, an unused, unexpired invitation for the verified email
+  creates the user and is consumed in the same transaction. A mailbox held by another
+  `(iss, sub)` is never merged, and no invitation means denial with no writes.
+- **Two modes, for a safe rollout.** Without `DATABASE_URL` (production when this was
+  written) the `INVITADAS` list decides, `/yo` works as before and no database is
+  touched. With `DATABASE_URL`, the table decides; `INVITADAS` only counts when
+  `INVITADAS_COMO_RESPALDO=1`, a temporary fallback to be removed once the table is the
+  only source. `/health` never touches the database.
+- **Layering.** `autenticacion.py` stays free of database code: the server injects an
+  `autorizar` callback.
+- **Tooling.** `scripts/invitar.py` creates invitations with a mandatory expiry.
+
 ---
 
 **Sources, consulted on 2 Oct 2026:**
