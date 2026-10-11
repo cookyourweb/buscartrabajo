@@ -156,6 +156,38 @@ to it.
   designed, not a pass-through of cost.
 - If the CV prompt shrinks enough for a free model to fit and pass the evaluation.
 
+## Amendment 2026-10: owner-paid CV extraction at sign-up
+
+One exception to "each user brings their own key": reading the CV at sign-up and proposing
+the profile fields is paid by the owner, once per user. Asking a newcomer to find, create
+and paste an API key before she has seen anything of the service would lose most of the
+people the invitation was meant for. Everything else stays BYOK.
+
+- **One per user.** Each user gets a single extraction. A second request is refused and the
+  panel shows the manual form. If the whole provider chain fails, the attempt is NOT used:
+  the failed call is recorded, it still counts toward the cap, and she can try again later.
+- **Model.** Claude Sonnet, the same model that writes her production CVs, with the existing
+  quality fallback chain (Claude first, Groq on a provider failure only). Cheaper models gave
+  visibly poorer results on 2 Oct 2026. One extraction is bounded to 0.05 USD by capping the
+  prompt size and the output tokens.
+- **Cap with a pessimistic reservation.** The month's spend, in UTC, may not pass 5 EUR. Before
+  any call a row is reserved with the worst case (input at 3 characters per token, the maximum
+  output, primary and fallback both billed, plus a margin), under a database lock so
+  concurrent requests cannot jointly pass the cap. A completed call replaces the estimate with
+  its real cost; a failed or interrupted one keeps the estimate. Rows of deleted accounts are
+  kept without a user, so the cap cannot be reset by deleting an account.
+- **Kill switch.** `EXTRACCION_ACTIVA=false` in the environment is a hard off, and the
+  `ajustes.extraccion_activa` row (flipped with `PUT /ajustes/extraccion`, machine key) turns
+  it on or off without a redeploy. Both fail closed.
+- **Explicit consent.** The CV goes to an external AI provider only after a stored, versioned
+  consent whose text names every provider the CV may reach (Anthropic and Groq). A new
+  version of the text requires a new consent.
+- **Everything else remains BYOK.** Generating CVs and cover letters, the interview advisor
+  and any later use of a model still use the key of the person asking.
+
+Revisit if the monthly spend regularly approaches the cap, or if the number of sign-ups makes
+the owner-paid step more than a small, bounded cost.
+
 ---
 
 **Sources, consulted on 2 Oct 2026:** platform.claude.com/docs/en/about-claude/pricing ·
