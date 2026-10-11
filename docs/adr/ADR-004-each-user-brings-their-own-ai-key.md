@@ -166,10 +166,16 @@ people the invitation was meant for. Everything else stays BYOK.
 - **One per user.** Each user gets a single extraction. A second request is refused and the
   panel shows the manual form. If the whole provider chain fails, the attempt is NOT used:
   the failed call is recorded, it still counts toward the cap, and she can try again later.
-- **Model.** Claude Sonnet, the same model that writes her production CVs, with the existing
-  quality fallback chain (Claude first, Groq on a provider failure only). Cheaper models gave
-  visibly poorer results on 2 Oct 2026. One extraction is bounded to 0.05 USD by capping the
-  prompt size and the output tokens.
+- **Model.** Claude Sonnet, the same model that writes her production CVs. Cheaper models gave
+  visibly poorer results on 2 Oct 2026. The extraction has its own provider chain: Claude
+  first, Groq on a provider failure only, and never any other provider or the general
+  generation cascade. Both calls are capped at 1,200 output tokens (one constant shared with
+  the cost estimate), time out after 30 seconds and are not retried. One extraction is bounded
+  to 0.05 USD by capping the prompt size and the output tokens.
+- **Dedicated key.** The Claude call uses a key reserved for sign-up extraction
+  (`ANTHROPIC_CLAVE_ALTA`, in its own workspace with its own monthly limit), never the key
+  used for generation. Without it the extraction is unavailable: nothing is reserved, no
+  provider is called and the panel shows the manual form.
 - **Cap with a pessimistic reservation.** The month's spend, in UTC, may not pass 5 EUR. Before
   any call a row is reserved with the worst case (input at 3 characters per token, the maximum
   output, primary and fallback both billed, plus a margin), under a database lock so
@@ -178,7 +184,8 @@ people the invitation was meant for. Everything else stays BYOK.
   kept without a user, so the cap cannot be reset by deleting an account.
 - **Kill switch.** `EXTRACCION_ACTIVA=false` in the environment is a hard off, and the
   `ajustes.extraccion_activa` row (flipped with `PUT /ajustes/extraccion`, machine key) turns
-  it on or off without a redeploy. Both fail closed.
+  it on or off without a redeploy. Both fail closed, and the switch is checked before
+  anything else: while it is off, nobody is asked for consent or a CV.
 - **Explicit consent.** The CV goes to an external AI provider only after a stored, versioned
   consent whose text names every provider the CV may reach (Anthropic and Groq). A new
   version of the text requires a new consent.
