@@ -189,11 +189,22 @@ people the invitation was meant for. Everything else stays BYOK.
 - **Explicit consent.** The CV goes to an external AI provider only after a stored, versioned
   consent whose text names every provider the CV may reach (Anthropic and Groq). A new
   version of the text requires a new consent.
-- **Everything else remains BYOK.** Generating CVs and cover letters, the interview advisor
-  and any later use of a model still use the key of the person asking.
+- **The interview advisor and any later use of a model remain BYOK.** Generating CVs and
+  cover letters no longer is: see the amendment below.
 
 Revisit if the monthly spend regularly approaches the cap, or if the number of sign-ups makes
 the owner-paid step more than a small, bounded cost.
+
+## Amendment 2026-10-11: owner-paid generation quota
+
+Asking non-technical users to create a developer account and paste a key proved to be the
+main obstacle, so generating CVs and cover letters for invited users is also paid by the
+owner, within hard limits: 8 applications per user per month (a CV counts 0.7, a letter 0.3),
+a global cap of 20 EUR per month for generation, a reservation made before any model call and
+an email alarm at 70 % of the cap. When the quota runs out the panel says when it renews and
+asks whether she would want paid packs or access through her academy. Paid packs, sold through
+a merchant of record, only come if real demand shows up. The details, numbers and triggers are
+in `cv-server/docs/ADR-010-owner-paid-generation-quota.md`.
 
 ---
 
