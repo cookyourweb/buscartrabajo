@@ -11,6 +11,7 @@
 //       destino/nodes/<nodo>.txt   un fichero por cuerpo de peticion (Groq, etc.)
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
+import { redactarPaths } from './lib/secretos.mjs';
 
 const [src, dest = 'workflows/PROD'] = process.argv.slice(2);
 if (!src) { console.error('uso: node scripts/wf-split.mjs <export.json> [destino]'); process.exit(1); }
@@ -19,24 +20,21 @@ const slug = (s) => s.toLowerCase()
   .normalize('NFD').replace(/[̀-ͯ]/g, '')
   .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-const wf = JSON.parse(readFileSync(src, 'utf8'));
-const nodesDir = join(dest, 'nodes');
-if (existsSync(nodesDir)) rmSync(nodesDir, { recursive: true });   // sin restos de nodos borrados
-mkdirSync(nodesDir, { recursive: true });
-
 // Los `path` de los webhook son SECRETOS: desde el 30-ago-2026 el webhook de
 // busqueda se protege por path impredecible, y este repositorio es PUBLICO.
 // Se sacan a secrets.local.json (ignorado por git) y en workflow.json queda un
 // marcador. Sin esto, el primer commit publicaria el secreto.
-const secretos = {};
+// Se redacta ANTES de partir, con `redactarPaths`: limpia tambien las rutas
+// escritas dentro del codigo de los nodos (enlaces de los correos). La copia
+// propia que habia aqui solo limpiaba el campo `path` (18-oct-2026).
+const { workflow: wf, secretos } = redactarPaths(JSON.parse(readFileSync(src, 'utf8')));
+const nodesDir = join(dest, 'nodes');
+if (existsSync(nodesDir)) rmSync(nodesDir, { recursive: true });   // sin restos de nodos borrados
+mkdirSync(nodesDir, { recursive: true });
 
 let js = 0, bodies = 0;
 for (const n of wf.nodes) {
   const p = n.parameters || {};
-  if (n.type.endsWith('webhook') && typeof p.path === 'string') {
-    secretos[n.name] = p.path;
-    p.path = `@@SECRET:${n.name}`;
-  }
   if (typeof p.jsCode === 'string') {
     const f = `${slug(n.name)}.js`;
     writeFileSync(join(nodesDir, f), p.jsCode);
