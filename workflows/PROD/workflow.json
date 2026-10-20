@@ -46,10 +46,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        912,
-        1072
+        6048,
+        3040
       ],
-      "id": "1b5d0baa-8d60-415a-9ad6-e8679419beb3",
+      "id": "bb0749a1-534c-4dea-b68f-702351f3b58d",
       "name": "Notion - Ofertas existentes",
       "retryOnFail": true,
       "maxTries": 4,
@@ -69,10 +69,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1808,
-        1072
+        6944,
+        3040
       ],
-      "id": "b5240aa1-bf29-4414-b230-ee9754cdf4d9",
+      "id": "a05eab7f-11c0-48a8-b338-91021ce239af",
       "name": "Formatear ofertas",
       "onError": "continueRegularOutput"
     },
@@ -90,10 +90,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1584,
-        1072
+        6720,
+        3040
       ],
-      "id": "711b35b9-2f76-48a5-aee5-502e6c1b0358",
+      "id": "d94bfdaf-dd05-4dd7-8a21-1e1e832628b5",
       "name": "Buscar en Tecnoempleo",
       "executeOnce": true,
       "onError": "continueRegularOutput"
@@ -108,10 +108,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1360,
-        1072
+        6496,
+        3040
       ],
-      "id": "5152c7ff-08a3-4ff2-8ab0-5f62d33770a1",
+      "id": "4878041e-f06e-4303-9115-a37f96d13ff8",
       "name": "Buscar en Adzuna",
       "executeOnce": true,
       "credentials": {
@@ -130,10 +130,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1136,
-        1072
+        6272,
+        3040
       ],
-      "id": "34cfd1d5-2391-446e-ae07-28ada5932ad8",
+      "id": "bdd353b9-41dc-478e-9054-3e64764f9a07",
       "name": "Buscar en Remotive",
       "executeOnce": true,
       "onError": "continueRegularOutput"
@@ -145,10 +145,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        688,
-        1136
+        5824,
+        3104
       ],
-      "id": "86a9b2cf-4e30-40d8-b420-3a42b6bba1d5",
+      "id": "1db3ade3-6e74-4811-9b18-f5754405cc39",
       "name": "Loop Over Users"
     },
     {
@@ -175,10 +175,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        240,
-        1920
+        5376,
+        3888
       ],
-      "id": "15d25450-62fc-4ffd-8aa1-c67c6271e4c3",
+      "id": "1f388d3a-1e47-451d-888f-cb67a70cf453",
       "name": "Brevo - Enviar Email Error1",
       "credentials": {
         "sendInBlueApi": {
@@ -194,10 +194,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        16,
-        1920
+        5152,
+        3888
       ],
-      "id": "4b7e8ee2-dda7-402c-a4ec-a812462f7a01",
+      "id": "62df919c-588e-46cc-8fe2-7afa56094dac",
       "name": "Code - Preparar Email Error1"
     },
     {
@@ -207,10 +207,10 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        2032,
-        1072
+        7168,
+        3040
       ],
-      "id": "5569667c-3fa2-432f-84f6-52d5d10abbfc",
+      "id": "2af139fd-43fa-4e24-84cc-e09f639843e0",
       "name": "Wait - Rate Limit Groq",
       "webhookId": "67526489-e050-4c23-81de-88680d3415f0"
     },
@@ -221,10 +221,10 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1360,
-        496
+        6496,
+        2464
       ],
-      "id": "c6f78cfe-ebc7-4e20-bc15-e734854eb949",
+      "id": "c4e403da-75b0-45e2-aa7b-390d8dbfdb2b",
       "name": "Wait",
       "webhookId": "ef05fdc3-b5eb-4ea7-9cbf-481eb31ca166"
     },
@@ -238,10 +238,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1136,
-        496
+        6272,
+        2464
       ],
-      "id": "9373fba2-7a18-49a5-934c-f16762f3f594",
+      "id": "55ff1611-aacb-4bab-bca2-80b19b0d58d0",
       "name": "HTTP Request",
       "retryOnFail": true,
       "maxTries": 4,
@@ -256,10 +256,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        464,
-        1232
+        5600,
+        3200
       ],
-      "id": "a3ab1351-d8e0-4c1a-bb83-29a647f5204d",
+      "id": "5c991699-3228-4f7e-9b29-aa79c1664171",
       "name": "Code — Normalizar (interno)"
     },
     {
@@ -269,13 +269,13 @@
         "responseMode": "lastNode",
         "options": {}
       },
-      "id": "e8dd50a7-bff9-4d61-bf6a-9837d8f7a505",
+      "id": "c283c5e9-c73f-4178-b0c8-b40cba1e020a",
       "name": "Webhook — Buscar para user",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        240,
-        1232
+        5376,
+        3200
       ],
       "webhookId": "buscar-para-user"
     },
@@ -286,10 +286,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        464,
-        1040
+        5600,
+        3008
       ],
-      "id": "5f67276b-b432-4d72-9fa4-87dfa226904c",
+      "id": "784db824-0fb4-4c5c-92ce-34ed8eaa28f5",
       "name": "Code — Normalizar users (schedule)"
     },
     {
@@ -319,10 +319,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        240,
-        1040
+        5376,
+        3008
       ],
-      "id": "80faa666-c75f-4199-9297-1d82c7efb37d",
+      "id": "fbabc539-2de3-4b92-91de-14c9aff6a155",
       "name": "Notion — Query usuarios activos",
       "retryOnFail": true,
       "maxTries": 4,
@@ -343,10 +343,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        240,
-        400
+        5376,
+        2368
       ],
-      "id": "018bb23c-ffaa-4601-b8cd-872b5b4edf33",
+      "id": "b2c5b539-1844-4ddb-bbff-1d983e958892",
       "name": "Respond to Webhook Aprobar"
     },
     {
@@ -358,10 +358,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1360,
-        1680
+        6496,
+        3648
       ],
-      "id": "8b3ac051-cdaa-4e81-9556-546b94d1a810",
+      "id": "f09932d3-6e89-4aaf-a641-fe8dc14d9ff4",
       "name": "Respond to Webhook Mandar Empresa"
     },
     {
@@ -373,10 +373,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        464,
-        1456
+        5600,
+        3424
       ],
-      "id": "0de703e8-89b6-4896-80c0-3b80ae5b94d6",
+      "id": "fee089f9-316a-49dd-8ba7-3209bb078477",
       "name": "Respond to Webhook Descartar"
     },
     {
@@ -403,10 +403,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1136,
-        1680
+        6272,
+        3648
       ],
-      "id": "9afc4cd3-7012-40dd-8ec1-5098f853a9fc",
+      "id": "cc8c2230-297f-484c-a74d-f08cea4e8345",
       "name": "Brevo - Email Confirmación",
       "retryOnFail": true,
       "credentials": {
@@ -444,10 +444,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2032,
-        496
+        7168,
+        2464
       ],
-      "id": "b5f62a38-93ed-4258-9cba-5ece07f9dfe5",
+      "id": "7f1787d5-989e-49fe-b0f5-e36cbe91681e",
       "name": "Notion - Guardar Link CV",
       "retryOnFail": true,
       "maxTries": 4,
@@ -483,10 +483,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2032,
-        304
+        7168,
+        2272
       ],
-      "id": "fd5f56c0-5724-4a13-83d2-c4e0f85ed40e",
+      "id": "92b77b4e-e82c-4794-8127-464fcf653cfe",
       "name": "Brevo - Enviar Carta+CV",
       "retryOnFail": true,
       "credentials": {
@@ -504,10 +504,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1808,
-        400
+        6944,
+        2368
       ],
-      "id": "87e23013-3e3d-4aac-adf7-58c0d2386b73",
+      "id": "aba77d1d-4249-4b1c-a23a-c42e5c7d08e4",
       "name": "Code - Preparar Email Carta+CV"
     },
     {
@@ -536,10 +536,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1584,
-        400
+        6720,
+        2368
       ],
-      "id": "543550ff-4b8d-4a7e-9d14-6ca94f82a16c",
+      "id": "6fb2bbc0-ecac-4452-a334-d4681b4a569d",
       "name": "CV Server - Generar CV",
       "retryOnFail": true,
       "maxTries": 5,
@@ -577,10 +577,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1360,
-        304
+        6496,
+        2272
       ],
-      "id": "454a7eb2-9e78-48c1-a87d-01faca142981",
+      "id": "d21c33ca-e440-4e42-b242-5b245a21614c",
       "name": "Groq - Generar Carta",
       "retryOnFail": true,
       "maxTries": 4,
@@ -612,10 +612,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1136,
-        304
+        6272,
+        2272
       ],
-      "id": "2809d9d6-a5e9-4dc5-a5f6-0e8d0297ee62",
+      "id": "e7aba737-4bce-40ba-9458-6a1ec3574ad6",
       "name": "Notion - Obtener Datos Oferta",
       "retryOnFail": true,
       "maxTries": 4,
@@ -654,10 +654,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        912,
-        304
+        6048,
+        2272
       ],
-      "id": "42689c2a-88e5-480a-a063-cdc0319d1b70",
+      "id": "977cf323-b64f-497c-95d8-f4e97d707a0a",
       "name": "Notion - Marcar En Proceso",
       "retryOnFail": true,
       "maxTries": 4,
@@ -696,10 +696,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        688,
-        304
+        5824,
+        2272
       ],
-      "id": "5ef98359-cadb-4f4a-bcc4-fab026e24c1f",
+      "id": "54dd9ebc-89b7-4a8b-9325-e49513f72b15",
       "name": "Notion - Marcar Aprobado",
       "retryOnFail": true,
       "maxTries": 4,
@@ -718,10 +718,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        464,
-        400
+        5600,
+        2368
       ],
-      "id": "2ec7e583-fd77-46b4-be67-3c36231bd696",
+      "id": "44f819c1-9e95-460a-a3cd-933b562efade",
       "name": "Code - Extraer ID"
     },
     {
@@ -733,10 +733,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        16,
-        400
+        5152,
+        2368
       ],
-      "id": "84edcf0f-9840-4e69-9b6d-053b3cfde2c5",
+      "id": "d61ed208-e8a2-4349-ae3c-d1f63a04461f",
       "name": "Webhook Aprobar",
       "webhookId": "aprobar-id"
     },
@@ -747,10 +747,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        912,
-        1680
+        6048,
+        3648
       ],
-      "id": "a5dff242-adf9-40f7-83a0-dc0bba1aa9e3",
+      "id": "6188e890-e192-46a0-8efb-57097c1000a5",
       "name": "Code - Preparar Confirmación"
     },
     {
@@ -772,10 +772,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        688,
-        1680
+        5824,
+        3648
       ],
-      "id": "2c81212c-1efd-4ac3-a240-fd2cbe87c88a",
+      "id": "68a6916d-d259-4ec9-9261-36d72b0e9be3",
       "name": "Notion - Obtener Datos Mandar",
       "retryOnFail": true,
       "maxTries": 4,
@@ -814,10 +814,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        464,
-        1680
+        5600,
+        3648
       ],
-      "id": "d30298d2-f1b3-4e19-9e77-a794ae58b290",
+      "id": "2a128832-be2b-44fc-85f0-b365717cc841",
       "name": "Notion - Marcar Enviado a empresa",
       "retryOnFail": true,
       "maxTries": 4,
@@ -836,10 +836,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        240,
-        1680
+        5376,
+        3648
       ],
-      "id": "c458785b-c39f-41be-bad5-1743930266a9",
+      "id": "59dff707-ca18-4040-b8b7-d846a58ca58f",
       "name": "Code - Extraer ID Mandar"
     },
     {
@@ -869,10 +869,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        240,
-        1456
+        5376,
+        3424
       ],
-      "id": "56f2d5da-aaf5-446f-950b-9b17ceb71ad4",
+      "id": "a432bb9d-4aee-4cc3-9da9-a9b692f34475",
       "name": "Notion - Marcar Descartado",
       "retryOnFail": true,
       "maxTries": 4,
@@ -893,10 +893,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        16,
-        1680
+        5152,
+        3648
       ],
-      "id": "c791aa34-5296-407c-b8bf-511aa6a9c0c3",
+      "id": "c86e0446-2726-413b-842c-6ae4fdb2c77a",
       "name": "Webhook Mandar Empresa",
       "webhookId": "webhook-mandar-empresa-id-001"
     },
@@ -909,10 +909,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        16,
-        1456
+        5152,
+        3424
       ],
-      "id": "8d025a25-55ef-4a97-8f0e-9a4eaaa697aa",
+      "id": "4bde3d3f-9c60-4015-9733-5d3c6b9cae22",
       "name": "Webhook Descartar",
       "webhookId": "webhook-descartar-id-001"
     },
@@ -940,10 +940,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3392,
-        1136
+        8528,
+        3104
       ],
-      "id": "54625216-07dc-46f8-8995-698d23a06f0e",
+      "id": "ea7b67de-83f0-454e-9bbc-3beab743a0e7",
       "name": "Brevo - Enviar Notificacion",
       "retryOnFail": true,
       "credentials": {
@@ -961,10 +961,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3168,
-        1072
+        8304,
+        3040
       ],
-      "id": "e49eb1ce-5e71-46a1-a580-d8a5b581ca64",
+      "id": "7abcc871-c143-47ea-b15f-eebab16cfa9d",
       "name": "Code - Preparar Email Notificacion"
     },
     {
@@ -990,10 +990,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2928,
-        1072
+        8064,
+        3040
       ],
-      "id": "e82f235b-56c0-47f1-8005-0633ace0f74c",
+      "id": "3bc6fcd5-81d4-4e7b-abf6-02e1b080828f",
       "name": "Notion - Obtener Datos Recién Creada",
       "retryOnFail": true,
       "maxTries": 4,
@@ -1080,10 +1080,10 @@
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2.2,
       "position": [
-        2704,
-        1072
+        7840,
+        3040
       ],
-      "id": "c2ed5587-2613-4511-be00-268960152977",
+      "id": "ad85cffa-1d31-4d0e-a903-3120a56af9ca",
       "name": "Notion - Crear Oferta",
       "retryOnFail": true,
       "maxTries": 4,
@@ -1102,10 +1102,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2480,
-        1072
+        7616,
+        3040
       ],
-      "id": "99967de4-7712-4966-8114-2ed51ff384be",
+      "id": "571277c6-2dee-4035-9d8b-51cde236661f",
       "name": "Code - Normalizar Modalidad"
     },
     {
@@ -1131,10 +1131,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2256,
-        1072
+        7392,
+        3040
       ],
-      "id": "5b9bb396-1e2c-44e2-8999-8056fc4eebdf",
+      "id": "33920adb-157b-4cff-8557-e2757098ae46",
       "name": "Groq - Generar Ofertas",
       "retryOnFail": true,
       "executeOnce": false,
@@ -1162,10 +1162,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        16,
-        944
+        5152,
+        2912
       ],
-      "id": "9b883e8a-3bc6-4dfa-86e8-57ba34666c9c",
+      "id": "d9c4e510-14e3-48d5-9d66-290eea171d33",
       "name": "Schedule Trigger (9am)"
     },
     {
@@ -1173,10 +1173,10 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        16,
-        1136
+        5152,
+        3104
       ],
-      "id": "3baab278-1b2c-4be2-b43a-5b3607464447",
+      "id": "1856549d-17bd-4bab-9ac9-2ba3fd815d65",
       "name": "Manual Trigger"
     },
     {
@@ -1203,10 +1203,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        464,
-        720
+        5600,
+        2688
       ],
-      "id": "ed5830c6-3b71-4d51-a929-b6c9752cf148",
+      "id": "12dec9e8-9c47-4735-ba7f-5b1e267238da",
       "name": "Brevo - Enviar Email Error",
       "credentials": {
         "sendInBlueApi": {
@@ -1222,10 +1222,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        240,
-        720
+        5376,
+        2688
       ],
-      "id": "7847259d-188c-428f-88ad-22f5627bf63c",
+      "id": "d44a5c00-f756-4eb1-a9e2-2e93ebc45a91",
       "name": "Code - Preparar Email Error"
     },
     {
@@ -1233,10 +1233,10 @@
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
       "position": [
-        16,
-        720
+        5152,
+        2688
       ],
-      "id": "4cf36e17-995b-4c5f-9064-c228604a5d6d",
+      "id": "dcdad08e-8947-4beb-94e4-bf4c04aaeb3e",
       "name": "Error Trigger"
     },
     {
@@ -1254,10 +1254,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        16,
-        208
+        5152,
+        2176
       ],
-      "id": "4eeec2d1-d0fe-478f-a022-9e743265e4ab"
+      "id": "aee4391a-8eb9-4058-9516-78b564fd647e"
     },
     {
       "parameters": {
@@ -1287,10 +1287,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        240,
-        208
+        5376,
+        2176
       ],
-      "id": "d3698015-89a8-4187-9906-1d03099e6dfa",
+      "id": "c8a20eb4-8668-4a71-8eec-895da6a84012",
       "credentials": {
         "notionApi": {
           "id": "ip1cxJYN655BWVcw",
@@ -1306,10 +1306,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        464,
-        208
+        5600,
+        2176
       ],
-      "id": "35388d2a-98b3-4aae-8782-521078c5804e"
+      "id": "27c4c186-95a1-4340-99be-3cb655c5b4d9"
     },
     {
       "parameters": {
@@ -1318,13 +1318,13 @@
           "timeout": 90000
         }
       },
-      "id": "31783102-4785-494e-b3d7-fe0d62172830",
+      "id": "046529c9-d9e1-49ff-934b-11d81c03c446",
       "name": "Despertar CV Server",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        912,
-        496
+        6048,
+        2464
       ],
       "retryOnFail": true,
       "maxTries": 5,
@@ -1336,13 +1336,13 @@
       "parameters": {
         "amount": 60
       },
-      "id": "b01f37fa-9b60-4ac2-b274-cd496ad8ceb2",
+      "id": "4b24ffc9-10bb-4091-a4e8-4a7fd8c36a63",
       "name": "Esperar arranque CV Server",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1136,
-        496
+        6272,
+        2464
       ],
       "webhookId": "736c7d56-b76e-406b-b685-2d886dfcc2e7"
     },
@@ -1359,15 +1359,16 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2720,
-        624
+        7856,
+        2592
       ],
       "name": "CV Server - Puntuar Ofertas",
       "retryOnFail": true,
       "maxTries": 5,
       "waitBetweenTries": 5000,
-      "id": "dda10574-bf6b-41c4-bf06-347630d953a5",
+      "id": "e49d8f83-3120-4596-a384-c77ad8862e61",
       "notesInFlow": true,
+      "executeOnce": true,
       "credentials": {
         "httpHeaderAuth": {
           "id": "f4OvDtVAyru10LAJ",
@@ -1375,7 +1376,44 @@
         }
       },
       "onError": "continueRegularOutput",
-      "notes": "Espera 60 s y reintenta 5 veces cada 5 s: cv-server está en el plan gratuito de Render y al despertar devuelve 503 \"Application loading\" durante unos 30-60 s (fallo del 19-oct, ejecución 52389)."
+      "notes": "Puntua todas las usuarias en una llamada (por eso Execute Once). Va detras de su propio despertar y espera; los reintentos cubren lo que quede de arranque (fallos del 19 y 20-oct, ejecuciones 52389 y 52514)."
+    },
+    {
+      "parameters": {
+        "url": "https://cv-server-ggd8.onrender.com/health",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "id": "0bd7db3f-d93b-48ae-94a2-6920bf7143b1",
+      "name": "Despertar CV Server (puntuar)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        7408,
+        2592
+      ],
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "onError": "continueRegularOutput",
+      "notes": "Despierta cv-server antes de puntuar: en el plan gratuito de Render arranca en 30-60 s y mientras responde 503."
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "id": "2b6e40fd-bf0d-44e5-be77-609d56ff12bb",
+      "name": "Esperar arranque (puntuar)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        7632,
+        2592
+      ],
+      "webhookId": "cf8feea4-81e3-41a4-ba40-e474a7abedec"
     }
   ],
   "pinData": {},
@@ -1439,7 +1477,7 @@
       "main": [
         [
           {
-            "node": "CV Server - Puntuar Ofertas",
+            "node": "Despertar CV Server (puntuar)",
             "type": "main",
             "index": 0
           }
@@ -1897,6 +1935,28 @@
           }
         ]
       ]
+    },
+    "Despertar CV Server (puntuar)": {
+      "main": [
+        [
+          {
+            "node": "Esperar arranque (puntuar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar arranque (puntuar)": {
+      "main": [
+        [
+          {
+            "node": "CV Server - Puntuar Ofertas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -1904,7 +1964,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "bccf3f68-035a-424f-99a7-023dcf5a2f78",
+  "versionId": "b128f185-7a7d-49fb-912e-b8a253aff0e3",
   "meta": null,
   "nodeGroups": [],
   "id": "IGVSEBCp1sFMXYYB",
