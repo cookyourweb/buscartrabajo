@@ -45,8 +45,22 @@ S = {
                             leading=12.4, textColor=TINTA, spaceAfter=1.5),
 }
 
-SECCIONES = {"PERFIL PROFESIONAL", "EXPERIENCIA PROFESIONAL", "HABILIDADES TÉCNICAS",
-             "FORMACIÓN", "IDIOMAS"}
+# Titulo tal como aparece en el CV -> seccion canonica. Sin el ingles, un CV en
+# ingles caia entero en la rama de cabecera (una raya bajo cada linea).
+SECCIONES = {
+    "PERFIL PROFESIONAL": "PERFIL PROFESIONAL",
+    "EXPERIENCIA PROFESIONAL": "EXPERIENCIA PROFESIONAL",
+    "PROYECTOS EN PRODUCCIÓN": "PROYECTOS",
+    "HABILIDADES TÉCNICAS": "HABILIDADES TÉCNICAS",
+    "FORMACIÓN": "FORMACIÓN",
+    "IDIOMAS": "IDIOMAS",
+    "PROFESSIONAL SUMMARY": "PERFIL PROFESIONAL",
+    "PROFESSIONAL EXPERIENCE": "EXPERIENCIA PROFESIONAL",
+    "PROJECTS IN PRODUCTION": "PROYECTOS",
+    "TECHNICAL SKILLS": "HABILIDADES TÉCNICAS",
+    "EDUCATION": "FORMACIÓN",
+    "LANGUAGES": "IDIOMAS",
+}
 
 
 def esc(t):
@@ -75,7 +89,7 @@ while i < n:
         continue
 
     if l in SECCIONES:
-        seccion_actual = l
+        seccion_actual = SECCIONES[l]
         story.append(Spacer(1, 3))
         story.append(Paragraph(esc(l), S["seccion"]))
         story.append(HRFlowable(width="100%", thickness=0.7, color=ACENTO,
