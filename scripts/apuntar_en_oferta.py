@@ -60,11 +60,19 @@ def texto(props, nombre, tipo="rich_text"):
 
 
 def buscar(empresa):
-    codigo, r = pedir(f"https://api.notion.com/v1/databases/{DB}/query",
-                      {"page_size": 100}, "POST")
-    if codigo != 200:
-        sys.exit(f"No se pudo leer la base: {r}")
-    hallados = [p for p in r["results"]
+    # Notion devuelve como mucho 100 por pagina: sin paginar, las fichas mas alla
+    # de la 100 no se encontraban y se acababan creando duplicadas.
+    paginas, cursor = [], None
+    while True:
+        cuerpo = {"page_size": 100, **({"start_cursor": cursor} if cursor else {})}
+        codigo, r = pedir(f"https://api.notion.com/v1/databases/{DB}/query", cuerpo, "POST")
+        if codigo != 200:
+            sys.exit(f"No se pudo leer la base: {r}")
+        paginas += r["results"]
+        if not r.get("has_more"):
+            break
+        cursor = r["next_cursor"]
+    hallados = [p for p in paginas
                 if empresa.lower() in texto(p["properties"], "Empresa", "title").lower()
                 and not texto(p["properties"], "Empresa", "title").startswith("ZZZ")]
     if not hallados:
