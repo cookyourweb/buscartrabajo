@@ -300,27 +300,13 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://api.notion.com/v1/data_sources/34811515-f4b2-80d6-875a-000b7b858306/query",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Notion-Version",
-              "value": "2025-09-03"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  filter: { property: 'Activo', checkbox: { equals: true } },\n  page_size: 100\n}) }}",
-        "options": {}
+        "method": "GET",
+        "url": "https://cv-server-ggd8.onrender.com/usuarios?formato=notion",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 120000
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -332,11 +318,11 @@
       "name": "Notion — Query usuarios activos",
       "retryOnFail": true,
       "maxTries": 4,
-      "waitBetweenTries": 4000,
+      "waitBetweenTries": 5000,
       "credentials": {
-        "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
-          "name": "Notion account"
+        "httpHeaderAuth": {
+          "id": "f4OvDtVAyru10LAJ",
+          "name": "cv-server clave de maquina"
         }
       }
     },
