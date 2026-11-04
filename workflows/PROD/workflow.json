@@ -1439,6 +1439,32 @@
       "name": "Buscar en Google Jobs",
       "executeOnce": true,
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://n8n-asistente-correo.onrender.com/webhook/{{ $node[\"Webhook — Buscar para user\"].parameter[\"path\"] }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 10000
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5824,
+        2848
+      ],
+      "name": "Lanzar búsqueda por usuaria",
+      "onError": "continueRegularOutput"
     }
   ],
   "connections": {
@@ -1499,13 +1525,7 @@
     },
     "Loop Over Users": {
       "main": [
-        [
-          {
-            "node": "Despertar CV Server (puntuar)",
-            "type": "main",
-            "index": 0
-          }
-        ],
+        [],
         [
           {
             "node": "Notion - Ofertas existentes",
@@ -1574,7 +1594,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Users",
+            "node": "Lanzar búsqueda por usuaria",
             "type": "main",
             "index": 0
           }
@@ -1987,6 +2007,17 @@
         [
           {
             "node": "Formatear ofertas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lanzar búsqueda por usuaria": {
+      "main": [
+        [
+          {
+            "node": "Despertar CV Server (puntuar)",
             "type": "main",
             "index": 0
           }
