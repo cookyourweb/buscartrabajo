@@ -57,6 +57,14 @@ const IA_SIGNAL = ['ai engineer','ai developer','ai software','ai full stack','a
   'genai','generative ai','gen ai','artificial intelligence','inteligencia artificial',
   'prompt engineer','ai-first','ai first','ai-native','ai native','conversational ai',
   'ai product','ai adoption','ai enablement','ai lead','ai tech lead','ia &','ai &','ia-first'];
+// Per-user prefilter (design 2026-11-01). The user's own stack always counts as a
+// profile signal and is never excluded: a Java user must not lose Java offers.
+const STACK_U = (U.stack || []).map(s => String(s).toLowerCase().trim()).filter(Boolean);
+for (const s of STACK_U) if (!INCLUIR.includes(s)) INCLUIR.push(s);
+for (let i = EXCLUIR_PERFIL.length - 1; i >= 0; i--) {
+  if (STACK_U.some(s => s.includes(EXCLUIR_PERFIL[i]))) EXCLUIR_PERFIL.splice(i, 1);
+}
+
 const esIA = (t) => IA_SIGNAL.some(k => (t || '').toLowerCase().includes(k));
 
 const JUNIOR = ['junior','jr.','jr ','trainee','becario','beca ','prácticas','practicas',
@@ -207,6 +215,25 @@ try {
   }
 } catch (e) {}
 
+// Google Jobs via SerpApi (1 Nov 2026). Per-user query built in the node.
+// apply_options[0] is usually the employer's or a portal's page; share_link is the fallback.
+try {
+  const g = $('Buscar en Google Jobs').first().json || {};
+  for (const j of (g.jobs_results || []).slice(0, 10)) {
+    const link = ((j.apply_options || [])[0] || {}).link || j.share_link || '';
+    const descReal = limpiar(j.description);
+    if (!link || !matchea(j.title, descReal)) continue;
+    if (!esNueva(link)) continue;
+    if (!esNuevaKey(j.company_name, j.title)) continue;
+    const ext = j.detected_extensions || {};
+    const ubic = ext.work_from_home ? 'Remoto' : (j.location || '');
+    idiomaPorLink[String(link).trim()] = detIdioma(j.title + ' ' + descReal);
+    descripcionPorLink[String(link).trim()] = String(descReal || '').slice(0, 1800);
+    ubicacionPorLink[String(link).trim()] = ubic;
+    out.push('[Google Jobs via ' + (j.via || '?') + '] ' + j.title + ' | ' + (j.company_name || '') + ' | ' + ubic + ' | ' + (ext.salary || 's/i') + ' | ' + link + ' | ' + descReal.slice(0, 600));
+  }
+} catch (e) {}
+
 // CAP modo prueba: máx 12 ofertas a Groq (ahorra tokens del cupo diario free)
 const MAX_OFERTAS = 12;
 // 30-ago-2026. Antes se ordenaba SOLO por "¿menciona IA?" y dentro de eso el orden
@@ -247,6 +274,7 @@ return [{ json: {
   salario:        U.salario || 0,
   modalidad:      U.modalidad || [],
   ciudad:         U.ciudad || '',
+  evitar:         U.evitar || '',
   cv_master_url:  U.cv_master_url || '',
   user_id:        U.user_id || ''
 }}];

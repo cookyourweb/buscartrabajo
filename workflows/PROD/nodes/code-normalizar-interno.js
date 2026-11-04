@@ -9,6 +9,7 @@ return [{ json: {
   salario:       body.salario    || 0,
   modalidad:     body.modalidad  || [],
   ciudad:        body.ciudad     || '',
+  evitar:        body.evitar     || '',
   linkedin:      body.linkedin   || '',
   cv_master_url: body.cv_master_url || '',
   user_id:    body.user_id || '',

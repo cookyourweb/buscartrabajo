@@ -13,6 +13,7 @@ return results.map(u => {
     salario:    p['Salario min']?.number || 0,
     modalidad:  (p.Modalidad?.multi_select || []).map(m => m.name),
     ciudad:     p.Ciudad?.rich_text?.[0]?.plain_text || '',
+    evitar:     (p.Evitar?.rich_text || []).map(t => t.plain_text).join(''),
     linkedin:   p.LinkedIn?.url || '',
     cv_master_url: p['CV Master URL']?.url || '',
     source:     'schedule'

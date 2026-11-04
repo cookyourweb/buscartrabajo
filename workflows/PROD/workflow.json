@@ -1,5 +1,11 @@
 {
+  "updatedAt": "2026-10-20T08:04:00.682Z",
+  "createdAt": "2026-10-02T04:36:03.161Z",
+  "id": "IGVSEBCp1sFMXYYB",
   "name": "BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)",
+  "description": null,
+  "active": true,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
@@ -1414,9 +1420,27 @@
         2592
       ],
       "webhookId": "cf8feea4-81e3-41a4-ba40-e474a7abedec"
+    },
+    {
+      "parameters": {
+        "url": "=https://serpapi.com/search.json?engine=google_jobs&hl=en&gl=uk&location=London%2CEngland%2CUnited%20Kingdom&q={{ encodeURIComponent(($('Loop Over Users').item.json.rol || 'Software Engineer').split('·')[0].trim() + ' remote Europe') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6944,
+        3240
+      ],
+      "name": "Buscar en Google Jobs",
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
     }
   ],
-  "pinData": {},
   "connections": {
     "Notion - Ofertas existentes": {
       "main": [
@@ -1433,7 +1457,7 @@
       "main": [
         [
           {
-            "node": "Formatear ofertas",
+            "node": "Buscar en Google Jobs",
             "type": "main",
             "index": 0
           }
@@ -1957,16 +1981,37 @@
           }
         ]
       ]
+    },
+    "Buscar en Google Jobs": {
+      "main": [
+        [
+          {
+            "node": "Formatear ofertas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "b128f185-7a7d-49fb-912e-b8a253aff0e3",
+  "staticData": {
+    "node:Schedule Trigger (9am)": {
+      "recurrenceRules": []
+    },
+    "node:Cron - Revisar Aprobadas": {
+      "recurrenceRules": []
+    }
+  },
   "meta": null,
   "nodeGroups": [],
-  "id": "IGVSEBCp1sFMXYYB",
+  "pinData": {},
+  "versionId": "b128f185-7a7d-49fb-912e-b8a253aff0e3",
+  "activeVersionId": "b128f185-7a7d-49fb-912e-b8a253aff0e3",
+  "versionCounter": 23,
+  "triggerCount": 6,
   "tags": []
 }

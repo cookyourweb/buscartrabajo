@@ -17,6 +17,8 @@ if (!jsonMatch) {
 let ofertas;
 try { ofertas = JSON.parse(jsonMatch[0]); }
 catch (e) { throw new Error('JSON inválido: ' + e.message); }
+// A model sometimes echoes the empty template instead of []: keep only real offers.
+ofertas = (Array.isArray(ofertas) ? ofertas : []).filter(o => o && String(o.link || '').trim());
 
 // Recuperar email_usuario Y user_id del nodo que alimentó el Wait
 let emailUsuario = '';
@@ -66,11 +68,25 @@ return ofertas.map(oferta => {
   else if (/\bremoto\b|teletrabajo|\bremote\b/.test(senales)) modalidad = 'Remoto';
   else if (/presencial|on-?site|in-?office/.test(senales)) modalidad = 'Presencial';
 
-  const esMadrid = (ubic + ' ' + desc).toLowerCase().includes('madrid');
+  // Per-user cities (design 2026-11-01). Base city tokens ("Valdemorillo, Madrid")
+  // plus every "Híbrido <city>" in the user's modalidades. BCN is an alias of Barcelona.
+  const UF = (() => { try { return $('Formatear ofertas').first().json; } catch (e) { return {}; } })();
+  const ALIAS = { bcn: 'barcelona' };
+  const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  const mods = (UF.modalidad || []).map(norm);
+  const base = norm(UF.ciudad).split(',').map(s => s.trim()).filter(Boolean);
+  const hibOcasional = mods.filter(m => m.startsWith('hibrido ')).map(m => m.slice(8).trim())
+    .map(c => ALIAS[c] || c).filter(c => !base.includes(c));
+  const aceptaHibrido = mods.some(m => m.startsWith('hibrido'));
+  const aceptaPresencial = mods.some(m => m.startsWith('presencial'));
+  const texto = norm(ubic + ' ' + desc);
+  const enBase = base.some(c => texto.includes(c));
+  const enOcasional = hibOcasional.some(c => texto.includes(c));
 
   // Se descarta SOLO con dato explícito. Lo desconocido pasa marcado.
-  if (modalidad === 'Presencial') return null;
-  if (modalidad === 'Hibrido' && !esMadrid) return null;
+  if (modalidad === 'Presencial' && !(aceptaPresencial && enBase)) return null;
+  const sinCiudad = /confirmar ciudad/i.test(String(oferta.notas || ''));
+  if (modalidad === 'Hibrido' && !(aceptaHibrido && (enBase || enOcasional || sinCiudad))) return null;
 
   const emailContacto = oferta.email_contacto && oferta.email_contacto.includes('@')
     ? oferta.email_contacto : '';
@@ -89,7 +105,7 @@ return ofertas.map(oferta => {
     modalidad,
     ubicacion:         ubic || '',
     link:              oferta.link || '',
-    descripcion_corta: aviso + (oferta.descripcion_corta || ''),
+    descripcion_corta: aviso + (oferta.notas ? oferta.notas + ' · ' : '') + (oferta.descripcion_corta || ''),
     descripcion_full:  descripcionPorLink[linkKey] || oferta.descripcion_corta || '',
     idioma,
     nombre_contacto:   oferta.nombre_contacto || '',
