@@ -1,5 +1,11 @@
 {
+  "updatedAt": "2026-10-20T08:04:00.682Z",
+  "createdAt": "2026-10-02T04:36:03.161Z",
+  "id": "IGVSEBCp1sFMXYYB",
   "name": "BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)",
+  "description": null,
+  "active": true,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
@@ -294,27 +300,13 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://api.notion.com/v1/databases/34811515f4b280f19a42f8da5e91a8fe/query",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "notionApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Notion-Version",
-              "value": "2022-06-28"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  filter: { property: 'Activo', checkbox: { equals: true } },\n  page_size: 100\n}) }}",
-        "options": {}
+        "method": "GET",
+        "url": "https://cv-server-ggd8.onrender.com/usuarios?formato=notion",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 120000
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -326,11 +318,11 @@
       "name": "Notion — Query usuarios activos",
       "retryOnFail": true,
       "maxTries": 4,
-      "waitBetweenTries": 4000,
+      "waitBetweenTries": 5000,
       "credentials": {
-        "notionApi": {
-          "id": "ip1cxJYN655BWVcw",
-          "name": "Notion account"
+        "httpHeaderAuth": {
+          "id": "f4OvDtVAyru10LAJ",
+          "name": "cv-server clave de maquina"
         }
       }
     },
@@ -1414,9 +1406,87 @@
         2592
       ],
       "webhookId": "cf8feea4-81e3-41a4-ba40-e474a7abedec"
+    },
+    {
+      "parameters": {
+        "url": "=https://serpapi.com/search.json?engine=google_jobs&hl=en&gl=uk&location=London%2CEngland%2CUnited%20Kingdom&q={{ encodeURIComponent(($('Loop Over Users').item.json.rol || 'Software Engineer').split('·')[0].trim() + ' remote Europe') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6944,
+        3240
+      ],
+      "name": "Buscar en Google Jobs",
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://n8n-asistente-correo.onrender.com/webhook/{{ $node[\"Webhook — Buscar para user\"].parameter[\"path\"] }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 10000
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5824,
+        2848
+      ],
+      "name": "Lanzar búsqueda por usuaria",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://cv-server-ggd8.onrender.com/health",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "name": "Despertar CV Server (usuarias)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5336,
+        2868
+      ],
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "onError": "continueRegularOutput",
+      "notes": "Despierta cv-server antes de puntuar: en el plan gratuito de Render arranca en 30-60 s y mientras responde 503."
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "name": "Esperar arranque (usuarias)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5436,
+        2868
+      ]
     }
   ],
-  "pinData": {},
   "connections": {
     "Notion - Ofertas existentes": {
       "main": [
@@ -1433,7 +1503,7 @@
       "main": [
         [
           {
-            "node": "Formatear ofertas",
+            "node": "Buscar en Google Jobs",
             "type": "main",
             "index": 0
           }
@@ -1475,13 +1545,7 @@
     },
     "Loop Over Users": {
       "main": [
-        [
-          {
-            "node": "Despertar CV Server (puntuar)",
-            "type": "main",
-            "index": 0
-          }
-        ],
+        [],
         [
           {
             "node": "Notion - Ofertas existentes",
@@ -1550,7 +1614,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Users",
+            "node": "Lanzar búsqueda por usuaria",
             "type": "main",
             "index": 0
           }
@@ -1841,7 +1905,7 @@
       "main": [
         [
           {
-            "node": "Notion — Query usuarios activos",
+            "node": "Despertar CV Server (usuarias)",
             "type": "main",
             "index": 0
           }
@@ -1852,7 +1916,7 @@
       "main": [
         [
           {
-            "node": "Notion — Query usuarios activos",
+            "node": "Despertar CV Server (usuarias)",
             "type": "main",
             "index": 0
           }
@@ -1957,16 +2021,70 @@
           }
         ]
       ]
+    },
+    "Buscar en Google Jobs": {
+      "main": [
+        [
+          {
+            "node": "Formatear ofertas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lanzar búsqueda por usuaria": {
+      "main": [
+        [
+          {
+            "node": "Despertar CV Server (puntuar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Despertar CV Server (usuarias)": {
+      "main": [
+        [
+          {
+            "node": "Esperar arranque (usuarias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar arranque (usuarias)": {
+      "main": [
+        [
+          {
+            "node": "Notion — Query usuarios activos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "b128f185-7a7d-49fb-912e-b8a253aff0e3",
+  "staticData": {
+    "node:Schedule Trigger (9am)": {
+      "recurrenceRules": []
+    },
+    "node:Cron - Revisar Aprobadas": {
+      "recurrenceRules": []
+    }
+  },
   "meta": null,
   "nodeGroups": [],
-  "id": "IGVSEBCp1sFMXYYB",
+  "pinData": {},
+  "versionId": "b128f185-7a7d-49fb-912e-b8a253aff0e3",
+  "activeVersionId": "b128f185-7a7d-49fb-912e-b8a253aff0e3",
+  "versionCounter": 23,
+  "triggerCount": 6,
   "tags": []
 }

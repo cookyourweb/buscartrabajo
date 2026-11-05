@@ -2,7 +2,39 @@
   model: "openai/gpt-oss-120b",
   messages: [{
     role: "user",
-    content: "Eres el career coach y reclutador senior del usuario. De una lista de ofertas REALES, elige las que MEJOR encajan con su perfil y descarta el resto sin piedad. NO inventes ofertas ni datos: usa SOLO las de la lista.\n\nPERFIL DEL USUARIO:\n- Nombre: " + ($json.nombre || '') + "\n- Rol objetivo: " + ($json.rol || '') + "\n- Perfil: " + ($json.perfil || '') + "\n- Stack: " + (($json.stack || []).join(', ')) + "\n- Salario minimo: " + ($json.salario || 0) + " EUR\n- Modalidad preferida: " + (($json.modalidad || []).join(', ')) + "\n- Ciudad: " + ($json.ciudad || '') + "\n\nFILTROS DUROS. Descarta si incumple cualquiera: 1) el frontend o la IA no son EL TRABAJO sino un anadido, lee la DESCRIPCION no el titulo (Java+React sobra, React+algo-de-.NET vale); 2) no es Senior/Staff/Lead/Principal/Architect. EXCEPCION IMPORTANTE: si el puesto es de IA (AI Engineer, ML Engineer, Machine Learning, GenAI, IA generativa, agentes, LLM, RAG, AI Native, AI Enablement, Applied AI, Agentic) NO lo descartes por el titulo: en IA casi nunca ponen Senior y aun asi son puestos senior. Juzga la seniority por los anos y responsabilidades que pida la DESCRIPCION, y si la descripcion no lo aclara, DEJALA PASAR; 3) presencial o hibrida fuera de Madrid con dato explicito. MARCA sin descartar (empieza el campo notas con la marca): salario por debajo del suelo -> BAJO SUELO. SUELO: 60000 EUR/ano con contrato, o 400/dia o 50/hora si es freelance (convierte dolares antes de comparar); sin salario indicado no descartes ni marques. NUNCA asumas la modalidad: si la oferta no dice remoto/hibrido, deja el campo vacio. REMOTO NO ES REMOTO DESDE CUALQUIER SITIO: si la oferta dice que el remoto esta restringido a otra region (por ejemplo 'remote role for candidates located in Sao Paulo', 'US only', 'remote LATAM', 'must reside in Brazil'), DESCARTALA: Veronica trabaja desde Madrid. Solo vale remoto desde Espana, Europa, EMEA o worldwide. Si no dice la region, no asumas y dejala pasar. ORDEN entre las que sobreviven: 1) las de IA SIEMPRE primero, es la prioridad declarada del usuario; 2) encaje real; 3) salario mas alto; 4) remoto antes que hibrido.\n\nOFERTAS REALES:\n" + ($json.ofertas || '') + "\n\nDevuelve SOLO un array JSON (sin texto extra, sin markdown) con las que pasen los filtros (maximo 5, y puede ser NINGUNA: devuelve un array vacio [] si ninguna encaja, no rellenes hasta cinco), cada una con estos campos EXACTOS:\n[{\"empresa\":\"\",\"puesto\":\"\",\"salario\":\"\",\"modalidad\":\"Remoto|Hibrido|Presencial\",\"link\":\"\",\"descripcion_corta\":\"80-150 chars\",\"nombre_contacto\":\"\",\"email_contacto\":\"\",\"telefono_contacto\":\"\",\"fecha_publicacion\":\"\"}]\nUsa el link real de cada oferta. Si NINGUNA encaja, devuelve []."
+    content: (() => {
+      const nombre = $json.nombre || 'el usuario';
+      const ciudad = $json.ciudad || '';
+      const mods = ($json.modalidad || []);
+      const suelo = Number($json.salario || 0);
+      const dia = suelo ? Math.round(suelo / 150) : 0;
+      const hora = suelo ? Math.round(suelo / 1200) : 0;
+      const sueloTxt = suelo
+        ? suelo + ' EUR/ano con contrato, o ' + dia + ' EUR/dia o ' + hora + ' EUR/hora si es freelance (convierte otras monedas a EUR antes de comparar)'
+        : 'sin suelo: no marques salario';
+      return "Eres el career coach y reclutador senior de " + nombre + ". De una lista de ofertas REALES, elige las que MEJOR encajan con su perfil y descarta el resto sin piedad. NO inventes ofertas ni datos: usa SOLO las de la lista.\n\n"
+      + "PERFIL DEL USUARIO:\n- Nombre: " + nombre
+      + "\n- Rol objetivo (en orden de prioridad): " + ($json.rol || '')
+      + "\n- Perfil: " + ($json.perfil || '')
+      + "\n- Stack: " + (($json.stack || []).join(', '))
+      + "\n- Ciudad base: " + ciudad
+      + "\n- Modalidades que acepta: " + (mods.join(', ') || 'no indicadas')
+      + "\n- Quiere evitar: " + ($json.evitar || 'nada indicado')
+      + "\n\nFILTROS DUROS. Descarta si incumple cualquiera:"
+      + "\n1) El trabajo principal no encaja con su Rol objetivo y su Stack. Lee la DESCRIPCION, no el titulo: si lo suyo es solo un anadido menor, descarta. Un puesto de solo frontend es tan valido como uno de IA o full-stack si encaja con su stack."
+      + "\n2) Es explicitamente junior, practicas o pide menos de 3 anos de experiencia. Juzga la seniority por la DESCRIPCION, no por el titulo: las ofertas en espanol casi nunca escriben Senior. Si no lo aclara, DEJALA PASAR."
+      + "\n3) Modalidad y ubicacion, segun SUS modalidades:"
+      + "\n   - Presencial: solo vale si acepta Presencial y es en su ciudad base. Si no, descarta."
+      + "\n   - Hibrido: vale en su ciudad base si acepta hibrido, y en cualquier ciudad que aparezca como 'Hibrido <ciudad>' en sus modalidades. Si la ciudad del hibrido NO es su ciudad base, dejala pasar y empieza notas con 'HIBRIDO <CIUDAD>: confirmar dias de oficina'. Hibrido en cualquier otra ciudad: descarta. Si el hibrido NO dice la ciudad, no asumas: dejala pasar y empieza notas con 'HIBRIDO: confirmar ciudad y dias de oficina'."
+      + "\n   - Remoto: vale si acepta Remoto y la oferta permite trabajar desde el pais de su ciudad base o desde una region que lo incluya (por ejemplo Europa, EMEA o mundial). Si el remoto esta restringido a otra region ('US only', 'remote LATAM', 'must reside in Brazil'), descarta. Si no dice la region, no asumas y dejala pasar."
+      + "\n4) Coincide con lo que quiere evitar: descarta."
+      + "\n\nMARCA sin descartar (empieza notas con la marca): salario por debajo del suelo -> BAJO SUELO. SUELO: " + sueloTxt + ". Sin salario indicado no descartes ni marques. NUNCA asumas la modalidad: si la oferta no la dice, deja el campo vacio."
+      + "\n\nORDEN entre las que sobreviven: 1) encaje con el PRIMER rol de su Rol objetivo, que es su prioridad; 2) encaje real con el resto del perfil; 3) salario mas alto; 4) remoto antes que hibrido."
+      + "\n\nOFERTAS REALES:\n" + ($json.ofertas || '')
+      + "\n\nDevuelve SOLO un array JSON (sin texto extra, sin markdown) con las que pasen los filtros (maximo 5, y puede ser NINGUNA: devuelve [] si ninguna encaja, no rellenes hasta cinco), cada una con estos campos EXACTOS:\n"
+      + '[{"empresa":"","puesto":"","salario":"","modalidad":"Remoto|Hibrido|Presencial","link":"","descripcion_corta":"80-150 chars","notas":"","nombre_contacto":"","email_contacto":"","telefono_contacto":"","fecha_publicacion":""}]'
+      + "\nUsa el link real de cada oferta. Si NINGUNA encaja, devuelve [].";
+    })()
   }],
   max_tokens: 4000,
   temperature: 0.3,
