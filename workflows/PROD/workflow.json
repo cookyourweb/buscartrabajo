@@ -1451,6 +1451,40 @@
       ],
       "name": "Lanzar búsqueda por usuaria",
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://cv-server-ggd8.onrender.com/health",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "name": "Despertar CV Server (usuarias)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5336,
+        2868
+      ],
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "onError": "continueRegularOutput",
+      "notes": "Despierta cv-server antes de puntuar: en el plan gratuito de Render arranca en 30-60 s y mientras responde 503."
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "name": "Esperar arranque (usuarias)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5436,
+        2868
+      ]
     }
   ],
   "connections": {
@@ -1871,7 +1905,7 @@
       "main": [
         [
           {
-            "node": "Notion — Query usuarios activos",
+            "node": "Despertar CV Server (usuarias)",
             "type": "main",
             "index": 0
           }
@@ -1882,7 +1916,7 @@
       "main": [
         [
           {
-            "node": "Notion — Query usuarios activos",
+            "node": "Despertar CV Server (usuarias)",
             "type": "main",
             "index": 0
           }
@@ -2004,6 +2038,28 @@
         [
           {
             "node": "Despertar CV Server (puntuar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Despertar CV Server (usuarias)": {
+      "main": [
+        [
+          {
+            "node": "Esperar arranque (usuarias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar arranque (usuarias)": {
+      "main": [
+        [
+          {
+            "node": "Notion — Query usuarios activos",
             "type": "main",
             "index": 0
           }
