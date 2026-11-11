@@ -84,6 +84,7 @@ backups-master/
 # OJO: .gitignore NO desindexa lo ya trackeado. Esto se saco con
 # `git rm -r --cached .claude` el 28-ago-2026.
 .claude/
+.opencode/
 
 # Copias de seguridad de workflows de n8n: solo se versiona workflows/PROD/.
 #
