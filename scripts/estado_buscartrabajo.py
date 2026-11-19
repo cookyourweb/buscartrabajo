@@ -23,7 +23,7 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-WF_ID = "CsvmtPcLVmGIZg6C"          # BuscarTrabajo - Ofertas Diarias (PROD, dedup ON)
+WF_ID = "IGVSEBCp1sFMXYYB"          # BuscarTrabajo - Ofertas Diarias (PROD, dedup ON). Re-imported; was CsvmtPcLVmGIZg6C until oct-2026
 DB_OFERTAS = "33d11515f4b281efa776d0ea698b748f"
 RAIZ = Path(__file__).resolve().parent.parent
 

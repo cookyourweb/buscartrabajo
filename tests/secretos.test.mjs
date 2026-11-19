@@ -292,3 +292,19 @@ test('se detectan varias rutas distintas y sin repetir', () => {
 
   assert.deepEqual(rutasLiterales(texto).sort(), ['oferta-aprobar', 'oferta-descartar']);
 });
+
+import { execFileSync } from 'node:child_process';
+
+test('--json devuelve JSON valido y sin violaciones', () => {
+  const salida = execFileSync(
+    'node',
+    ['scripts/check-secretos.mjs', '--json'],
+    { encoding: 'utf8', cwd: process.cwd() },
+  );
+  const json = JSON.parse(salida);
+  assert.equal(typeof json.ok, 'boolean');
+  assert.ok(Array.isArray(json.violations));
+  assert.equal(typeof json.reviewed_files, 'number');
+  assert.ok(json.secrets_file_present === true || json.secrets_file_present === false);
+  assert.equal(json.ok, true);
+});

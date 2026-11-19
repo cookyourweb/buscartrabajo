@@ -118,6 +118,17 @@ lifting.
 The last two are checked automatically by `scripts/render_carta.py`: it **aborts the
 render** if it finds a long dash or an arrow.
 
+**Since 26 Oct 2026 the whole checklist is enforced, not just remembered.** That day five
+letters went out breaking this rule, because nothing checked it. Now:
+
+- `scripts/lib/carta.mjs` validates a letter against this checklist (merits, gaps,
+  assertive tone, old template, over 100 words, missing "puede encajar" or
+  "El detalle está en mi CV", no accents, dashes and arrows).
+- `tests/carta.test.mjs` keeps the real letters of 26 Oct as cases that must fail.
+- `scripts/hook-carta.mjs` is a Claude Code `PreToolUse` hook (in the user settings) that
+  runs the validator before any letter is typed into a form or written to a `carta*` file,
+  and **blocks** it if it does not pass.
+
 ---
 
 ## What was left behind

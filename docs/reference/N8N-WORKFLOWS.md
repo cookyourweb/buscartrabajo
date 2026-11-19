@@ -32,7 +32,7 @@ The 10 workflows on the instance, read via the API on 28 Aug 2026. Six active.
 
 | Workflow | n8n ID | Status | What it does |
 |----------|--------|--------|--------------|
-| **`BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)`** | `CsvmtPcLVmGIZg6C` | ACTIVE | **THE PRODUCTION ONE.** 50 nodes. Cron `0 9 * * *` (09:00 Madrid = 07:00Z) searches for offers, writes them to Notion and sends the daily email. Sender `veronica@cookyourwebai.es`. Also `Cron - Revisar Aprobadas` every 15 min. |
+| **`BuscarTrabajo — Ofertas Diarias (PROD, dedup ON)`** | `IGVSEBCp1sFMXYYB` | ACTIVE | **THE PRODUCTION ONE** (re-imported; on 1 Nov 2026 `CsvmtPcLVmGIZg6C` was inactive). The daily trigger runs at 08:00Z in winter. 50 nodes. Cron `0 9 * * *` (09:00 Madrid = 07:00Z) searches for offers, writes them to Notion and sends the daily email. Sender `veronica@cookyourwebai.es`. Also `Cron - Revisar Aprobadas` every 15 min. |
 | **Asistente Correo Outlook - FIX 14-07** | `tVLM6O2a5doN2XZr` | ACTIVE | Outside the offers flow. |
 | **Búsqueda Empleo Diaria** (Telegram) | `LODaOAsNrmU7NnJ4` | ACTIVE | Sends offers over Telegram. Does NOT write to Notion. That it works says nothing about the production one. |
 | **Captura Gmail - v4.1** | `yfmYPJc4FN2425Dt` | ACTIVE | Gmail invoices to Notion + PDF to Drive. Canonical export: `workflows/captura-gmail-facturas-BUENA-v4.1.json`. |
@@ -124,3 +124,11 @@ trust the number in the name.
 
 **Last updated:** 28 August 2026 (inventory re-read via the API, webhooks swept node by node)
 **See also:** `../../README.md` (full flow of the system).
+
+## Draft and published versions (1 Nov 2026)
+
+The instance separates the draft from the published version. Uploading with the public
+API (`PUT /workflows/{id}`, `scripts/subir_workflow.py`) only changes the **draft**; the
+scheduled trigger keeps running the **published** one until someone clicks **Publish** in
+the editor. A yellow dot on the Publish button means unpublished changes. Check with the
+API that `versionId` equals `activeVersionId`.

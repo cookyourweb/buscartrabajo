@@ -245,6 +245,23 @@ When it said "depersonalize the baseline", it was not adopted, and the reason wa
 
 ---
 
+## What is checked automatically (since 27 Oct 2026)
+
+`scripts/lib/respuesta.mjs` (tests in `tests/respuesta.test.mjs`) blocks, through the
+Claude Code hook `scripts/hook-carta.mjs`, any open answer typed into a form that:
+
+- sounds like a report (`therefore`, `moreover`, `thus`, `which created`,
+  `the main lesson was`, `it is worth noting`, *por lo tanto*, *cabe destacar*, *"Además,"*
+  opening a sentence);
+- names her projects (cv-server, Tu Vuelta al Sol, Nova, panel-empleo…): they are
+  described, not named (her request, 26 Oct);
+- confesses a gap (*"would be new ground"*, *"no tengo experiencia"*): that goes to the
+  call prep, not to the form;
+- sells with empty words (*passionate*, *leverage*, *apasionada*…);
+- carries a long dash or an arrow.
+
+Whether the content is good is still decided by a person. The rest of this checklist too.
+
 ## Checklist before sending
 
 - [ ] Does it start with the problem?
